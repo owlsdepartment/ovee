@@ -8,7 +8,11 @@
         "declarationDir": "./dist/types",
         "paths": {
             "src": ["./src"],
-            "tests": ["./tests"]
+            "tests": ["./tests"],
+            "@barba/core/src/*": [
+                "./node_modules/@barba/core/dist/core/src/*",
+                "../../node_modules/@barba/core/dist/core/src/*" 
+            ]
         }
     },
 

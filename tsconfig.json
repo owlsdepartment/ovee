@@ -8,10 +8,15 @@
         "target": "ES6",
         "strict": true,
         "experimentalDecorators": true,
+        "esModuleInterop": true,
         "baseUrl": ".",
         "paths": {
-            "ovee": ["packages/ovee"]
-        }
+            "ovee": ["packages/ovee/src"]
+        },
+        "plugins": [
+            { "transform": "typescript-transform-paths" },
+            { "transform": "typescript-transform-paths", "afterDeclarations": true }
+        ]
     },
     "exclude": [
         "node_modules",

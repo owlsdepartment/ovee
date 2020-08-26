@@ -2,11 +2,13 @@
   "name": "root",
   "private": true,
   "scripts": {
+    "build": "lerna run build",
+    "bootstrap": "lerna bootstrap",
     "test": "node -v && npm run test:unit",
     "test:unit": "NODE_ENV=test jest",
     "test:unit:watch": "NODE_ENV=test jest --watch --coverage --coverage-reporters=lcov",
-    "lint": "eslint . --fix",
-    "lint:no-fix": "eslint ."
+    "lint": "eslint ./packages --fix",
+    "lint:no-fix": "eslint ./packages"
   },
   "devDependencies": {
     "@types/jest": "^26.0.10",
@@ -21,5 +23,8 @@
     "lerna": "^3.22.1",
     "ts-jest": "^26.2.0",
     "typescript": "3.9.7"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]  
 }

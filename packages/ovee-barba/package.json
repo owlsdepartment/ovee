@@ -8,9 +8,13 @@
   "dependencies": {
     "@barba/core": "^2.9.7",
     "@barba/css": "^2.1.15",
-    "@barba/prefetch": "^2.1.10"
+    "@barba/prefetch": "^2.1.10",
+    "ovee": "^2.0.0"
   },
   "devDependencies": {
+    "ttypescript": "^1.5.11",
+    "typescript": "3.9.7",
+    "typescript-transform-paths": "^2.0.0"
   },
   "scripts": {
     "test": "node -v && npm run test:unit",
@@ -18,7 +22,7 @@
     "test:unit:watch": "NODE_ENV=test jest --watch --coverage --coverage-reporters=lcov",
     "lint": "eslint . --fix",
     "lint:no-fix": "eslint .",
-    "build": "tsc",
+    "build": "ttsc",
     "clean": "rm -rf ./dist"
   },
   "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11"
