@@ -3,6 +3,7 @@ import ReactiveProxy from 'src/reactive/ReactiveProxy';
 import createDecoratorsHandler from 'tests/helpers/createDecoratorsHandler';
 
 jest.mock('src/reactive/makeReactive', () => ({
+    __esModule: true,
     default: jest.fn((instance) => new ReactiveProxy(instance))
 }));
 
