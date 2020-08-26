@@ -6,6 +6,9 @@
   "license": "MIT",
   "homepage": "https://github.com/owlsdepartment/ovee",
   "repository": "github:owlsdepartment/ovee",
+  "bugs": {
+    "url": "https://github.com/owlsdepartment/ovee/issues"
+  },
   "main": "dist/src/index.js",
   "types": "dist/types/index.d.ts",
   "files": [
@@ -43,7 +46,9 @@
     "test:unit:watch": "NODE_ENV=test jest --watch --coverage --coverage-reporters=lcov",
     "lint": "eslint . --fix",
     "lint:no-fix": "eslint .",
-    "build": "tsc"
+    "build": "tsc",
+    "clean": "rm -rf ./dist",
+    "prepare": "npm run test && npm run clean && npm run build"
   },
   "jest": {
     "verbose": true,
