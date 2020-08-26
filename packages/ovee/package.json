@@ -1,0 +1,82 @@
+{
+  "name": "ovee",
+  "version": "2.0.0",
+  "description": "A modern, optionally reactive framework for markup you already have",
+  "author": "Jakub Przyborowski",
+  "license": "MIT",
+  "homepage": "https://github.com/owlsdepartment/ovee",
+  "repository": "github:owlsdepartment/ovee",
+  "main": "dist/src/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "dependencies": {
+    "lit-html": "^1.1.2",
+    "on-change": "^1.6.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.10",
+    "@types/jsdom": "^16.2.3",
+    "@typescript-eslint/eslint-plugin": "^3.9.1",
+    "@typescript-eslint/parser": "^3.9.1",
+    "acorn": "^6.0.0",
+    "acorn-dynamic-import": "^4.0.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^7.7.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-jest": "^23.8.0",
+    "eslint-plugin-lit": "^1.2.0",
+    "jest": "^26.4.0",
+    "jsdom": "^16.4.0",
+    "laravel-mix": "^4.0.16",
+    "laravel-mix-eslint": "^0.1.3",
+    "resolve-url-loader": "3.1.0",
+    "ts-jest": "^26.2.0",
+    "typescript": "3.9.7",
+    "webpack": "^4.33.0"
+  },
+  "scripts": {
+    "test": "node -v && npm run test:unit",
+    "test:unit": "NODE_ENV=test jest",
+    "test:unit:watch": "NODE_ENV=test jest --watch --coverage --coverage-reporters=lcov",
+    "lint": "eslint . --fix",
+    "lint:no-fix": "eslint .",
+    "build": "tsc"
+  },
+  "jest": {
+    "verbose": true,
+    "testMatch": [
+      "**/tests/unit/**/*.spec.(js|jsx|ts|tsx)|**/__tests__/*.(js|jsx|ts|tsx)"
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.{js,ts}"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "src"
+    ],
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/src/$1",
+      "^tests/(.*)$": "<rootDir>/tests/$1"
+    },
+    "setupFiles": [
+      "./tests/helpers/_helpers.ts"
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tests/tsconfig.json"
+      }
+    }
+  },
+  "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11"
+}

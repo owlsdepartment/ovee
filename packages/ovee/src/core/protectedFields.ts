@@ -1,0 +1,10 @@
+export const BEFORE_INIT = Symbol('beforeInit');
+export const REFS = Symbol('refs');
+export const REFS_OBSERVER = Symbol('refsObserver');
+export const UPDATE_REFS = Symbol('updateRefs');
+export const TRACK_REFS = Symbol('trackRefs');
+export const INSTANCE_DECORATORS = Symbol('instanceDecorators');
+export const INSTANCE_DECORATORS_DESTRUCTORS = Symbol('instanceDecoratorDestructors');
+export const RENDER = Symbol('render');
+export const UPDATE_AF = Symbol('updateAF');
+export const UPDATE_PROMISE = Symbol('updatePromise');

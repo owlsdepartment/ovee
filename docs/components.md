@@ -1,0 +1,246 @@
+# Components
+
+## What is a Component
+Component is a building block of your website or an application. In OWD.js, it is represented by a class and corresponding markup. The framework detects html tag matching the component by either tag name, or a data parameter. Each instance of matched tag gets its own instance of component class.
+
+Let's take a look at an example:
+
+```html
+<counter class="counter">
+    <p class="counter__value"></p>
+    <button class="counter__button">increment!</button>
+</counter>
+```
+
+```js
+import {
+    Component,
+    bind,
+    el,
+    reactive,
+    register,
+    watch
+} from 'owd';
+
+@register('counter')
+export default class extends Component {
+    @reactive()
+    counter = 0;
+
+    @el('.counter__value')
+    valueElement;
+
+    @bind('click', '.counter__button')
+    increment() {
+        this.counter++;
+    }
+
+    @watch('counter', { immediate: true })
+    update() {
+        if (this.valueElement) {
+            this.valueElement.innerHTML = `Current value: ${this.counter}`;
+        }
+    }
+}
+```
+
+As we can see, within component class we can reference children elements that are contained within its corresponding DOM node. The framework gives us convinient mechanisms to bind events, DOM elements and react to data changes.
+
+## Declaring and Registering Components
+A component has to extend base `Component` class. For convenience, we provide `@register()` decorator, which defines the name that will be used to corelate it with a matching DOM element. Underneath, we define a custom element. Alternatively, you may define a `static getName()` method that would return a name.
+
+In normal circumstances, you would not instantiate a `Component` manually. Instead, you should use `registerComponent()` method of `App` or pass it as an `App` argument. The `App` instance is responsible of handling instantiating and destroying components. More info about registering components within the `App` [here](/guide#initialization).
+
+## Component Lifecycle
+A component's lifecycle is prerty straightforward. In most cases, you shuld not override its constructor. Instead, use lifecycle hooks.
+<mermaid>
+graph TD
+    A["new Component"] -- "binding refs, events, evaluating decorators" --> B["init()"];
+    B --> C["component is up and running"];
+    C -. "events and watchers loop" .-> C
+    C -- "unbinding refs and events" --> Z["destroy()"];
+    class A,B,C,Z className;
+    classDef className fill:#fafafe,stroke:#323edd,color:#323edd,stroke-width:2px;
+</mermaid>
+
+All the initialization should be done within `init()` hook. Please mind, that it might be called in asynchronous manner in relation to constructor.
+
+Bindings that were done using `$on()` method or `@bind()` decorator are automatically unbound during teardown. But in cases when you are using some external libraries or do manual event listener bindings, you should unbind and destroy them within `destroy()` hook.
+
+## Linking to DOM
+OWD.js is using `MutationObserver` to handle changes in DOM and automatically initialize and teardown component instances. Within a `Component` instance, you always have access to its DOM node counterpart using `this.$element` property.
+
+In many cases, you'll need to access component's child elements. While you can simply access them using DOM selectors, e.g. `this.$element.querySelector('.button')`, the framework provies you with a convenient way to link them dynamically to component properties. To acheive that, you can use `@el` directive.
+
+```js
+@el('.button--next')
+buttonNextElement;
+```
+
+By default, the directive will use `querySelector()` to match a single [`Element`](https://developer.mozilla.org/en-US/docs/Web/API/element). There are also cases, when you instead need to access a list of elements, for example to access all slides within a slider.
+
+```js
+@el('.slide', { list: true })
+slideElementList;
+```
+
+In such case, you can pass `list: true` option to `@el` directive. Underneath, `querySelectorAll()` will be called, so you'll get static [`NodeList`](https://developer.mozilla.org/en-US/docs/Web/API/NodeList) instance hooked into the property.
+
+Additional profit of using this method is that the framework will update the property automatically when the DOM structure changes. Please mind, that in case of using `list: true` parameter, the whole `NodeList` will be updated each time a matching change in component's DOM occurs.
+
+## DOM References
+Using `@el()` directive is a very convenient way to hook child elements into component properties. Although, in some cases like creating generic, reusable components, you might want to avoid using CSS selectors. Instead, you can use references mechanism. To acheive this, you mark a reference in your markup using `ref` property. For example:
+
+```html
+<button type="button" class="button button--next" ref="buttonNext">Next</button>
+```
+
+Now in the component, you can access all refered buttons:
+```
+this.$refs.buttonNext
+```
+
+For each `$refs` key, you'll get an array of matching nodes. Refs are automatically updated, when DOM changes. If you ever used Vue, you might be familiar with this mechanism. However, please mind that while in Vue component's markup template is always known, in OWD.js the same JS component class may be used with different markup structures. Therefore, you should always write your code to check, if the reference is even there. The most convenient way is to use [optional chanining operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining).
+
+```
+this.$refs?.searchInput?.focus?.();
+```
+
+## Event Handling
+There are two ways to listen events on a component, using:
+ - decorator `@bind()`
+ - `this.$on()` and `this.$off()`
+
+In previous example, we enabled listening of a `click` event on a button using decorator `@bind`. It expects 2 arguments: first is an event or list of space seperated events to listen and second is an optional selector. If not passed, we will listen on root `this.$element`. This example shows us, how to listen on `focus` and `blur` on a parent and `click` on inner button:
+
+```js
+@register('base-example')
+export default class extends Component {
+    // some code
+
+    @bind('click', '.counter__button')
+    onButtonClick() {
+        // handle click
+    }
+
+    @bind('focus blur')
+    onFocusChange() {
+        // handle focus
+    }
+}
+```
+
+We can do the same using `this.$on`, that we gain by extending `Component` class. `$on` method is chainable as it returns `this`.
+
+```js
+@register('base-example')
+export default class extends Component {
+    // some code
+    init() {
+        this.$on('click', '.counter__button', this.onButtonClick)
+            .$on('focus blur', this.onFocusChange);
+    }
+
+    destroy() {
+        this.$off('click', '.counter__button', this.onButtonClick)
+            .$off('focus blur', this.onFocusChange);
+    }
+
+    onButtonClick() {
+        // handle click
+    }
+
+    onFocusChange() {
+        // handle focus
+    }
+}
+```
+
+Notice, that when using `$on` we have to use coresponding method `$off` to remove event listeners. Decorator `@bind` do this automatically fo us. `@bind` also uses `$on` and `$off` underhood.
+
+Full signature for methods `$on` and `$off`:
+
+```typescript
+function $on(events: string, callback: Callback<this>): this;
+function $on(events: string, selector: string, callback: Callback<this>): this;
+function $on(events: string, target: Element, callback: Callback<this>): this;
+function $on(events: string, target: Element, selector: string, callback: Callback<this>): this;
+
+function $off(events: string, callback: Callback<this>): this;
+function $off(events: string, selector: string, callback: Callback<this>): this;
+function $off(events: string, target: Element, callback: Callback<this>): this;
+function $off(events: string, target: Element, selector: string, callback: Callback<this>): this;
+```
+
+## Reactivity and Watching Properties
+`OWD` allows you to make some class property reactive, that is when it gets changed, all other reactive elements and watchers, that depend on this property, are notified about that. Reactivity is really useful in `TemplateComponent` that we cover in a next section.
+
+To make property reactive, we use decorator `@reactive`:
+
+```js
+export default class extends Component {
+    @reactive()
+    counter = 0;
+}
+```
+
+It's not doing much by itself, but what if we want to do something, when it is changed? We would then use decorator `@watch`.
+
+```js
+export default class extends Component {
+    @reactive()
+    counter = 0;
+
+    @watch('counter')
+    onCounterChange() {
+        console.log(`Counter was changed to: ${this.counter}`)
+    }
+}
+```
+
+Now we will be notified when `counter` is changed.
+
+Decorator `@watch` accepts two arguments:
+ - path to watch (could be something like `obj.a`)
+ - optional object with field `immediate` that accepts `boolean`. If `immediate` is `true`, watching method will be called immediatly after component initialization with current value. In other case, it will be called only when something changes.
+
+Method, that we decorate, will receive 3 arguments:
+ - current value
+ - previous value
+ - path that we are watching
+
+__Important!__ `@watch` can only watch properties marked as `@reactive` as in `OWD` nothing is reactive by default in opposite to frameworks like `Vue`, `React` or `Angular`.
+
+## Template Components
+In earlier example, with `counter` component, we had to update DOM manually when `this.counter` value was changed. But we can do it easier, by using `TemplateComponent` and implementing it's method `template`. Example:
+
+```js
+import {
+    TemplateComponent,
+    bind,
+    reactive,
+    register
+} from 'owd';
+
+@register('counter')
+export default class extends TemplateComponent {
+    @reactive()
+    counter = 0;
+
+    @bind('click', '.counter__button')
+    increment() {
+        this.counter++;
+    }
+
+    template() {
+        return this.html`
+            <p class="counter__value">Current value: ${this.counter}</p>
+            <button class="counter__button">increment!</button>
+        `
+    }
+}
+```
+
+We do not need `valueElement` property and `update` method. If property used in `template` method is reactive, DOM will be updated automatically.
+
+Sometimes, you would like to do something after whole template would be rerendered. Then you can use `this.$requestUpdate()` method that returns `Promise` that will resolve after rerender.

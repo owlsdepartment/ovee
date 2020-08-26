@@ -1,0 +1,80 @@
+{
+    "root": true,
+    "env": {
+        "browser": true,
+        "jasmine": true,
+        "node": true,
+        "es6": true
+    },
+    "plugins": ["lit", "jest", "@typescript-eslint"],
+    "extends": ["airbnb/base", "plugin:lit/recommended", "plugin:@typescript-eslint/recommended"],
+    "rules": {
+        "indent": ["error", 4],
+        "max-len": [1, 120],
+        "arrow-body-style": [
+            2,
+            "as-needed"
+        ],
+        "no-return-assign": 0,
+        "no-param-reassign": 0,
+        "class-methods-use-this": 0,
+        "no-underscore-dangle": 0,
+        "comma-dangle": [
+            2,
+            "never"
+        ],
+        "arrow-parens": [
+            2,
+            "always"
+        ],
+        "no-console": [
+            2, {
+                "allow": ["warn", "error", "info"]
+            }
+        ],
+        "no-plusplus": 0,
+        "lines-between-class-members": "off",
+        "no-unused-expressions": "off",
+        "no-use-before-define": ["error", "nofunc"],
+        "func-names": "off",
+
+        "import/no-cycle": 2,
+        "import/no-mutable-exports": 0,
+        "import/no-extraneous-dependencies": [
+            "error", {"devDependencies": ["build/*", "test/**/*"]}
+        ],
+        "import/no-unresolved": 0,
+        "import/extensions": ["error", "never"],
+        "import/order": ["error", {
+            "newlines-between": "always",
+            "groups": [["builtin", "external"], "internal", ["sibling", "parent", "index"]],
+            "pathGroups": [
+                { "pattern": "src/**", "group": "internal" },
+                { "pattern": "tests/**", "group": "internal" }
+            ],
+            "pathGroupsExcludedImportTypes": ["internal"],
+            "alphabetize": { "order": "asc" }
+        }],
+
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/explicit-module-boundary-types": [
+            "warn",
+            {
+                "allowArgumentsExplicitlyTypedAsAny": true
+            }
+        ],
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/no-empty-interface": "off",
+        "@typescript-eslint/no-namespace": [
+            "error",
+            { "allowDeclarations": true }
+        ],
+        "@typescript-eslint/no-empty-function": "off"
+    },
+    "parserOptions": {
+        "ecmaFeatures": {
+            "legacyDecorators": true
+        }
+    },
+    "parser": "@typescript-eslint/parser"
+}
