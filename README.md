@@ -10,3 +10,6 @@ Due to lack of a good, modern toolset that would fit our needs, our team at [Owl
 OWD.js was created and is maintained by [Jakub Przyborowski](https://github.com/przyb), CTO of [Owls Department](https://www.owlsdepartment.com/).
 
 Built with <3 in Cracow.
+
+## License
+Library is under [MIT License](https://opensource.org/licenses/MIT)
