@@ -34,41 +34,7 @@
     "lint": "eslint . --fix",
     "lint:no-fix": "eslint .",
     "build": "tsc",
-    "clean": "rm -rf ./dist",
-    "prepare": "npm run test && npm run clean && npm run build"
-  },
-  "jest": {
-    "verbose": true,
-    "testMatch": [
-      "**/tests/unit/**/*.spec.(js|jsx|ts|tsx)|**/__tests__/*.(js|jsx|ts|tsx)"
-    ],
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src/**/*.{js,ts}"
-    ],
-    "transform": {
-      "^.+\\.(ts|tsx)$": "ts-jest"
-    },
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "src"
-    ],
-    "moduleNameMapper": {
-      "^src/(.*)$": "<rootDir>/src/$1",
-      "^tests/(.*)$": "<rootDir>/tests/$1"
-    },
-    "setupFiles": [
-      "./tests/helpers/_helpers.ts"
-    ],
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "tests/tsconfig.json"
-      }
-    }
+    "clean": "rm -rf ./dist"
   },
   "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11"
 }

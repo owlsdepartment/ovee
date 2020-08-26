@@ -11,35 +11,15 @@
     "@barba/prefetch": "^2.1.10"
   },
   "devDependencies": {
-
   },
   "scripts": {
     "test": "node -v && npm run test:unit",
     "test:unit": "NODE_ENV=test jest",
-    "test:unit:watch": "NODE_ENV=test jest --watch --coverage --coverage-reporters=lcov"
-  },
-  "jest": {
-    "verbose": true,
-    "testMatch": [
-      "**/tests/unit/**/*.spec.(js|jsx|ts|tsx)|**/__tests__/*.(js|jsx|ts|tsx)"
-    ],
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src/**/*.{js,ts}"
-    ],
-    "transform": {
-      "^.+\\.js$": "babel-jest"
-    },
-    "moduleFileExtensions": [
-      "js"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "src"
-    ],
-    "setupFiles": [
-      "./tests/_helpers.js"
-    ]
+    "test:unit:watch": "NODE_ENV=test jest --watch --coverage --coverage-reporters=lcov",
+    "lint": "eslint . --fix",
+    "lint:no-fix": "eslint .",
+    "build": "tsc",
+    "clean": "rm -rf ./dist"
   },
   "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11"
 }

@@ -278,7 +278,7 @@ export default class App {
         return this;
     }
 
-    $emit<D = any>(eventDesc: EventDesc, detail: D): void {
+    $emit<D = any>(eventDesc: EventDesc, detail?: D): void {
         this.$eventDelegate.emit(eventDesc, detail);
     }
 
