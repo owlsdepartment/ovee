@@ -1,0 +1,45 @@
+{
+  "name": "owd-barba",
+  "version": "2.0.0",
+  "description": "Barba integration for owd",
+  "main": "index.js",
+  "author": "Jakub Przyborowski",
+  "license": "MIT",
+  "dependencies": {
+    "@barba/core": "^2.9.7",
+    "@barba/css": "^2.1.15",
+    "@barba/prefetch": "^2.1.10"
+  },
+  "devDependencies": {
+
+  },
+  "scripts": {
+    "test": "node -v && npm run test:unit",
+    "test:unit": "NODE_ENV=test jest",
+    "test:unit:watch": "NODE_ENV=test jest --watch --coverage --coverage-reporters=lcov"
+  },
+  "jest": {
+    "verbose": true,
+    "testMatch": [
+      "**/tests/unit/**/*.spec.(js|jsx|ts|tsx)|**/__tests__/*.(js|jsx|ts|tsx)"
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.{js,ts}"
+    ],
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    },
+    "moduleFileExtensions": [
+      "js"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "src"
+    ],
+    "setupFiles": [
+      "./tests/_helpers.js"
+    ]
+  },
+  "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11"
+}
