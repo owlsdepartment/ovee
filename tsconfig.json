@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "lib": ["ES2017", "ES7", "ES6", "DOM"],
+        "target": "ES6",
+        "strict": true,
+        "experimentalDecorators": true,
+        "baseUrl": ".",
+        "rootDir": ".",
+        "paths": {
+            "ovee": ["packages/ovee"]
+        }
+    },
+    "include": [
+        "packages/*/src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
