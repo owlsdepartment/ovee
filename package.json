@@ -6,11 +6,13 @@
     "docs:build": "vuepress build docs",
     "build": "lerna run build",
     "bootstrap": "lerna bootstrap",
+    "publish": "lerna publish",
     "test": "node -v && npm run test:unit",
     "test:unit": "NODE_ENV=test jest",
     "test:unit:watch": "NODE_ENV=test jest --watch --coverage --coverage-reporters=lcov",
     "lint": "eslint ./packages --fix",
-    "lint:no-fix": "eslint ./packages"
+    "lint:no-fix": "eslint ./packages",
+    "prepare": "npm run lint:no-fix"
   },
   "devDependencies": {
     "@types/jest": "^26.0.10",
