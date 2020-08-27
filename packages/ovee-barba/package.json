@@ -1,6 +1,6 @@
 {
   "name": "@ovee.js/barba",
-  "version": "2.0.2",
+  "version": "2.0.0",
   "description": "Barba integration for owd",
   "main": "index.js",
   "author": "Jakub Przyborowski",
@@ -16,7 +16,7 @@
     "typescript-transform-paths": "^2.0.0"
   },
   "peerDependencies": {
-    "ovee": "^2.0.0"
+    "ovee": ">=^2.0.0"
   },
   "scripts": {
     "test": "node -v && npm run test:unit",
@@ -29,5 +29,5 @@
     "prepare": "npm run clean && npm run build"
   },
   "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11",
-  "gitHead": "6bb8cbd08616b715a882e06a598410b28dfe2fa2"
+  "gitHead": "264eb4d044993506cd3f0a30886d0fcac2d1331b"
 }
