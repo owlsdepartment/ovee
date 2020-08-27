@@ -8,13 +8,15 @@
   "dependencies": {
     "@barba/core": "^2.9.7",
     "@barba/css": "^2.1.15",
-    "@barba/prefetch": "^2.1.10",
-    "ovee": "^2.0.0"
+    "@barba/prefetch": "^2.1.10"
   },
   "devDependencies": {
     "ttypescript": "^1.5.11",
     "typescript": "3.9.7",
     "typescript-transform-paths": "^2.0.0"
+  },
+  "peerDependencies": {
+    "ovee": "^2.0.0"
   },
   "scripts": {
     "test": "node -v && npm run test:unit",
