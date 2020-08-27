@@ -45,7 +45,10 @@ implements WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, W
         });
 
         Object.defineProperty(this, '$options', {
-            value: { ...(this.constructor as typeof Component).defaultOptions(), ...options },
+            value: {
+                ...(this.constructor as typeof Component).defaultOptions(),
+                ...options
+            },
             writable: false,
             configurable: false
         });
@@ -175,14 +178,12 @@ implements WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, W
     }
 
     static register(): void {
-        if (window.customElements) {
-            const target = this.prototype;
+        const target = this.prototype;
 
-            registerCustomElement(class extends HTMLElement implements OwdElement {
-                _isOwdCustomElement = true
-                _OwdComponent = target
-            }, toKebabCase(Component.getName()), 'div');
-        }
+        registerCustomElement(class extends HTMLElement implements OwdElement {
+            _isOwdCustomElement = true
+            _OwdComponent = target
+        }, toKebabCase(this.getName()), 'div');
     }
 
     static getName(): string {

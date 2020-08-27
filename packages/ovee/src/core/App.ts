@@ -38,10 +38,10 @@ const defaultConfig: AppConfig = {
 };
 
 export default class App {
+    readonly modules: Dictionary<Module> = {};
+    readonly components: Dictionary<ComponentStorage<Component>> = {};
+    readonly $eventDelegate!: EventDelegate<any>;
     initialized = false;
-    modules: Dictionary<Module> = {};
-    components: Dictionary<ComponentStorage<Component>> = {};
-    $eventDelegate!: EventDelegate<any>;
     rootElement?: Element
     config!: AppConfig
 

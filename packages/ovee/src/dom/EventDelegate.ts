@@ -120,8 +120,8 @@ export default class EventDelegate<Context extends Component> {
                 out.callback = selector as Callback<Context>;
                 out.selector = target;
                 out.target = this.targetElement;
-            } else if (typeof selector === 'function') {
-                out.callback = selector;
+            } else {
+                out.callback = selector as Callback<Context>;
                 out.target = target as Element;
             }
         } else {

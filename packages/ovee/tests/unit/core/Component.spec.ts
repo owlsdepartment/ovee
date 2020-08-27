@@ -6,10 +6,12 @@ import Component from 'src/core/Component';
 import * as protectedFields from 'src/core/protectedFields';
 import EventDelegate from 'src/dom/EventDelegate';
 import attachMutationObserver from 'src/utils/attachMutationObserver';
+import registerCustomElement from 'src/utils/registerCustomElement';
 
 jest.mock('../../../src/core/App');
 jest.mock('../../../src/dom/EventDelegate');
 jest.mock('../../../src/utils/attachMutationObserver');
+jest.mock('src/utils/registerCustomElement');
 
 const dom = new JSDOM('<!DOCTYPE html>');
 
@@ -222,6 +224,22 @@ describe('Component class', () => {
 
         expect(instance.$eventDelegate.off).toHaveBeenCalledTimes(1);
         expect(instance.$eventDelegate.off).toHaveBeenCalledWith(events, target, selector, callback);
+    });
+
+    it('should register custom element after call register()', () => {
+        class CustomComponent extends Component {
+            static getName() {
+                return 'custom-component';
+            }
+        }
+        CustomComponent.register();
+
+        const mock = registerCustomElement as jest.Mock;
+
+        expect(mock).toHaveBeenCalledTimes(1);
+        expect(typeof mock.mock.calls[0][0]).toBe('function');
+        expect(mock.mock.calls[0][1]).toBe('custom-component');
+        expect(mock.mock.calls[0][2]).toBe('div');
     });
 
     it('should emit event from $emit', () => {

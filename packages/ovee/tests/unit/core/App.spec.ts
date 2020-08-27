@@ -5,6 +5,7 @@ import App from 'src/core/App';
 import Component from 'src/core/Component';
 import Module from 'src/core/Module';
 import { OwdComponent } from 'src/core/types';
+import EventDelegate from 'src/dom/EventDelegate';
 import ComponentError from 'src/errors/ComponentError';
 import attachMutationObserver from 'src/utils/attachMutationObserver';
 
@@ -747,6 +748,58 @@ describe('App class', () => {
             expect(dummyConstructor1.mock.calls[0][1]).toBe(app);
             expect(dummyConstructor1.mock.calls[0][2]).toEqual({});
         });
+    });
+
+    it('should subscribe to events using $on method and EventDelegate', async () => {
+        const app = new App();
+        const event = 'event';
+        const callback = () => {};
+        const target = document.createElement('div');
+        const onSpy = jest.spyOn(EventDelegate.prototype, 'on');
+
+        app.$on(event, callback);
+        app.$on(event, target, callback);
+
+        await flushPromises();
+
+        expect(onSpy).toHaveBeenCalledTimes(2);
+        expect(onSpy.mock.calls[0][0]).toEqual(event);
+        expect(onSpy.mock.calls[0][1]).toEqual(callback);
+        expect(onSpy.mock.calls[1]).toEqual([event, target, callback]);
+    });
+
+    it('should unsubscribe to events using $off method and EventDelegate', async () => {
+        const app = new App();
+        const event = 'event';
+        const callback = () => {};
+        const target = document.createElement('div');
+        const offSpy = jest.spyOn(EventDelegate.prototype, 'off');
+
+        app.$off(event, callback);
+        app.$off(event, target, callback);
+
+        await flushPromises();
+
+        expect(offSpy).toHaveBeenCalledTimes(2);
+        expect(offSpy.mock.calls[0][0]).toEqual(event);
+        expect(offSpy.mock.calls[0][1]).toEqual(callback);
+        expect(offSpy.mock.calls[1]).toEqual([event, target, callback]);
+    });
+
+    it('should unsubscribe to events using $emit method and EventDelegate', async () => {
+        const app = new App();
+        const EVENT = 'event';
+        const DETAILS = 20;
+        const emitSpy = jest.spyOn(EventDelegate.prototype, 'emit');
+
+        app.$emit(EVENT);
+        app.$emit(EVENT, DETAILS);
+
+        await flushPromises();
+
+        expect(emitSpy).toHaveBeenCalledTimes(2);
+        expect(emitSpy.mock.calls[0][0]).toEqual(EVENT);
+        expect(emitSpy.mock.calls[1]).toEqual([EVENT, DETAILS]);
     });
 });
 

@@ -34,6 +34,20 @@ describe('@prop decorator', () => {
         expect(handler.clientHeight).toBe(0);
     });
 
+    it('returns proper value from original element', () => {
+        const handler = createHandler({ innerText: null });
+        const NEW_VAL = 'test text';
+
+        prop()(handler, 'innerText');
+        handler.init();
+
+        expect(handler.$element.innerText).toBe(undefined);
+
+        handler.$element.innerText = NEW_VAL;
+
+        expect(handler.$element.innerText).toBe(NEW_VAL);
+    });
+
     it('updates instance field accordingly to elements field', () => {
         const handler = createHandler({ scrollTop: 0 });
         const NEW_VAL = 100;

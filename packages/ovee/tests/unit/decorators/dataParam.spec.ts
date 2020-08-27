@@ -1,3 +1,4 @@
+import { WithDataParam } from 'src/core/types';
 import dataParam from 'src/decorators/dataParam';
 import createDecoratorsHandler from 'tests/helpers/createDecoratorsHandler';
 
@@ -92,6 +93,45 @@ describe('@prop decorator', () => {
         await flushPromises();
 
         expect(handler.field).toBe(VAL);
+    });
+
+    it('don\'t override when used on multiple properties', () => {
+        const handler = createHandler({ field_1: '', field_2: '' });
+        const DATASET_FIELD_1 = 'datasetField1';
+        const DATASET_FIELD_2 = 'datasetField2';
+        const DATASET_VAL_1 = 'val1';
+        const DATASET_VAL_2 = 'val2';
+
+        (handler.$element as HTMLElement).dataset[DATASET_FIELD_1] = DATASET_VAL_1;
+        (handler.$element as HTMLElement).dataset[DATASET_FIELD_2] = DATASET_VAL_2;
+        dataParam(DATASET_FIELD_1)(handler, 'field_1');
+        dataParam(DATASET_FIELD_2)(handler, 'field_2');
+        handler.init();
+
+        expect(handler.field_1).toBe(DATASET_VAL_1);
+        expect(handler.field_2).toBe(DATASET_VAL_2);
+    });
+
+    it('don\'t react on changes of other data fields', async () => {
+        const handler = createHandler({ field: '' });
+        const DATASET_FIELD_1 = 'datasetField1';
+        const DATASET_FIELD_2 = 'datasetField2';
+        const VAL = 'data';
+        const field1Mock = jest.fn();
+
+        (handler.$element as HTMLElement).dataset[DATASET_FIELD_1] = VAL;
+        (handler.$element as HTMLElement).dataset[DATASET_FIELD_2] = '';
+        dataParam(DATASET_FIELD_1)(handler, 'field');
+        handler.init();
+
+        expect(handler.field).toBe(VAL);
+
+        (handler as WithDataParam).__dataParams![DATASET_FIELD_1] = field1Mock;
+        (handler.$element as HTMLElement).dataset[DATASET_FIELD_2] = '';
+
+        await flushPromises();
+
+        expect(field1Mock).not.toHaveBeenCalled();
     });
 
     it('disconnects observer on destroy', () => {
