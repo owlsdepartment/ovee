@@ -1,5 +1,5 @@
 {
-  "name": "owd-barba",
+  "name": "@ovee.js/barba",
   "version": "2.0.0",
   "description": "Barba integration for owd",
   "main": "index.js",
