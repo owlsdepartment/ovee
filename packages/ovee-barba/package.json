@@ -26,7 +26,8 @@
     "lint:no-fix": "eslint .",
     "build": "ttsc",
     "clean": "rm -rf ./dist",
-    "prepare": "npm run test && npm run clean && npm run build"
+    "prepare": "npm run clean && npm run build"
   },
-  "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11"
+  "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11",
+  "gitHead": "6bb8cbd08616b715a882e06a598410b28dfe2fa2"
 }
