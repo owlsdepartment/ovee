@@ -2,7 +2,7 @@
   "name": "@ovee.js/barba",
   "version": "2.0.0",
   "private": false,
-  "description": "Barba integration for owd",
+  "description": "Barba integration for ovee.js",
   "main": "index.js",
   "author": "Jakub Przyborowski",
   "license": "MIT",

@@ -4,7 +4,7 @@ import { JSDOM } from 'jsdom';
 import App from 'src/core/App';
 import Component from 'src/core/Component';
 import Module from 'src/core/Module';
-import { OwdComponent } from 'src/core/types';
+import { OveeComponent } from 'src/core/types';
 import EventDelegate from 'src/dom/EventDelegate';
 import ComponentError from 'src/errors/ComponentError';
 import attachMutationObserver from 'src/utils/attachMutationObserver';
@@ -43,7 +43,7 @@ describe('App class', () => {
         const app = new App();
 
         expect(app.getConfig()).toBeInstanceOf(Object);
-        expect(app.getConfig().namespace).toBe('owd');
+        expect(app.getConfig().namespace).toBe('ovee');
         expect(app.getConfig().global).toBe(global);
         expect(app.getConfig().document).toBe(document);
     });
@@ -59,7 +59,7 @@ describe('App class', () => {
         });
 
         expect(app.getConfig()).toBeInstanceOf(Object);
-        expect(app.getConfig().namespace).toBe('owd');
+        expect(app.getConfig().namespace).toBe('ovee');
         expect(app.getConfig().global).toBe(global);
         expect(app.getConfig().document).toBe(dummyOption);
         expect((app.getConfig() as any).otherDummyOption).toBe(otherDummyOption);
@@ -74,7 +74,7 @@ describe('App class', () => {
         } as any);
 
         expect(app.getConfig()).toBeInstanceOf(Object);
-        expect(app.getConfig().namespace).toBe('owd');
+        expect(app.getConfig().namespace).toBe('ovee');
         expect((app.getConfig() as any).dummyOption).toBe(dummyOption);
     });
 
@@ -242,7 +242,7 @@ describe('App class', () => {
 
             expect(dispatch).toBeCalledTimes(1);
             expect(dispatch.mock.calls[0][0]).toBeInstanceOf(Event);
-            expect(dispatch.mock.calls[0][0].type).toBe('owd:initialized');
+            expect(dispatch.mock.calls[0][0].type).toBe('ovee:initialized');
         });
     });
 
@@ -397,7 +397,7 @@ describe('App class', () => {
 
         expect(console.info).toBeCalledTimes(1);
         expect(console.info).toBeCalledWith(
-            'You are running OWD.JS in development mode.\n'
+            'You are running Ovee.js in development mode.\n'
             + 'Make sure to turn on production mode when deploying for production.'
         );
 
@@ -526,8 +526,8 @@ describe('App class', () => {
 
             await calls();
 
-            const getOwdInstance = (selector: string) => (
-                rootElement.querySelector(selector) as OwdComponent)._owdComponentInstance;
+            const getOveeInstance = (selector: string) => (
+                rootElement.querySelector(selector) as OveeComponent)._oveeComponentInstance;
 
             expect(dummyConstructor1).toBeCalledTimes(2);
             expect(dummyConstructor1.mock.calls[0][0]).toBe(rootElement.querySelector('#e1'));
@@ -540,10 +540,10 @@ describe('App class', () => {
             expect(dummyConstructor2.mock.calls[0][0]).toBe(rootElement.querySelector('#e4'));
             expect(dummyConstructor2.mock.calls[0][1]).toBe(app);
             expect(dummyConstructor2.mock.calls[0][2]).toBe(dummyComponent2Options);
-            expect(getOwdInstance('#e1')).toBeInstanceOf(DummyComponent1);
-            expect(getOwdInstance('#e2')).not.toBeDefined();
-            expect(getOwdInstance('#e3')).toBeInstanceOf(DummyComponent1);
-            expect(getOwdInstance('#e4')).toBeInstanceOf(DummyComponent2);
+            expect(getOveeInstance('#e1')).toBeInstanceOf(DummyComponent1);
+            expect(getOveeInstance('#e2')).not.toBeDefined();
+            expect(getOveeInstance('#e3')).toBeInstanceOf(DummyComponent1);
+            expect(getOveeInstance('#e4')).toBeInstanceOf(DummyComponent2);
         });
     });
 
@@ -578,7 +578,7 @@ describe('App class', () => {
             expect(dummyConstructor1.mock.calls[0][0]).toBe(rootElement);
             expect(dummyConstructor1.mock.calls[0][1]).toBe(app);
             expect(dummyConstructor1.mock.calls[0][2]).toEqual({});
-            expect((rootElement as OwdComponent)._owdComponentInstance).toBeInstanceOf(DummyComponent1);
+            expect((rootElement as OveeComponent)._oveeComponentInstance).toBeInstanceOf(DummyComponent1);
         });
     });
 
@@ -700,7 +700,7 @@ describe('App class', () => {
         });
     });
 
-    it('should initialize components for nodes added to dom when owd:dom:updated event called', async () => {
+    it('should initialize components for nodes added to dom when ovee:dom:updated event called', async () => {
         await asyncHelper(async (calls, wipe) => {
             const rootElement = dom.window.document.createElement('div');
             const dummyComponent1Name = 'component-1';
@@ -739,7 +739,7 @@ describe('App class', () => {
 
             newComponent.setAttribute(`data-${dummyComponent1Name}`, 'true');
             rootElement.appendChild(newComponent);
-            rootElement.dispatchEvent(new dom.window.Event('owd:dom:updated'));
+            rootElement.dispatchEvent(new dom.window.Event('ovee:dom:updated'));
 
             await calls();
 

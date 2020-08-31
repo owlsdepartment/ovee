@@ -4,13 +4,13 @@ import ReactiveProxy from 'src/reactive/ReactiveProxy';
 import { Dictionary } from '../utils/types';
 import * as protectedFields from './protectedFields';
 
-export interface OwdElement {
-    _isOwdCustomElement: boolean;
-    _OwdComponent: Component;
+export interface OveeElement {
+    _isOveeCustomElement: boolean;
+    _OveeComponent: Component;
 }
 
-export interface OwdComponent {
-    _owdComponentInstance?: Component;
+export interface OveeComponent {
+    _oveeComponentInstance?: Component;
 }
 
 export interface WithReactiveProxy {

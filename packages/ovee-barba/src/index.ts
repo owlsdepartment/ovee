@@ -122,6 +122,6 @@ export default class extends Module<OveeBarbaOptions> {
     }
 
     static getName(): string {
-        return 'owdBarba';
+        return 'OveeBarba';
     }
 }

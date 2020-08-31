@@ -1,4 +1,4 @@
-import { OwdComponent } from 'src/core/types';
+import { OveeComponent } from 'src/core/types';
 import EventDelegate, { Callback, EventDesc } from 'src/dom/EventDelegate';
 import ComponentError from 'src/errors/ComponentError';
 import attachMutationObserver from 'src/utils/attachMutationObserver';
@@ -31,7 +31,7 @@ export interface ComponentStorage<C extends Component> {
 }
 
 const defaultConfig: AppConfig = {
-    namespace: 'owd',
+    namespace: 'ovee',
     productionTip: process.env.NODE_ENV !== 'production',
     global: window,
     document
@@ -227,26 +227,26 @@ export default class App {
 
     makeComponent<
         C extends Component
-    >(el: Element & OwdComponent, ComponentClass: Class<C, typeof Component>, options: ComponentOptions = {}): C {
+    >(el: Element & OveeComponent, ComponentClass: Class<C, typeof Component>, options: ComponentOptions = {}): C {
         // @todo handle multi-component elements
-        if (!el._owdComponentInstance) {
+        if (!el._oveeComponentInstance) {
             el.classList.add(`${this.config.namespace}-component`);
-            el._owdComponentInstance = new ComponentClass(el, this, options) as C;
-        } else if (!(el._owdComponentInstance instanceof ComponentClass)) {
+            el._oveeComponentInstance = new ComponentClass(el, this, options) as C;
+        } else if (!(el._oveeComponentInstance instanceof ComponentClass)) {
             throw new ComponentError(
                 'Component instance has already been initialized for this element',
                 el,
-                el._owdComponentInstance
+                el._oveeComponentInstance
             );
         }
 
-        return el._owdComponentInstance as C;
+        return el._oveeComponentInstance as C;
     }
 
-    destroyComponent(el: Element & OwdComponent): void {
-        if (el._owdComponentInstance) {
-            el._owdComponentInstance.$destroy();
-            delete el._owdComponentInstance;
+    destroyComponent(el: Element & OveeComponent): void {
+        if (el._oveeComponentInstance) {
+            el._oveeComponentInstance.$destroy();
+            delete el._oveeComponentInstance;
             el.classList.remove(`${this.config.namespace}-component`);
         }
     }
@@ -256,7 +256,7 @@ export default class App {
             && process.env.NODE_ENV !== 'test'
             && this.config.productionTip !== false) {
             console.info(
-                'You are running OWD.JS in development mode.\n'
+                'You are running Ovee.js in development mode.\n'
                 + 'Make sure to turn on production mode when deploying for production.'
             );
         }

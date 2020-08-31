@@ -1,8 +1,6 @@
 language: node_js
 node_js:
   - lts/*
-install:
-  - yarn install # npm ci
 script:
   - yarn docs:deploy
 notifications:

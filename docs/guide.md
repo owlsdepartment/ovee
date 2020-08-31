@@ -1,23 +1,30 @@
 # Introduction
 
-## What is OWD.js
-OWD.js is a lightweight, component-based JavaScript framework built to work with server-side rendered markup. It's meant to bring the modern toolset to the traditional workflow.
+## What is Ovee.js
+Ovee.js is a lightweight, component-based JavaScript framework built to work with server-side rendered markup. It's meant to bring the modern toolset to the traditional workflow.
 
 ## Installation
-@TODO
+
+```
+yarn add ovee.js
+
+// or
+
+npm install --save ovee.js
+```
 
 ## Browser Support
-OWD.js used with babel supports all modern browsers. Currently it's meant to be used with a bundler to provide support for novel features like MutationObserver and decorators.
+Ovee.js used with babel supports all modern browsers. Currently it's meant to be used with a bundler to provide support for novel features like MutationObserver and decorators.
 
 ## Getting Started
-OWD.js app lives around a root element. It acts as a container for all its components and modules. Let's take a look at some code.
+Ovee.js app lives around a root element. It acts as a container for all its components and modules. Let's take a look at some code.
 
 ```html
 <div id="app"></div>
 ```
 
 ```js
-import { App } from 'owd';
+import { App } from 'ovee.js';
 
 const root = document.getElementById('app');
 const app = new App();
@@ -44,15 +51,15 @@ You can find more info in [Module Lifecycle](/modules/#module-lifecycle) section
 In typical use case, the app lives until the user closes the browser tab. In such case, there's no need to destroy it. In more complex cases, like multi-root apps, you may need to clean up the app object. In such case, you should call `app.destroy()`. It will dispose all components and modules automaticaly.
 
 ## Decorators
-OWD.js uses ECMAScript decorators quite heavily. Despite this JS feature it's still in a proposal state, we've decided to utilize it as it brings amazing clarity to component code. You can find out more about ES decorators notation [here](https://github.com/tc39/proposal-decorators).
+Ovee.js uses ECMAScript decorators quite heavily. Despite this JS feature it's still in a proposal state, we've decided to utilize it as it brings amazing clarity to component code. You can find out more about ES decorators notation [here](https://github.com/tc39/proposal-decorators).
 
 ## Initialization
 As mentioned in [Getting Started](#getting-started) section, `App` object acts as a spine of the application. It provides two ways of registering components and modules. You can do it either using options objects passed into constructor:
 
 ```js
-import { App } from 'owd';
+import { App } from 'ovee';
 
-import OwdBarba from 'owd-barba';
+import OveeBarba from '@ovee.js/barba';
 
 import TodoList from './components/TodoList';
 import TodoListItem from './components/TodoListItem';
@@ -63,7 +70,7 @@ const app = new App({
         TodoListItem
     ],
     modules: [
-        OwdBarba
+        OveeBarba
     ]
 });
 ```
@@ -71,9 +78,9 @@ const app = new App({
 Alternative notation is to use `registerComponent()` for single component or `registerComponents()` for multiple components and `use()` for modules. Example:
 
 ```js
-import { App } from 'owd';
+import { App } from 'ovee.js';
 
-import OwdBarba from 'owd-barba';
+import OveeBarba from '@ovee.js/barba';
 
 import TodoList from './components/TodoList';
 import TodoListItem from './components/TodoListItem';
@@ -88,7 +95,7 @@ app.registerComponents([
     TodoListItem
 ]);
 
-app.use(OwdBarba);
+app.use(OveeBarba);
 ```
 
 ### Passing options into components
@@ -116,7 +123,7 @@ Similarly to components, you can pass options object while registering a module.
 ```js
 const app = new App({
     modules: [
-        [OwdBarba, {
+        [OveeBarba, {
             transitions: [
                 defaultTransition
             ]

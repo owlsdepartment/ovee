@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import {
-    OwdElement, WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, WithDataParam, WithElements
+    OveeElement, WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, WithDataParam, WithElements
 } from 'src/core/types';
 import EventDelegate, { Callback, EventDesc } from 'src/dom/EventDelegate';
 import ReactiveProxy from 'src/reactive/ReactiveProxy';
@@ -91,7 +91,7 @@ implements WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, W
     [protectedFields.UPDATE_REFS](): void {
         const refsObj: Dictionary<Element[]> = {};
 
-        this.$element.querySelectorAll(':not(.owd-component) [ref]')
+        this.$element.querySelectorAll(':not(.ovee-component) [ref]')
             .forEach((el) => {
                 const refKey = el.getAttribute('ref');
 
@@ -180,9 +180,9 @@ implements WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, W
     static register(): void {
         const target = this.prototype;
 
-        registerCustomElement(class extends HTMLElement implements OwdElement {
-            _isOwdCustomElement = true
-            _OwdComponent = target
+        registerCustomElement(class extends HTMLElement implements OveeElement {
+            _isOveeCustomElement = true
+            _OveeComponent = target
         }, toKebabCase(this.getName()), 'div');
     }
 

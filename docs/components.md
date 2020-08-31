@@ -1,7 +1,7 @@
 # Components
 
 ## What is a Component
-Component is a building block of your website or an application. In OWD.js, it is represented by a class and corresponding markup. The framework detects html tag matching the component by either tag name, or a data parameter. Each instance of matched tag gets its own instance of component class.
+Component is a building block of your website or an application. In Ovee.js, it is represented by a class and corresponding markup. The framework detects html tag matching the component by either tag name, or a data parameter. Each instance of matched tag gets its own instance of component class.
 
 Let's take a look at an example:
 
@@ -20,7 +20,7 @@ import {
     reactive,
     register,
     watch
-} from 'owd';
+} from 'ovee.js';
 
 @register('counter')
 export default class extends Component {
@@ -68,7 +68,7 @@ All the initialization should be done within `init()` hook. Please mind, that it
 Bindings that were done using `$on()` method or `@bind()` decorator are automatically unbound during teardown. But in cases when you are using some external libraries or do manual event listener bindings, you should unbind and destroy them within `destroy()` hook.
 
 ## Linking to DOM
-OWD.js is using `MutationObserver` to handle changes in DOM and automatically initialize and teardown component instances. Within a `Component` instance, you always have access to its DOM node counterpart using `this.$element` property.
+Ovee.js is using `MutationObserver` to handle changes in DOM and automatically initialize and teardown component instances. Within a `Component` instance, you always have access to its DOM node counterpart using `this.$element` property.
 
 In many cases, you'll need to access component's child elements. While you can simply access them using DOM selectors, e.g. `this.$element.querySelector('.button')`, the framework provies you with a convenient way to link them dynamically to component properties. To acheive that, you can use `@el` directive.
 
@@ -100,7 +100,7 @@ Now in the component, you can access all refered buttons:
 this.$refs.buttonNext
 ```
 
-For each `$refs` key, you'll get an array of matching nodes. Refs are automatically updated, when DOM changes. If you ever used Vue, you might be familiar with this mechanism. However, please mind that while in Vue component's markup template is always known, in OWD.js the same JS component class may be used with different markup structures. Therefore, you should always write your code to check, if the reference is even there. The most convenient way is to use [optional chanining operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining).
+For each `$refs` key, you'll get an array of matching nodes. Refs are automatically updated, when DOM changes. If you ever used Vue, you might be familiar with this mechanism. However, please mind that while in Vue component's markup template is always known, in Ovee.js the same JS component class may be used with different markup structures. Therefore, you should always write your code to check, if the reference is even there. The most convenient way is to use [optional chanining operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining).
 
 ```
 this.$refs?.searchInput?.focus?.();
@@ -173,7 +173,7 @@ function $off(events: string, target: Element, selector: string, callback: Callb
 ```
 
 ## Reactivity and Watching Properties
-`OWD` allows you to make some class property reactive, that is when it gets changed, all other reactive elements and watchers, that depend on this property, are notified about that. Reactivity is really useful in `TemplateComponent` that we cover in a next section.
+`Ovee.js` allows you to make some class property reactive, that is when it gets changed, all other reactive elements and watchers, that depend on this property, are notified about that. Reactivity is really useful in `TemplateComponent` that we cover in a next section.
 
 To make property reactive, we use decorator `@reactive`:
 
@@ -209,7 +209,7 @@ Method, that we decorate, will receive 3 arguments:
  - previous value
  - path that we are watching
 
-__Important!__ `@watch` can only watch properties marked as `@reactive` as in `OWD` nothing is reactive by default in opposite to frameworks like `Vue`, `React` or `Angular`.
+__Important!__ `@watch` can only watch properties marked as `@reactive` as in `Ovee.js` nothing is reactive by default in opposite to frameworks like `Vue`, `React` or `Angular`.
 
 ## Template Components
 In earlier example, with `counter` component, we had to update DOM manually when `this.counter` value was changed. But we can do it easier, by using `TemplateComponent` and implementing it's method `template`. Example:
@@ -220,7 +220,7 @@ import {
     bind,
     reactive,
     register
-} from 'owd';
+} from 'ovee.js';
 
 @register('counter')
 export default class extends TemplateComponent {

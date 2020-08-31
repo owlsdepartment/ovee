@@ -159,7 +159,7 @@ describe('Component class', () => {
         const app = new App();
 
         element.innerHTML = `
-            <div class="owd-component">
+            <div class="ovee-component">
                 <div ref="ref1"></div>
             </div>
         `;
