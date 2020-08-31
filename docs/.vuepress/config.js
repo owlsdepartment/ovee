@@ -8,7 +8,7 @@ module.exports = {
         nav: [
             { text: 'Guide', link: '/guide' },
             { text: 'Authors', link: 'https://www.owlsdepartment.com/', target:'_blank' },
-            { text: 'GitHub', link: '#', target:'_blank' }
+            { text: 'GitHub', link: 'https://github.com/owlsdepartment/ovee', target:'_blank' }
         ],
         sidebarDepth: 2,
         displayAllHeaders: false,
