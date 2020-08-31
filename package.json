@@ -2,8 +2,10 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
+    "docs:dev": "yarn workspace docs run docs:dev",
+    "docs:build": "yarn workspace docs run docs:build",
+    "docs:install": "cd docs && yarn install --focus",
+    "docs:deploy": "yarn run docs:install && yarn run docs:build",
     "build": "lerna run build",
     "bootstrap": "lerna bootstrap",
     "publish": "lerna publish",
@@ -26,10 +28,10 @@
     "jest": "^26.4.0",
     "lerna": "^3.22.1",
     "ts-jest": "^26.2.0",
-    "typescript": "3.9.7",
-    "vuepress": "^1.5.3"
+    "typescript": "3.9.7"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "docs"
   ]  
 }
