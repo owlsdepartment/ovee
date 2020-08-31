@@ -1,11 +1,3 @@
-# `ovee`
+# Ovee.js
 
-> TODO: description
-
-## Usage
-
-```
-const ovee = require('ovee');
-
-// TODO: DEMONSTRATE API
-```
+Core package of `ovee.js` framework.

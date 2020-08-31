@@ -1,6 +1,7 @@
 module.exports = {
     title: 'OWD.js 2.0',
     description: 'Optionally reactive framework for server-side generated markup',
+    base: '/ovee/',
     themeConfig: {
         theme: '@vuepress/vue',
         lastUpdated: 'Last Updated',
