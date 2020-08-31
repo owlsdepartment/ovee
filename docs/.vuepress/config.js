@@ -18,6 +18,7 @@ module.exports = {
             '/components',
             '/component-decorators',
             '/modules',
+            '/typescript',
             '/addons',
             '/meta'
         ]

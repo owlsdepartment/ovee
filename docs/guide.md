@@ -5,10 +5,10 @@ Ovee.js is a lightweight, component-based JavaScript framework built to work wit
 
 ## Installation
 
-```
+```shell
 yarn add ovee.js
 
-// or
+# or
 
 npm install --save ovee.js
 ```
@@ -152,7 +152,7 @@ const app = new App({
 
 | Option | Default Value | Description |
 |:------ |:------------- |:----------- |
-| `namespace` | `'owd'` | during its lifecycle, the framework uses namespacing prefixes e.g. for css classes it adds, and events it triggers and listens to. |
+| `namespace` | `'ovee'` | during its lifecycle, the framework uses namespacing prefixes e.g. for css classes it adds, and events it triggers and listens to. |
 | `productionTip` | `process.env.NODE_ENV !== 'production'` | displays a tip on console if the app is not built for production to remind you, that development build is not optimized. |
 | `global` | `window` | global object, in browser it should be set to window |
 | `document` | `document` | document object, leave it as is unless you really know what you're doing |

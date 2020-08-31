@@ -1,8 +1,10 @@
 language: node_js
 node_js:
   - lts/*
+install:
+  - yarn docs:install # npm ci
 script:
-  - yarn docs:deploy
+  - yarn docs:build
 notifications:
   email: false
 cache:
