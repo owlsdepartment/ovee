@@ -100,10 +100,10 @@ Example:
 ```js
 @register('baseComponent')
 class extends Component {
-    @prop()
+    @dataParam()
     initial; // will bind to data-initial
 
-    @prop('loaded')
+    @dataParam('loaded')
     isLoaded; // will bind to data-loaded
 }
 ```

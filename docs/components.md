@@ -244,3 +244,5 @@ export default class extends TemplateComponent {
 We do not need `valueElement` property and `update` method. If property used in `template` method is reactive, DOM will be updated automatically.
 
 Sometimes, you would like to do something after whole template would be rerendered. Then you can use `this.$requestUpdate()` method that returns `Promise` that will resolve after rerender.
+
+To render template, template components uses [`lit-html`](https://github.com/polymer/lit-html). Guide: <https://lit-html.polymer-project.org/guide>. We are also recomending some tools and helpers for `lit-html` to use with your IDE: <https://lit-html.polymer-project.org/guide/tools#ide-plugins> or for `VS Code`: <https://marketplace.visualstudio.com/items?itemName=bierner.lit-html>.
