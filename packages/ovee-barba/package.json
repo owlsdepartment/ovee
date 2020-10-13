@@ -3,9 +3,13 @@
   "version": "2.0.3",
   "private": false,
   "description": "Barba integration for ovee.js",
-  "main": "index.js",
   "author": "Jakub Przyborowski",
   "license": "MIT",
+  "main": "dist/src/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "/dist"
+  ],
   "dependencies": {
     "@barba/core": "^2.9.7",
     "@barba/css": "^2.1.15",
