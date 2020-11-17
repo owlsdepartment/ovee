@@ -37,8 +37,8 @@
     "test": "node -v && npm run test:unit",
     "test:unit": "NODE_ENV=test jest",
     "test:unit:watch": "NODE_ENV=test jest --watch --coverage --coverage-reporters=lcov",
-    "lint": "eslint . --fix",
-    "lint:no-fix": "eslint .",
+    "lint": "eslint ./src --fix",
+    "lint:no-fix": "eslint ./src",
     "build": "ttsc",
     "clean": "rm -rf ./dist",
     "prepare": "npm run clean && npm run build"

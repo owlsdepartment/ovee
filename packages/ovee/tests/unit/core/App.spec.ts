@@ -582,6 +582,43 @@ describe('App class', () => {
         });
     });
 
+    it('should not destroy component when it\'s moved', async () => {
+        asyncHelper(async (calls) => {
+            const dummyComponent1Name = 'component-1';
+            const rootElement = dom.window.document.createElement('div');
+            const child = dom.window.document.createElement('div');
+            const component = dom.window.document.createElement(dummyComponent1Name);
+
+            rootElement.appendChild(child);
+            child.appendChild(component);
+
+            const dummyDestroy1 = jest.fn();
+            const DummyComponent1 = class extends Component {
+                static register() { }
+
+                static getName() {
+                    return dummyComponent1Name;
+                }
+
+                destroy() {
+                    dummyDestroy1();
+                }
+            };
+
+            const app = new App({
+                components: [DummyComponent1]
+            });
+
+            app.run(rootElement);
+            await calls();
+            child.removeChild(component);
+            rootElement.appendChild(component);
+            await calls();
+
+            expect(dummyDestroy1).toBeCalledTimes(0);
+        });
+    });
+
     it('should throw error when matched two components for single node', async () => {
         asyncHelper(async (calls) => {
             const rootElement = dom.window.document.createElement('div');

@@ -190,6 +190,7 @@ export default class App {
             const name = ComponentClass.getName();
             const selector = `${name}, [data-${name}]`;
 
+            // TODO: init only uninitialized components
             root.querySelectorAll(selector).forEach((el) => {
                 this.makeComponent(el, ComponentClass, options);
             });
@@ -217,10 +218,11 @@ export default class App {
 
     attachMutationObserver(root: Element): void {
         attachMutationObserver(root, (addedNodes) => {
-            Array.from(addedNodes).filter(isValidNode)
+            addedNodes.filter(isValidNode)
                 .forEach((node) => this.harvestComponents(node));
         }, (removedNodes) => {
-            Array.from(removedNodes).filter(isValidNode)
+            removedNodes.filter(isValidNode)
+                .filter((node) => !node.parentNode)
                 .forEach((node) => this.destroyComponents(node));
         });
     }
