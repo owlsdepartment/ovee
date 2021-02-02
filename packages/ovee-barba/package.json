@@ -1,6 +1,6 @@
 {
   "name": "@ovee.js/barba",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "private": false,
   "description": "Barba integration for ovee.js",
   "author": "Jakub Przyborowski",
