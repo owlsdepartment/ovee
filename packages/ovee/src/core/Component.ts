@@ -26,7 +26,7 @@ implements WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, W
     [protectedFields.REFS]: Dictionary<Element[]> = {};
     [protectedFields.REFS_OBSERVER]: MutationObserver;
     [protectedFields.INSTANCE_DECORATORS]?: ((ctx: this) => any)[];
-    [protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]: ((ctx: this) => any)[];
+    [protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]?: ((ctx: this) => any)[];
     __reactiveProxy?: ReactiveProxy;
     __dataParams?: Dictionary<() => void>;
     __els?: Dictionary<() => void>;
@@ -164,7 +164,7 @@ implements WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, W
         this.$eventDelegate.destroy();
 
         if (this[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]) {
-            this[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS].forEach((fn) => fn(this));
+            this[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]!.forEach((fn) => fn(this));
             delete this[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS];
         }
 

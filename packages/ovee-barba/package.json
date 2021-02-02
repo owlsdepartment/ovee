@@ -21,7 +21,7 @@
     "typescript-transform-paths": "^2.0.0"
   },
   "peerDependencies": {
-    "ovee.js": ">=^2.0.0"
+    "ovee.js": "^2.0.0"
   },
   "scripts": {
     "test": "node -v && npm run test:unit",
