@@ -1,5 +1,9 @@
 # Component Decorators
 
+Ovee.js uses ECMAScript decorators quite heavily. Despite this JS feature it's still in a proposal state, we've decided to utilize it as it brings amazing clarity to component code. You can find out more about ES decorators notation [here](https://github.com/tc39/proposal-decorators).
+
+[[toc]]
+
 ## @register
 Adds static method `getName()` that returns name of a component. This method is required for a component to be registered.
 

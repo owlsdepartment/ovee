@@ -1,5 +1,7 @@
 # Components
 
+[[toc]]
+
 ## What is a Component
 Component is a building block of your website or an application. In Ovee.js, it is represented by a class and corresponding markup. The framework detects html tag matching the component by either tag name, or a data parameter. Each instance of matched tag gets its own instance of component class.
 

@@ -1,5 +1,7 @@
 # Introduction
 
+[[toc]]
+
 ## What is Ovee.js
 Ovee.js is a lightweight, component-based JavaScript framework built to work with server-side rendered markup. It's meant to bring the modern toolset to the traditional workflow.
 

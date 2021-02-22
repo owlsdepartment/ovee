@@ -79,28 +79,6 @@ export default class extends Module<OveeBarbaOptions> {
         });
 
         barba.hooks.after(() => {
-            // google tag manager
-            // if (global.dataLayer !== undefined) {
-            //     try {
-            //         global.dataLayer.push({
-            //             event: 'content-view',
-            //             'content-name': global.location.pathname
-            //         });
-            //     // eslint-disable-next-line no-empty
-            //     } catch (e) {}
-            // }
-
-            // // google analytics
-            // if (global.ga !== undefined) {
-            //     try {
-            //         global.ga('send', 'pageview', {
-            //             page: global.location.pathname,
-            //             title: (document.querySelector('head > title') as HTMLTitleElement)?.text ?? ''
-            //         });
-            //     // eslint-disable-next-line no-empty
-            //     } catch (e) {}
-            // }
-
             this.$app.$emit('barbaAfter');
             this.callHook('after');
         });
