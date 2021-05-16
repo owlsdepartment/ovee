@@ -22,22 +22,23 @@ describe('instanceDecoratorDestructor function', () => {
     });
 
     it('should create an ampty array for destructors if it does not exist', () => {
-        const instance: any = {};
+        class Test {}
 
-        instanceDecoratorDestructor(instance, jest.fn());
+        instanceDecoratorDestructor(Test.prototype, jest.fn());
 
-        expect(Array.isArray(instance[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS])).toBeTruthy();
+        expect(
+            Array.isArray((Test.prototype.constructor as any)[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS])
+        ).toBeTruthy();
     });
 
     it('should push callback into instanceDecoratorDestructors array', () => {
-        const instance: any = {
-            [protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]: []
-        };
+        class T {}
         const callback = jest.fn();
 
-        instanceDecoratorDestructor(instance, callback);
+        instanceDecoratorDestructor(T.prototype, callback);
+        const ctor = T.prototype.constructor as any;
 
-        expect(instance[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS].length).toBe(1);
-        expect(instance[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS][0]).toBe(callback);
+        expect(ctor[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS].length).toBe(1);
+        expect(ctor[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS][0]).toBe(callback);
     });
 });
