@@ -1,15 +1,16 @@
 import { WithElements, WithElement } from 'src/core/types';
 import attachMutationObserver, { MutationCallback } from 'src/utils/attachMutationObserver';
-import instanceDecoratorDestructor from 'src/utils/instanceDecoratorDestructor';
-import instanceDecoratorFactory from 'src/utils/instanceDecoratorFactory';
+import instanceDecoratorFactory, { DecoratorContext } from 'src/utils/instanceDecoratorFactory';
 import isValidNode from 'src/utils/isValidNode';
 
 interface ElDecoratorOptions {
     list?: boolean
 }
 
+type Target = WithElements & WithElement;
+
 export default instanceDecoratorFactory((
-    instance: WithElements & WithElement, prop, selector: string, options: ElDecoratorOptions = {}
+    { instance, addDestructor }: DecoratorContext<Target>, prop, selector: string, options: ElDecoratorOptions = {}
 ) => {
     if (typeof (instance as any)[prop] === 'function') {
         console.error('El decorator should be only applied to a property');
@@ -40,7 +41,7 @@ export default instanceDecoratorFactory((
 
         const observer = attachMutationObserver(instance.$element, _mutationHook, _mutationHook);
 
-        instanceDecoratorDestructor(instance, () => {
+        addDestructor(() => {
             observer.disconnect();
         });
     }

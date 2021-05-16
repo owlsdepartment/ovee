@@ -2,7 +2,6 @@ import Component from 'src/core/Component';
 import ReactiveProxy from 'src/reactive/ReactiveProxy';
 
 import { Dictionary } from '../utils/types';
-import * as protectedFields from './protectedFields';
 
 export interface OveeElement {
     _isOveeCustomElement: boolean;
@@ -27,12 +26,4 @@ export interface WithElements {
 
 export interface WithElement {
     readonly $element: Element;
-}
-
-export interface WithInstanceDecorators {
-    [protectedFields.INSTANCE_DECORATORS]?: ((ctx: any) => any)[];
-}
-
-export interface WithInstanceDestructors {
-    [protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]?: ((ctx: any) => any)[];
 }

@@ -1,7 +1,9 @@
 import { WithElement } from 'src/core/types';
-import instanceDecoratorFactory from 'src/utils/instanceDecoratorFactory';
+import instanceDecoratorFactory, { DecoratorContext } from 'src/utils/instanceDecoratorFactory';
 
-export default instanceDecoratorFactory((instance: WithElement, instancePropName, elementPropName?: string) => {
+export default instanceDecoratorFactory((
+    { instance }: DecoratorContext<WithElement>, instancePropName, elementPropName?: string
+) => {
     const originalKey = Symbol(instancePropName);
 
     elementPropName = elementPropName || instancePropName;

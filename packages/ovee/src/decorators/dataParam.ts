@@ -1,10 +1,11 @@
 import { WithDataParam, WithElement } from 'src/core/types';
-import instanceDecoratorDestructor from 'src/utils/instanceDecoratorDestructor';
-import instanceDecoratorFactory from 'src/utils/instanceDecoratorFactory';
+import instanceDecoratorFactory, { DecoratorContext } from 'src/utils/instanceDecoratorFactory';
 import toKebabCase from 'src/utils/toKebabCase';
 
+type Target = WithDataParam & WithElement
+
 export default instanceDecoratorFactory((
-    instance: WithDataParam & WithElement, dataParamName, dataParamOverrideName?: string
+    { instance, addDestructor }: DecoratorContext<Target>, dataParamName, dataParamOverrideName?: string
 ) => {
     if (typeof (instance as any)[dataParamName] === 'function') {
         console.error('DataParam decorator should be only applied to a property');
@@ -35,7 +36,7 @@ export default instanceDecoratorFactory((
             attributes: true, childList: false, characterData: false
         });
 
-        instanceDecoratorDestructor(instance, () => {
+        addDestructor(() => {
             observer.disconnect();
         });
     }

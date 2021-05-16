@@ -1,5 +1,9 @@
 export { default as attachMutationObserver } from './attachMutationObserver';
 export * from './attachMutationObserver';
+export { default as forEachPrototype } from './forEachPrototype';
+export * from './forEachPrototype';
+export { default as forEachStaticPrototype } from './forEachStaticPrototype';
+export * from './forEachStaticPrototype';
 export { default as instanceDecoratorDestructor } from './instanceDecoratorDestructor';
 export * from './instanceDecoratorDestructor';
 export { default as instanceDecoratorFactory } from './instanceDecoratorFactory';
