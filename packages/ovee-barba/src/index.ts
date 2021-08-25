@@ -15,18 +15,23 @@ declare module 'ovee.js' {
 type Hook = 'before' | 'beforeLeave' | 'leave' | 'afterLeave' | 'beforeEnter' | 'enter' | 'afterEnter' | 'after'
 
 export interface OveeBarbaOptions extends IBarbaOptions {
-    useCss: boolean;
-    usePrefetch: boolean;
-    hooks: Partial<Record<Hook, () => any>>;
+    useCss?: boolean;
+    usePrefetch?: boolean;
+    hooks?: BarbaHooks;
 }
+
+export type BarbaHooks = Partial<Record<Hook, () => any>>
 
 const defaultOptions: OveeBarbaOptions = {
     useCss: false,
-    usePrefetch: true,
-    hooks: {}
+    usePrefetch: true
 };
 
 export default class extends Module<OveeBarbaOptions> {
+    get hooks(): BarbaHooks {
+        return this.options.hooks ?? {};
+    }
+
     init(): void {
         this.options = {
             ...defaultOptions,
@@ -118,7 +123,7 @@ export default class extends Module<OveeBarbaOptions> {
 
     private callHook(name: Hook): void {
         // eslint-disable-next-line no-unused-expressions
-        this.options.hooks[name]?.();
+        this.hooks[name]?.();
     }
 
     static getName(): string {
