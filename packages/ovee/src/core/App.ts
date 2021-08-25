@@ -113,8 +113,10 @@ export default class App {
         return this;
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    use<M extends Module<Opt>, Opt extends object>(ModuleClass: ClassConstructor<M>, options?: Opt): M {
+    use<
+        M extends Module,
+        Opt = M extends Module<infer O> ? O : Record<string, any>
+    >(ModuleClass: ClassConstructor<M>, options?: Opt): M {
         if (!(ModuleClass.prototype instanceof Module)) {
             throw new TypeError('A module passed to use() method must be an instance of Module');
         }
