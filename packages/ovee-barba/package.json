@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "ttypescript": "^1.5.11",
-    "typescript": "3.9.7",
+    "typescript": "^4.2.0",
     "typescript-transform-paths": "^2.0.0"
   },
   "peerDependencies": {
@@ -31,7 +31,7 @@
     "lint:no-fix": "eslint .",
     "build": "ttsc",
     "clean": "rm -rf ./dist",
-    "prepare": "npm run clean && npm run build"
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11",
   "gitHead": "264eb4d044993506cd3f0a30886d0fcac2d1331b"

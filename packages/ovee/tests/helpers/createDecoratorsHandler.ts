@@ -3,30 +3,31 @@ import * as protectedFields from 'src/core/protectedFields';
 import { WithElement } from 'src/core/types';
 
 interface DecoratorsHandler extends Required<typeof InstanceDecorators> {
-    init(): void;
-    destroy(): void;
+	init(): void;
+	destroy(): void;
 }
 
-interface Options extends WithElement {}
+type Options = WithElement;
 
-function createDecoratorsHandler<
-    T extends object, O extends Options
->(base: T, options?: O): T & O & DecoratorsHandler {
-    class Handler extends InstanceDecorators {
-        init() {
-            this[protectedFields.INITIALIZE_DECORATORS]();
-        }
+function createDecoratorsHandler<T extends object, O extends Options>(
+	base: T,
+	options?: O
+): T & O & DecoratorsHandler {
+	class Handler extends InstanceDecorators {
+		init() {
+			this[protectedFields.INITIALIZE_DECORATORS]();
+		}
 
-        destroy() {
-            this[protectedFields.DESTROY_DECORATORS]();
-        }
-    }
-    const ret = new Handler();
+		destroy() {
+			this[protectedFields.DESTROY_DECORATORS]();
+		}
+	}
+	const ret = new Handler();
 
-    Object.assign(ret, base);
-    Object.assign(ret, options);
+	Object.assign(ret, base);
+	Object.assign(ret, options);
 
-    return ret as any;
+	return ret as any;
 }
 
 export default createDecoratorsHandler;
