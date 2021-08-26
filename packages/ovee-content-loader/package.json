@@ -1,0 +1,38 @@
+{
+  "name": "@ovee.js/content-loader",
+  "version": "2.0.0",
+  "private": false,
+  "description": "Content loader module for for ovee.js",
+  "author": "Owls Department",
+  "license": "MIT",
+  "main": "dist/src/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "devDependencies": {
+    "install-peers-cli": "^2.2.0",
+    "ttypescript": "^1.5.11",
+    "typescript": "3.9.7",
+    "typescript-transform-paths": "^2.0.0"
+  },
+  "peerDependencies": {
+    "@barba/core": "^2.9.7",
+    "ovee.js": "^2.0.7"
+  },
+  "scripts": {
+    "test": "node -v && npm run test:unit",
+    "test:unit": "NODE_ENV=test jest",
+    "test:unit:watch": "NODE_ENV=test jest --watch --coverage --coverage-reporters=lcov",
+    "lint": "eslint . --fix",
+    "lint:no-fix": "eslint .",
+    "build": "ttsc",
+    "clean": "rm -rf ./dist",
+    "install-peers": "install-peers -f",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11",
+  "dependencies": {
+    "ovee.js": "^2.0.7"
+  }
+}

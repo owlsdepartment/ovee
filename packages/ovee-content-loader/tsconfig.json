@@ -1,0 +1,22 @@
+{
+    "extends": "../../tsconfig.json",
+
+    "compilerOptions": {
+        "baseUrl": ".",
+        "rootDir": "./src",
+        "outDir": "./dist/src",
+        "declarationDir": "./dist/types",
+        "paths": {
+            "src": ["./src"],
+            "tests": ["./tests"],
+            "@barba/core/src/*": [
+                "./node_modules/@barba/core/dist/core/src/*",
+                "../../node_modules/@barba/core/dist/core/src/*" 
+            ]
+        }
+    },
+
+    "include": [
+        "src/**/*.ts"
+    ]
+}
