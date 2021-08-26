@@ -110,7 +110,7 @@ describe('Component class', () => {
             const decorator2 = jest.fn();
 
             const C = class extends Component { };
-            C.prototype[protectedFields.INSTANCE_DECORATORS] = [
+            (C.prototype.constructor as any)[protectedFields.INSTANCE_DECORATORS] = [
                 decorator1, decorator2
             ];
 
@@ -285,7 +285,7 @@ describe('Component class', () => {
         const destructor2 = jest.fn();
 
         const C = class extends Component { };
-        C.prototype[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS] = [
+        (C.prototype.constructor as any)[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS] = [
             destructor1, destructor2
         ];
 

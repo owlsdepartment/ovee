@@ -8,3 +8,5 @@ export const INSTANCE_DECORATORS_DESTRUCTORS = Symbol('instanceDecoratorDestruct
 export const RENDER = Symbol('render');
 export const UPDATE_AF = Symbol('updateAF');
 export const UPDATE_PROMISE = Symbol('updatePromise');
+export const INITIALIZE_DECORATORS = Symbol('initializeDecorators');
+export const DESTROY_DECORATORS = Symbol('destroyDecorators');

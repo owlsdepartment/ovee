@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import {
-    OveeElement, WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, WithDataParam, WithElements
+    OveeElement, WithReactiveProxy, WithDataParam, WithElements
 } from 'src/core/types';
 import EventDelegate, { Callback, EventDesc } from 'src/dom/EventDelegate';
 import ReactiveProxy from 'src/reactive/ReactiveProxy';
@@ -11,12 +11,13 @@ import toKebabCase from 'src/utils/toKebabCase';
 import { Dictionary } from 'src/utils/types';
 
 import App from './App';
+import InstanceDecorators from './InstanceDecorators';
 import * as protectedFields from './protectedFields';
 
 export interface ComponentOptions {}
 
-export default class Component
-implements WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, WithDataParam, WithElements {
+export default class Component extends InstanceDecorators
+    implements WithReactiveProxy, WithDataParam, WithElements {
     readonly $element!: Element;
     readonly $app!: App;
     readonly $options!: ComponentOptions;
@@ -25,13 +26,13 @@ implements WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, W
 
     [protectedFields.REFS]: Dictionary<Element[]> = {};
     [protectedFields.REFS_OBSERVER]: MutationObserver;
-    [protectedFields.INSTANCE_DECORATORS]?: ((ctx: this) => any)[];
-    [protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]?: ((ctx: this) => any)[];
     __reactiveProxy?: ReactiveProxy;
     __dataParams?: Dictionary<() => void>;
     __els?: Dictionary<() => void>;
 
     constructor(element: Element, app: App, options: ComponentOptions = {}) {
+        super();
+
         Object.defineProperty(this, '$element', {
             value: element,
             writable: false,
@@ -60,7 +61,7 @@ implements WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, W
         });
 
         const refsProxy = new Proxy({}, {
-            get: (target, key: number | string) => (this[protectedFields.REFS][key] ?? [])
+            get: (target, key: string) => (this[protectedFields.REFS][key] ?? [])
         });
 
         Object.defineProperty(this, '$refs', {
@@ -82,10 +83,7 @@ implements WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, W
     }
 
     async [protectedFields.BEFORE_INIT](): Promise<void> {
-        if (this[protectedFields.INSTANCE_DECORATORS]) {
-            this[protectedFields.INSTANCE_DECORATORS]!.forEach((fn) => fn(this));
-            delete this[protectedFields.INSTANCE_DECORATORS];
-        }
+        this[protectedFields.INITIALIZE_DECORATORS]();
     }
 
     [protectedFields.UPDATE_REFS](): void {
@@ -162,12 +160,7 @@ implements WithInstanceDecorators, WithInstanceDestructors, WithReactiveProxy, W
         this.beforeDestroy();
 
         this.$eventDelegate.destroy();
-
-        if (this[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]) {
-            this[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]!.forEach((fn) => fn(this));
-            delete this[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS];
-        }
-
+        this[protectedFields.DESTROY_DECORATORS]();
         this[protectedFields.REFS_OBSERVER].disconnect();
 
         this.destroy();

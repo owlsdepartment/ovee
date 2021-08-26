@@ -1,10 +1,12 @@
 import Component from 'src/core/Component';
 import { Callback } from 'src/dom/EventDelegate';
-import instanceDecoratorFactory from 'src/utils/instanceDecoratorFactory';
+import instanceDecoratorFactory, { DecoratorContext } from 'src/utils/instanceDecoratorFactory';
 
 type OnArgs = [string, string, Callback<Component>]
 
-export default instanceDecoratorFactory((instance: Component, methodName, eventName: string, selector?: string) => {
+export default instanceDecoratorFactory((
+    { instance }: DecoratorContext<Component>, methodName, eventName: string, selector?: string
+) => {
     if (typeof (instance as any)[methodName] !== 'function') {
         console.error('Bind decorator should be only applied to a function');
     } else if (!eventName) {

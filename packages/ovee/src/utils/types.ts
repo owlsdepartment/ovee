@@ -8,3 +8,5 @@ export type Class<T, C extends Function> = C & ClassConstructor<T>
 export interface Dictionary<T> {
     [key: string]: T
 }
+
+export type AnyFunction = (...args: any[]) => any
