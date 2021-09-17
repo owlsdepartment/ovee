@@ -1,6 +1,8 @@
 /**
  * Comes from `lodash` `isString` method
  * https://lodash.com/docs/4.17.15#isString
+ *
+ * LICENSE: https://github.com/lodash/lodash/blob/master/LICENSE
  */
 export function isString(value: unknown): value is string {
 	const type = typeof value;

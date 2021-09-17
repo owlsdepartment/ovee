@@ -77,7 +77,7 @@ export default class EventDelegate<Context extends Component> {
 				target,
 				selector,
 				callback,
-				handler
+				handler,
 			});
 		});
 	}
