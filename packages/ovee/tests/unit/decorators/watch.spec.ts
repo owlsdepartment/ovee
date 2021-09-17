@@ -29,9 +29,7 @@ describe('@watch decorator', () => {
 		handler.init();
 
 		expect(spy.console).toHaveBeenCalledTimes(1);
-		expect(spy.console.mock.calls[0][0]).toBe(
-			'Watch decorator should be only applied to a function'
-		);
+		expect(spy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @watch\]/);
 	});
 
 	it('requires path to be passed', () => {
@@ -43,7 +41,7 @@ describe('@watch decorator', () => {
 		handler.init();
 
 		expect(spy.console).toHaveBeenCalledTimes(1);
-		expect(typeof spy.console.mock.calls[0][0]).toBe('string');
+		expect(spy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @watch\]/);
 	});
 
 	it('ensures that target is reactive', () => {

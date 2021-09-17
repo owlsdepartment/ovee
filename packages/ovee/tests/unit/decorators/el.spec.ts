@@ -22,9 +22,7 @@ describe('@el decorator', () => {
 		handler.init();
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toBe(
-			'El decorator should be only applied to a property'
-		);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @el\]/);
 	});
 
 	it("logs error when selector wasn't provided", () => {
@@ -36,7 +34,7 @@ describe('@el decorator', () => {
 		handler.init();
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toBe('Selector must be provided for el decorator');
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @el\]/);
 	});
 
 	it('binds element to a field based on a selector', () => {

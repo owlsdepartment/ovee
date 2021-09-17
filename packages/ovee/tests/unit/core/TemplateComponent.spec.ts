@@ -3,6 +3,7 @@ import { html, render } from 'lit-html';
 import App from 'src/core/App';
 import Component from 'src/core/Component';
 import TemplateComponent from 'src/core/TemplateComponent';
+import { createComponent } from 'tests/helpers';
 
 jest.mock('lit-html', () => ({
 	__esModule: true,
@@ -95,5 +96,14 @@ describe('TemplateComponent class', () => {
 		const component = new TemplateComponent(element, app, options);
 
 		expect(component.template()).toBe('');
+	});
+
+	it('stopsRerenderWatch on destroy', () => {
+		const test = createComponent(TemplateComponent);
+		const stopWatchSpy = jest.spyOn(test, 'stopWatch' as any);
+
+		test.$destroy();
+
+		expect(stopWatchSpy).toBeCalledTimes(1);
 	});
 });

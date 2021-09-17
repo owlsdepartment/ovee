@@ -4,19 +4,17 @@ import { createDecoratorsHandler } from 'tests/helpers';
 describe('@bind decorator', () => {
 	const consoleSpy = spyConsole('error');
 
-	it('logs error when applied on field other than method', () => {
+	it('logs namespaced error when applied on field other than method', () => {
 		const handler = createDecoratorsHandler({ field: '' });
 
 		bind('')(handler, 'field');
 		handler.init();
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toBe(
-			'Bind decorator should be only applied to a function'
-		);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @bind\]/);
 	});
 
-	it("logs error when name wasn't passed", () => {
+	it(`logs namespaced error when name wasn't passed`, () => {
 		const handler = createDecoratorsHandler({ method() {} });
 
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -25,9 +23,7 @@ describe('@bind decorator', () => {
 		handler.init();
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toBe(
-			'Event name must be provided for bind decorator'
-		);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @bind\]/);
 	});
 
 	it('binds event on component using $on method', () => {

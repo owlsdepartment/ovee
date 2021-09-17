@@ -41,9 +41,9 @@ describe('@watchEffect decorator', () => {
 		createComponent(Test);
 
 		expect(errorSpy.console).toBeCalledTimes(3);
-		expect(errorSpy.console.mock.calls[0][0]).toEqual(expect.any(String));
-		expect(errorSpy.console.mock.calls[1][0]).toEqual(expect.any(String));
-		expect(errorSpy.console.mock.calls[2][0]).toEqual(expect.any(String));
+		expect(errorSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @watchEffect\]/);
+		expect(errorSpy.console.mock.calls[1][0]).toMatch(/^\[\w+ ~ @watchEffect\]/);
+		expect(errorSpy.console.mock.calls[2][0]).toMatch(/^\[\w+ ~ @watchEffect\]/);
 	});
 
 	it('ensures that target is reactive', () => {

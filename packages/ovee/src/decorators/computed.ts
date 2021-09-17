@@ -1,5 +1,8 @@
+import { Logger } from 'src/errors';
 import { makeComputed } from 'src/reactive';
 import { instanceDecoratorFactory } from 'src/utils';
+
+const logger = new Logger('@computed');
 
 export const computed = instanceDecoratorFactory(
 	({ instance, proto, addDestructor }, fieldName) => {
@@ -8,8 +11,8 @@ export const computed = instanceDecoratorFactory(
 			Object.getOwnPropertyDescriptor(proto, fieldName);
 
 		if (!descriptor?.get) {
-			console.error(
-				`[Ovee.js | computed] Error while creating computed on field ${fieldName}. 'computed' can only be used on getter`
+			logger.error(
+				`Error while creating computed on field ${fieldName}. '@computed' can only be used on getter`
 			);
 
 			return;

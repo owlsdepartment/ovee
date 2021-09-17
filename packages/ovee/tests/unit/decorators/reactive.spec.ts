@@ -26,9 +26,7 @@ describe('@reactive decorator', () => {
 		handler.init();
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toBe(
-			'Reactive decorator should be only applied to a property'
-		);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @reactive\]/);
 	});
 
 	it('calls makeComponentReactive under the hood', () => {

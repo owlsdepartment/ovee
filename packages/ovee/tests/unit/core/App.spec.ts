@@ -4,7 +4,7 @@ import Component from 'src/core/Component';
 import Module from 'src/core/Module';
 import { OveeComponent } from 'src/core/types';
 import EventDelegate from 'src/dom/EventDelegate';
-import ComponentError from 'src/errors/ComponentError';
+import { ComponentError } from 'src/errors/ComponentError';
 import attachMutationObserver from 'src/utils/attachMutationObserver';
 
 jest.mock('src/utils/attachMutationObserver');

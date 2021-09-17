@@ -2,6 +2,7 @@ import register from 'src/decorators/register';
 
 describe('@register decorator', () => {
 	const consoleSpy = spyConsole('error');
+	const registerErrorRegex = /^\[\w+ ~ @register\]/;
 
 	it("logs error when name wan't provided", () => {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -9,9 +10,7 @@ describe('@register decorator', () => {
 		register()(class {});
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toBe(
-			'Name must be provided for component decorator'
-		);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(registerErrorRegex);
 	});
 
 	it('logs error when used on something else then class', () => {
@@ -20,7 +19,7 @@ describe('@register decorator', () => {
 		register('name')({});
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toBe('Decorator works only for classes');
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(registerErrorRegex);
 	});
 
 	it('logs error when passed name does not have at least two words', () => {
@@ -28,9 +27,7 @@ describe('@register decorator', () => {
 		register('name')(Test);
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toBe(
-			'Component name must consist of at least two words'
-		);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(registerErrorRegex);
 	});
 
 	it('adds static function getName that returns string', () => {

@@ -14,9 +14,7 @@ describe('@prop decorator', () => {
 		handler.init();
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toBe(
-			'Prop decorator should be only applied to a property'
-		);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @prop\]/);
 	});
 
 	it('copies element current value to instance field', () => {

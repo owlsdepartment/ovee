@@ -1,4 +1,5 @@
 import { WithReactiveProxy } from 'src/core';
+import { Logger } from 'src/errors';
 import {
 	handleCombinedWatch,
 	makeComponentReactive,
@@ -8,6 +9,8 @@ import {
 	WatchSource,
 } from 'src/reactive';
 import { DecoratorContext, instanceDecoratorFactory } from 'src/utils';
+
+const logger = new Logger('@watch');
 
 export default instanceDecoratorFactory(
 	(
@@ -19,17 +22,18 @@ export default instanceDecoratorFactory(
 		const method: WatchCallback = instance[methodName];
 
 		if (typeof method !== 'function') {
-			console.error('Watch decorator should be only applied to a function');
-		} else if (!source) {
-			console.error('Path name or source must be provided for watch decorator');
-		} else {
-			const callback = method.bind(instance);
-
-			makeComponentReactive(instance);
-
-			const destroyWatcher = handleCombinedWatch(instance, source, callback, options);
-
-			addDestructor(() => destroyWatcher());
+			return logger.error('Decorator should only be applied to a function');
 		}
+		if (!source) {
+			return logger.error('Path name or source must be provided');
+		}
+
+		const callback = method.bind(instance);
+
+		makeComponentReactive(instance);
+
+		const destroyWatcher = handleCombinedWatch(instance, source, callback, options);
+
+		addDestructor(() => destroyWatcher());
 	}
 );

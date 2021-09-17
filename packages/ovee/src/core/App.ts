@@ -1,6 +1,6 @@
 import { OveeComponent } from 'src/core/types';
 import EventDelegate, { Callback, EventDesc } from 'src/dom/EventDelegate';
-import ComponentError from 'src/errors/ComponentError';
+import { ComponentError } from 'src/errors';
 import attachMutationObserver from 'src/utils/attachMutationObserver';
 import isValidNode from 'src/utils/isValidNode';
 import { Class, ClassConstructor, Dictionary } from 'src/utils/types';
@@ -270,8 +270,8 @@ export default class App {
 			this.config.productionTip !== false
 		) {
 			console.info(
-				'You are running Ovee.js in development mode.\n' +
-					'Make sure to turn on production mode when deploying for production.'
+				`You are running Ovee.js in development mode.
+Make sure to turn on production mode when deploying for production.`
 			);
 		}
 	}

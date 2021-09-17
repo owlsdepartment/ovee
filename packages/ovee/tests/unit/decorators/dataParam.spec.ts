@@ -15,9 +15,7 @@ describe('@prop decorator', () => {
 		handler.init();
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toBe(
-			'DataParam decorator should be only applied to a property'
-		);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @dataParam\]/);
 	});
 
 	it('uses MutationObserver under the hood', () => {

@@ -1,7 +1,7 @@
 import InstanceDecorators from 'src/core/InstanceDecorators';
 import * as protectedFields from 'src/core/protectedFields';
 
-import instanceDecoratorDestructor from './instanceDecoratorDestructor';
+import { instanceDecoratorDestructor } from './instanceDecoratorDestructor';
 import { AnyObject } from './types';
 
 export type ExtractDecorator<T, F extends DecoratorFactoryCallback<T>> = (

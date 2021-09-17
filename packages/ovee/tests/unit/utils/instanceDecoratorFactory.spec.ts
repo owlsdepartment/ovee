@@ -1,5 +1,5 @@
 import * as protectedFields from 'src/core/protectedFields';
-import instanceDecoratorDestructor from 'src/utils/instanceDecoratorDestructor';
+import { instanceDecoratorDestructor } from 'src/utils/instanceDecoratorDestructor';
 import instanceDecoratorFactory from 'src/utils/instanceDecoratorFactory';
 
 jest.mock('src/utils/instanceDecoratorDestructor');

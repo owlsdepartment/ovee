@@ -1,8 +1,8 @@
-export function spyConsole(method: 'log' | 'warning' | 'error') {
+export function spyConsole(method: 'log' | 'warn' | 'error' | 'info') {
 	const spy: { console: jest.SpyInstance } = {} as any;
 
 	beforeEach(() => {
-		spy.console = jest.spyOn(console, method as any).mockImplementation(() => {});
+		spy.console = jest.spyOn(console, method).mockImplementation(() => {});
 	});
 
 	afterEach(() => {

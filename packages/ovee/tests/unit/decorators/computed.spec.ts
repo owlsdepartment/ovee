@@ -21,6 +21,7 @@ describe('@computed decorator', () => {
 	});
 
 	it(`can only be applied to getter`, async () => {
+		const testEerrorMsg = /^\[\w+ ~ @computed\]/;
 		class Test extends Component {
 			@computed() field: any;
 			@computed()
@@ -36,9 +37,9 @@ describe('@computed decorator', () => {
 		createComponent(Test);
 
 		expect(errorSpy.console).toBeCalledTimes(3);
-		expect(errorSpy.console.mock.calls[0][0]).toEqual(expect.any(String));
-		expect(errorSpy.console.mock.calls[1][0]).toEqual(expect.any(String));
-		expect(errorSpy.console.mock.calls[2][0]).toEqual(expect.any(String));
+		expect(errorSpy.console.mock.calls[0][0]).toMatch(testEerrorMsg);
+		expect(errorSpy.console.mock.calls[1][0]).toMatch(testEerrorMsg);
+		expect(errorSpy.console.mock.calls[2][0]).toMatch(testEerrorMsg);
 	});
 
 	it(`uses 'makeComputed' under the hood`, async () => {

@@ -14,8 +14,8 @@ module.exports = {
 	},
 	testMatch: ['**/tests/unit/**/*.spec.(js|jsx|ts|tsx)|**/__tests__/*.(js|jsx|ts|tsx)'],
 	collectCoverage: true,
-	collectCoverageFrom: ['src/**/*.{js,ts}'],
-	coveragePathIgnorePatterns: ['tests/helpers'],
+	collectCoverageFrom: ['src/**/*.{js,ts}', '!src/**/index.{js,ts}'],
+	coveragePathIgnorePatterns: ['tests/helpers', '/index.ts$'],
 	moduleFileExtensions: ['ts', 'js'],
 	moduleDirectories: ['node_modules', 'src'],
 	moduleNameMapper: {

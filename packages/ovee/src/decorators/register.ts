@@ -1,20 +1,23 @@
+import { Logger } from 'src/errors';
 import toKebabCase from 'src/utils/toKebabCase';
+
+const logger = new Logger('@register');
 
 function decorate(target: any, name: string) {
 	if (!name) {
-		console.error('Name must be provided for component decorator', target);
+		logger.error('Component name must be provided', target);
 		return target;
 	}
 
 	if (!target.prototype) {
-		console.error('Decorator works only for classes', target);
+		logger.error('Decorator works only for classes', target);
 		return target;
 	}
 
 	name = toKebabCase(name);
 
 	if (!name.includes('-')) {
-		console.error('Component name must consist of at least two words', target);
+		logger.error('Component name must consist of at least two words', target);
 		return target;
 	}
 
@@ -25,6 +28,6 @@ function decorate(target: any, name: string) {
 	return target;
 }
 
-export default function(name: string) {
+export default function (name: string) {
 	return (target: any): any => decorate(target, name);
 }
