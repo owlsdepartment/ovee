@@ -1,6 +1,6 @@
 import { WithDataParam } from 'src/core/types';
 import dataParam from 'src/decorators/dataParam';
-import { createDecoratorsHandler } from 'tests/helpers';
+import { createDecoratorsHandler, createLoggerRegExp } from 'tests/helpers';
 
 const createHandler = <T extends object>(obj: T) =>
 	createDecoratorsHandler(obj, { $element: document.createElement('div') });
@@ -15,7 +15,7 @@ describe('@prop decorator', () => {
 		handler.init();
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @dataParam\]/);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(createLoggerRegExp('@dataParam'));
 	});
 
 	it('uses MutationObserver under the hood', () => {

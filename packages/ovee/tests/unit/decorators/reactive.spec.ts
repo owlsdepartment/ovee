@@ -1,6 +1,6 @@
 import { reactive } from 'src/decorators';
 import { makeComponentReactive, ReactiveProxy } from 'src/reactive';
-import { createDecoratorsHandler } from 'tests/helpers';
+import { createDecoratorsHandler, createLoggerRegExp } from 'tests/helpers';
 
 jest.mock('src/reactive/makeComponentReactive', () => {
 	const originalModule = jest.requireActual('src/reactive/makeComponentReactive');
@@ -26,7 +26,7 @@ describe('@reactive decorator', () => {
 		handler.init();
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @reactive\]/);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(createLoggerRegExp('@reactive'));
 	});
 
 	it('calls makeComponentReactive under the hood', () => {

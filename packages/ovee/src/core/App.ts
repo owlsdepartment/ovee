@@ -1,3 +1,4 @@
+import { FRAMEWORK_NAME } from 'src/constants';
 import { OveeComponent } from 'src/core/types';
 import EventDelegate, { Callback, EventDesc } from 'src/dom/EventDelegate';
 import { ComponentError } from 'src/errors';
@@ -270,7 +271,7 @@ export default class App {
 			this.config.productionTip !== false
 		) {
 			console.info(
-				`You are running Ovee.js in development mode.
+				`You are running ${FRAMEWORK_NAME} in development mode.
 Make sure to turn on production mode when deploying for production.`
 			);
 		}

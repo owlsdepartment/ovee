@@ -1,6 +1,6 @@
 import { WithElements } from 'src/core/types';
 import el from 'src/decorators/el';
-import { createDecoratorsHandler } from 'tests/helpers';
+import { createDecoratorsHandler, createLoggerRegExp } from 'tests/helpers';
 
 const createHandler = <T extends object>(obj: T) => {
 	const $element = document.createElement('div');
@@ -22,7 +22,7 @@ describe('@el decorator', () => {
 		handler.init();
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @el\]/);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(createLoggerRegExp('@el'));
 	});
 
 	it("logs error when selector wasn't provided", () => {
@@ -34,7 +34,7 @@ describe('@el decorator', () => {
 		handler.init();
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @el\]/);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(createLoggerRegExp('@el'));
 	});
 
 	it('binds element to a field based on a selector', () => {

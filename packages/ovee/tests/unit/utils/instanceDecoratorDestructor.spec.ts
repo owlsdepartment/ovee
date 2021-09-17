@@ -1,5 +1,6 @@
 import * as protectedFields from 'src/core/protectedFields';
 import { instanceDecoratorDestructor } from 'src/utils/instanceDecoratorDestructor';
+import { createLoggerRegExp } from 'tests/helpers';
 
 describe('instanceDecoratorDestructor function', () => {
 	const originalConsoleError = console.error;
@@ -18,7 +19,7 @@ describe('instanceDecoratorDestructor function', () => {
 		const err = console.error as jest.Mock;
 
 		expect(err.mock.calls.length).toBe(1);
-		expect(err.mock.calls[0][0]).toMatch(/^\[\w+ ~ instanceDecoratorDestructor\]/);
+		expect(err.mock.calls[0][0]).toMatch(createLoggerRegExp('instanceDecoratorDestructor'));
 	});
 
 	it('should create an ampty array for destructors if it does not exist', () => {

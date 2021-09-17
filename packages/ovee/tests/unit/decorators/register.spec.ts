@@ -1,8 +1,9 @@
 import register from 'src/decorators/register';
+import { createLoggerRegExp } from 'tests/helpers';
 
 describe('@register decorator', () => {
 	const consoleSpy = spyConsole('error');
-	const registerErrorRegex = /^\[\w+ ~ @register\]/;
+	const registerErrorRegex = createLoggerRegExp('@register');
 
 	it("logs error when name wan't provided", () => {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment

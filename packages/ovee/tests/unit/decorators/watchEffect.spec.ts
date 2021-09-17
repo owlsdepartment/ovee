@@ -1,7 +1,8 @@
 import Component from 'src/core/Component';
+import * as protectedFields from 'src/core/protectedFields';
 import { watchEffect } from 'src/decorators';
 import { doWatchEffect, ReactiveProxy } from 'src/reactive';
-import { createComponent } from 'tests/helpers';
+import { createComponent, createLoggerRegExp } from 'tests/helpers';
 
 jest.mock('src/reactive', () => {
 	const originalModule = jest.requireActual('src/reactive');
@@ -41,9 +42,9 @@ describe('@watchEffect decorator', () => {
 		createComponent(Test);
 
 		expect(errorSpy.console).toBeCalledTimes(3);
-		expect(errorSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @watchEffect\]/);
-		expect(errorSpy.console.mock.calls[1][0]).toMatch(/^\[\w+ ~ @watchEffect\]/);
-		expect(errorSpy.console.mock.calls[2][0]).toMatch(/^\[\w+ ~ @watchEffect\]/);
+		expect(errorSpy.console.mock.calls[0][0]).toMatch(createLoggerRegExp('@watchEffect'));
+		expect(errorSpy.console.mock.calls[1][0]).toMatch(createLoggerRegExp('@watchEffect'));
+		expect(errorSpy.console.mock.calls[2][0]).toMatch(createLoggerRegExp('@watchEffect'));
 	});
 
 	it('ensures that target is reactive', () => {
@@ -54,7 +55,7 @@ describe('@watchEffect decorator', () => {
 
 		const test = createComponent(Test);
 
-		expect(test.__reactiveProxy).toBeInstanceOf(ReactiveProxy);
+		expect(test[protectedFields.REACTIVE_PROXY]).toBeInstanceOf(ReactiveProxy);
 	});
 
 	it(`passes options to 'doWatchEffect'`, () => {

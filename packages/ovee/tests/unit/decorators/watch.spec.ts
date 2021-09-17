@@ -1,7 +1,8 @@
 import { WithReactiveProxy } from 'src/core';
+import * as protectedFields from 'src/core/protectedFields';
 import watch from 'src/decorators/watch';
 import { handleCombinedWatch, ReactiveProxy } from 'src/reactive';
-import { createDecoratorsHandler } from 'tests/helpers';
+import { createDecoratorsHandler, createLoggerRegExp } from 'tests/helpers';
 
 jest.mock('src/reactive/watch/handleCombinedWatch', () => {
 	const originalModule = jest.requireActual('src/reactive/watch/handleCombinedWatch');
@@ -29,7 +30,7 @@ describe('@watch decorator', () => {
 		handler.init();
 
 		expect(spy.console).toHaveBeenCalledTimes(1);
-		expect(spy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @watch\]/);
+		expect(spy.console.mock.calls[0][0]).toMatch(createLoggerRegExp('@watch'));
 	});
 
 	it('requires path to be passed', () => {
@@ -41,7 +42,7 @@ describe('@watch decorator', () => {
 		handler.init();
 
 		expect(spy.console).toHaveBeenCalledTimes(1);
-		expect(spy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @watch\]/);
+		expect(spy.console.mock.calls[0][0]).toMatch(createLoggerRegExp('@watch'));
 	});
 
 	it('ensures that target is reactive', () => {
@@ -54,7 +55,9 @@ describe('@watch decorator', () => {
 		watch('a')(handler, 'method');
 		handler.init();
 
-		expect((handler as WithReactiveProxy).__reactiveProxy).toBeInstanceOf(ReactiveProxy);
+		expect((handler as WithReactiveProxy)[protectedFields.REACTIVE_PROXY]).toBeInstanceOf(
+			ReactiveProxy
+		);
 	});
 
 	it('passes all arguments to handleCombinedWatch', () => {

@@ -7,22 +7,36 @@ describe('Logger class', () => {
 	const errorSpy = spyConsole('error');
 
 	it('creates proper base prefix', () => {
-		const testSubnamespace = 'test subnamespace';
-		const testNamespace = 'test namespace';
+		const subnamespace = 'test subnamespace';
+		const namespace = 'test namespace';
 		const logger1 = new Logger();
-		const logger2 = new Logger(testSubnamespace);
+		const logger2 = new Logger(subnamespace);
 		const logger3 = new Logger('', '');
-		const logger4 = new Logger(testSubnamespace, testNamespace);
+		const logger4 = new Logger(subnamespace, namespace);
 
-		expect(logger1.basePrefix).toMatch('[Ovee]');
-		expect(logger2.basePrefix).toMatch(`[Ovee ~ ${testSubnamespace}]`);
+		expect(logger1.basePrefix).toMatch('[Ovee.js]');
+		expect(logger2.basePrefix).toMatch(`[Ovee.js ~ ${subnamespace}]`);
 		expect(logger3.basePrefix).toMatch(`[]`);
-		expect(logger4.basePrefix).toMatch(`[${testNamespace} ~ ${testSubnamespace}]`);
+		expect(logger4.basePrefix).toMatch(`[${namespace} ~ ${subnamespace}]`);
+	});
+
+	it('allows for custom connector', () => {
+		const subnamespace = 'test subnamespace';
+		const namespace = 'test namespace';
+		const connector1 = ' | ';
+		const connector2 = ' - ';
+		const logger = new Logger(subnamespace, namespace, connector1);
+
+		expect(logger.basePrefix).toMatch(`[${namespace}${connector1}${subnamespace}]`);
+
+		logger.connector = connector2;
+
+		expect(logger.basePrefix).toMatch(`[${namespace}${connector2}${subnamespace}]`);
 	});
 
 	describe('log', () => {
 		it(`adds proper prefix to console.log when message is string, otherwise appends it at the beginning`, () => {
-			const basePrefix = '[Ovee ~ test]';
+			const basePrefix = '[Ovee.js ~ test]';
 			const logger = new Logger('test');
 			const message = 'some message';
 			const firstObj = {};
@@ -46,7 +60,7 @@ describe('Logger class', () => {
 
 	describe('logSpecific', () => {
 		it('allows to add more parts to prefix for console.log', () => {
-			const basePrefix = 'Ovee ~ test';
+			const basePrefix = 'Ovee.js ~ test';
 			const logger = new Logger('test');
 			const message = 'some message';
 			const parts = ['a', 'b'];
@@ -64,7 +78,7 @@ describe('Logger class', () => {
 
 	describe('info', () => {
 		it('adds proper prefix to console.info when message is string, otherwise appends it at the beginning', () => {
-			const basePrefix = '[Ovee ~ test]';
+			const basePrefix = '[Ovee.js ~ test]';
 			const logger = new Logger('test');
 			const message = 'some message';
 			const firstObj = {};
@@ -88,7 +102,7 @@ describe('Logger class', () => {
 
 	describe('infoSpecific', () => {
 		it('allows to add more parts to prefix for console.log', () => {
-			const basePrefix = 'Ovee ~ test';
+			const basePrefix = 'Ovee.js ~ test';
 			const logger = new Logger('test');
 			const message = 'some message';
 			const parts = ['a', 'b'];
@@ -106,7 +120,7 @@ describe('Logger class', () => {
 
 	describe('warn', () => {
 		it('adds proper prefix to console.warn when message is string, otherwise appends it at the beginning', () => {
-			const basePrefix = '[Ovee ~ test]';
+			const basePrefix = '[Ovee.js ~ test]';
 			const logger = new Logger('test');
 			const message = 'some message';
 			const firstObj = {};
@@ -130,7 +144,7 @@ describe('Logger class', () => {
 
 	describe('warnSpecific', () => {
 		it('allows to add more parts to prefix for console.log', () => {
-			const basePrefix = 'Ovee ~ test';
+			const basePrefix = 'Ovee.js ~ test';
 			const logger = new Logger('test');
 			const message = 'some message';
 			const parts = ['a', 'b'];
@@ -148,7 +162,7 @@ describe('Logger class', () => {
 
 	describe('error', () => {
 		it('adds proper prefix to console.error when message is string, otherwise appends it at the beginning', () => {
-			const basePrefix = '[Ovee ~ test]';
+			const basePrefix = '[Ovee.js ~ test]';
 			const logger = new Logger('test');
 			const message = 'some message';
 			const firstObj = {};
@@ -172,7 +186,7 @@ describe('Logger class', () => {
 
 	describe('errorSpecific', () => {
 		it('allows to add more parts to prefix for console.log', () => {
-			const basePrefix = 'Ovee ~ test';
+			const basePrefix = 'Ovee.js ~ test';
 			const logger = new Logger('test');
 			const message = 'some message';
 			const parts = ['a', 'b'];

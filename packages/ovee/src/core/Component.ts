@@ -30,7 +30,7 @@ export default class Component
 
 	[protectedFields.REFS]: Dictionary<Element[]> = {};
 	[protectedFields.REFS_OBSERVER]: MutationObserver;
-	__reactiveProxy?: ReactiveProxy;
+	[protectedFields.REACTIVE_PROXY]?: ReactiveProxy;
 	__dataParams?: Dictionary<() => void>;
 	__els?: Dictionary<() => void>;
 

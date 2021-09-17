@@ -1,16 +1,23 @@
+import { FRAMEWORK_NAME } from 'src/constants';
 import { isString } from 'src/utils/isString';
 
 type LogLevel = 'log' | 'warn' | 'info' | 'error';
 
+const DEFAULT_CONNECTOR = ' ~ ';
+
 export class Logger {
-	constructor(public subnamespace = '', public namespace = 'Ovee') {}
+	constructor(
+		public subnamespace = '',
+		public namespace = FRAMEWORK_NAME,
+		public connector = DEFAULT_CONNECTOR
+	) {}
 
 	get basePrefix(): string {
 		return this.createPrefix([this.namespace, this.subnamespace]);
 	}
 
 	private createPrefix(parts: string[]) {
-		const prefix = parts.filter(p => !!p).join(' ~ ');
+		const prefix = parts.filter(p => !!p).join(this.connector);
 
 		return `[${prefix}]`;
 	}

@@ -1,5 +1,6 @@
+import { FRAMEWORK_NAME } from 'src/constants';
 import bind from 'src/decorators/bind';
-import { createDecoratorsHandler } from 'tests/helpers';
+import { createDecoratorsHandler, createLoggerRegExp } from 'tests/helpers';
 
 describe('@bind decorator', () => {
 	const consoleSpy = spyConsole('error');
@@ -11,7 +12,7 @@ describe('@bind decorator', () => {
 		handler.init();
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @bind\]/);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(createLoggerRegExp('@bind'));
 	});
 
 	it(`logs namespaced error when name wasn't passed`, () => {
@@ -23,7 +24,7 @@ describe('@bind decorator', () => {
 		handler.init();
 
 		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-		expect(consoleSpy.console.mock.calls[0][0]).toMatch(/^\[\w+ ~ @bind\]/);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(createLoggerRegExp('@bind'));
 	});
 
 	it('binds event on component using $on method', () => {

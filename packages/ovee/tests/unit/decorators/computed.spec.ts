@@ -1,7 +1,7 @@
 import Component from 'src/core/Component';
 import { computed } from 'src/decorators';
 import { makeComputed, ref } from 'src/reactive/vue';
-import { createComponent } from 'tests/helpers';
+import { createComponent, createLoggerRegExp } from 'tests/helpers';
 
 jest.mock('src/reactive/vue', () => {
 	const originalModule = jest.requireActual('src/reactive/vue');
@@ -21,7 +21,7 @@ describe('@computed decorator', () => {
 	});
 
 	it(`can only be applied to getter`, async () => {
-		const testEerrorMsg = /^\[\w+ ~ @computed\]/;
+		const testEerrorMsg = createLoggerRegExp('@computed');
 		class Test extends Component {
 			@computed() field: any;
 			@computed()

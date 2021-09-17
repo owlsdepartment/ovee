@@ -1,4 +1,5 @@
 /* eslint-disable max-classes-per-file */
+import * as protectedFields from 'src/core/protectedFields';
 import { WithReactiveProxy } from 'src/core/types';
 import { ReactiveProxy } from 'src/reactive';
 import { makeComponentReactive } from 'src/reactive/makeComponentReactive';
@@ -31,6 +32,6 @@ describe('makeComponentReactive function', () => {
 
 		makeComponentReactive(instance);
 
-		expect(instance.__reactiveProxy).toBeInstanceOf(ReactiveProxy);
+		expect(instance[protectedFields.REACTIVE_PROXY]).toBeInstanceOf(ReactiveProxy);
 	});
 });

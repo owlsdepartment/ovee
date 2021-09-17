@@ -1,4 +1,5 @@
 import Component from 'src/core/Component';
+import * as protectedFields from 'src/core/protectedFields';
 import { ReactiveProxy } from 'src/reactive/ReactiveProxy';
 import { Dictionary } from 'src/utils';
 
@@ -12,7 +13,7 @@ export interface OveeComponent {
 }
 
 export interface WithReactiveProxy {
-	__reactiveProxy?: ReactiveProxy;
+	[protectedFields.REACTIVE_PROXY]?: ReactiveProxy;
 }
 
 export interface WithDataParam {
