@@ -49,5 +49,5 @@
     "prepublishOnly": "npm run clean && npm run build"
   },
   "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11",
-  "gitHead": "6bb8cbd08616b715a882e06a598410b28dfe2fa2"
+  "gitHead": "803d4b89d6092ef596e4f5cbac4c86a3af835487"
 }

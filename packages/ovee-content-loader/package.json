@@ -34,5 +34,6 @@
   "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11",
   "dependencies": {
     "ovee.js": "^2.1.0-alpha.0"
-  }
+  },
+  "gitHead": "803d4b89d6092ef596e4f5cbac4c86a3af835487"
 }
