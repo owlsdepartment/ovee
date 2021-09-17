@@ -14,7 +14,7 @@ export default instanceDecoratorFactory(
 		dataParamOverrideName?: string
 	) => {
 		if (typeof (instance as any)[dataParamName] === 'function') {
-			return logger.error(`It should only be applied to a property`);
+			return logger.error(`Decorator should only be applied to a property`);
 		}
 
 		const datasetKey = dataParamOverrideName || dataParamName;
