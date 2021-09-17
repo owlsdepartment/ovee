@@ -9,7 +9,7 @@ describe('attachMutationObserver function', () => {
 	const mutationObserverMethods = {
 		constuctor: jest.fn(),
 		disconnect: jest.fn(),
-		observe: jest.fn()
+		observe: jest.fn(),
 	};
 	const MutationObserver = class {
 		constructor(...args: any[]) {
@@ -61,20 +61,20 @@ describe('attachMutationObserver function', () => {
 		const mutations = [
 			{
 				type: 'characterData',
-				target: dom.window.document.createElement('div')
+				target: dom.window.document.createElement('div'),
 			},
 			{
 				type: 'childList',
 				target: dom.window.document.createElement('div'),
 				addedNodes: [dom.window.document.createElement('div')],
-				removedNodes: [dom.window.document.createElement('div')]
+				removedNodes: [dom.window.document.createElement('div')],
 			},
 			{
 				type: 'childList',
 				target: dom.window.document.createElement('div'),
 				addedNodes: [dom.window.document.createElement('div')],
-				removedNodes: []
-			}
+				removedNodes: [],
+			},
 		];
 
 		window.MutationObserver = MutationObserver as typeof window.MutationObserver;

@@ -12,7 +12,7 @@ describe('registerCustomElement function', () => {
 		const tagName = 'test-element';
 
 		Object.defineProperty(window, 'customElements', {
-			value: { define: mockDefine }
+			value: { define: mockDefine },
 		});
 		registerCustomElement(htmlElement, tagName);
 
@@ -26,7 +26,7 @@ describe('registerCustomElement function', () => {
 		const tagName = 'test-element';
 
 		Object.defineProperty(window, 'customElements', {
-			value: undefined
+			value: undefined,
 		});
 
 		expect(() => {

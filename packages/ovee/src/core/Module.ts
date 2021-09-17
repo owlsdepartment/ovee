@@ -12,13 +12,13 @@ abstract class Module<Options = ModuleOptions> {
 			$app: {
 				writable: false,
 				configurable: false,
-				value: app
+				value: app,
 			},
 			options: {
 				writable: true,
 				configurable: false,
-				value: { ...options }
-			}
+				value: { ...options },
+			},
 		});
 	}
 

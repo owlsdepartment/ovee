@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-export default function(
+export default function (
 	component: CustomElementConstructor,
 	name: string,
 	extendsEl?: string

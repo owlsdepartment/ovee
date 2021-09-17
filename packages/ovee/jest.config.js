@@ -3,8 +3,8 @@ module.exports = {
 	roots: ['<rootDir>/tests'],
 	globals: {
 		'ts-jest': {
-			tsconfig: '<rootDir>/tests/tsconfig.json'
-		}
+			tsconfig: '<rootDir>/tests/tsconfig.json',
+		},
 	},
-	setupFiles: ['./tests/helpers/_helpers.ts']
+	setupFiles: ['./tests/helpers/_helpers.ts'],
 };

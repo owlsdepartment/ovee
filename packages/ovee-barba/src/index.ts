@@ -32,7 +32,7 @@ export type BarbaHooks = Partial<Record<Hook, () => any>>;
 
 const defaultOptions: OveeBarbaOptions = {
 	useCss: false,
-	usePrefetch: true
+	usePrefetch: true,
 };
 
 export default class extends Module<OveeBarbaOptions> {
@@ -43,7 +43,7 @@ export default class extends Module<OveeBarbaOptions> {
 	init(): void {
 		this.options = {
 			...defaultOptions,
-			...this.options
+			...this.options,
 		};
 
 		if (this.options.usePrefetch) {
