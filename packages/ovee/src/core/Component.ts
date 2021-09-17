@@ -1,12 +1,15 @@
 // eslint-disable-next-line max-classes-per-file
-import { OveeElement, WithDataParam, WithElements, WithReactiveProxy } from 'src/core/types';
-import EventDelegate, { Callback, EventDesc } from 'src/dom/EventDelegate';
-import ReactiveProxy from 'src/reactive/ReactiveProxy';
-import attachMutationObserver, { MutationCallback } from 'src/utils/attachMutationObserver';
-import isValidNode from 'src/utils/isValidNode';
-import registerCustomElement from 'src/utils/registerCustomElement';
-import toKebabCase from 'src/utils/toKebabCase';
-import { Dictionary } from 'src/utils/types';
+import { OveeElement, WithDataParam, WithElements, WithReactiveProxy } from 'src/core';
+import { Callback, EventDelegate, EventDesc } from 'src/dom';
+import { ReactiveProxy } from 'src/reactive';
+import {
+	attachMutationObserver,
+	Dictionary,
+	isValidNode,
+	MutationCallback,
+	registerCustomElement,
+	toKebabCase,
+} from 'src/utils';
 
 import App from './App';
 import InstanceDecorators from './InstanceDecorators';
@@ -15,8 +18,10 @@ import * as protectedFields from './protectedFields';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ComponentOptions {}
 
-export default class Component extends InstanceDecorators
-	implements WithReactiveProxy, WithDataParam, WithElements {
+export default class Component
+	extends InstanceDecorators
+	implements WithReactiveProxy, WithDataParam, WithElements
+{
 	readonly $element!: Element;
 	readonly $app!: App;
 	readonly $options!: ComponentOptions;
@@ -35,41 +40,41 @@ export default class Component extends InstanceDecorators
 		Object.defineProperty(this, '$element', {
 			value: element,
 			writable: false,
-			configurable: false
+			configurable: false,
 		});
 
 		Object.defineProperty(this, '$app', {
 			value: app,
 			writable: false,
-			configurable: false
+			configurable: false,
 		});
 
 		Object.defineProperty(this, '$options', {
 			value: {
 				...(this.constructor as typeof Component).defaultOptions(),
-				...options
+				...options,
 			},
 			writable: false,
-			configurable: false
+			configurable: false,
 		});
 
 		Object.defineProperty(this, '$eventDelegate', {
 			value: new EventDelegate(element, this),
 			writable: false,
-			configurable: false
+			configurable: false,
 		});
 
 		const refsProxy = new Proxy(
 			{},
 			{
-				get: (target, key: string) => this[protectedFields.REFS][key] ?? []
+				get: (target, key: string) => this[protectedFields.REFS][key] ?? [],
 			}
 		);
 
 		Object.defineProperty(this, '$refs', {
 			value: refsProxy,
 			writable: false,
-			configurable: false
+			configurable: false,
 		});
 
 		this[protectedFields.UPDATE_REFS]();
@@ -78,8 +83,8 @@ export default class Component extends InstanceDecorators
 		// we need to postpone further initialization
 		// to allow properties to get defined
 		// before decorators are ran
-		setTimeout(async () => {
-			await this[protectedFields.BEFORE_INIT]();
+		setTimeout(() => {
+			this[protectedFields.BEFORE_INIT]();
 			this.init();
 		});
 	}

@@ -1,46 +1,43 @@
-import { JSDOM } from 'jsdom';
-import App from 'src/core/App';
 import Component from 'src/core/Component';
 import * as protectedFields from 'src/core/protectedFields';
+import { ClassConstructor } from 'src/utils';
 import instanceDecoratorFactory from 'src/utils/instanceDecoratorFactory';
+import { createComponent } from 'tests/helpers';
 
-const dom = new JSDOM('<!DOCTYPE html>');
+const getDecorators = (classDef: ClassConstructor<any>) => {
+	return classDef.prototype.constructor[protectedFields.INSTANCE_DECORATORS] as Array<
+		(...args: any[]) => any
+	>;
+};
 
 describe('Instance Decorators System', () => {
-	it("don't share decorators between extended components", () => {
-		asyncHelper(async calls => {
-			const element = dom.window.document.createElement('div');
-			const app = new App();
-			const decoratorCb1 = jest.fn();
-			const decoratorCb2 = jest.fn();
+	it("don't share decorators between extended components", async () => {
+		const decoratorCb1 = jest.fn();
+		const decoratorCb2 = jest.fn();
 
-			const decorator1 = instanceDecoratorFactory(decoratorCb1);
-			const decorator2 = instanceDecoratorFactory(decoratorCb2);
+		const decorator1 = jest.fn(instanceDecoratorFactory(decoratorCb1)());
+		const decorator2 = jest.fn(instanceDecoratorFactory(decoratorCb2)());
 
-			class Base extends Component {
-				@decorator1()
-				test: any;
-			}
-			class Extended extends Base {
-				@decorator2()
-				test2: any;
-			}
+		class Base extends Component {
+			@decorator1
+			test: any;
+		}
+		class Extended extends Base {
+			@decorator2
+			test2: any;
+		}
 
-			expect((Base.prototype.constructor as any)[protectedFields.INSTANCE_DECORATORS][0]).toBe(
-				decorator1
-			);
-			expect((Extended.prototype.constructor as any)[protectedFields.INSTANCE_DECORATORS][0]).toBe(
-				decorator2
-			);
+		expect(getDecorators(Base).length).toBe(1);
+		expect(getDecorators(Extended).length).toBe(1);
+		expect(getDecorators(Base)[0]).toBeInstanceOf(Function);
+		expect(getDecorators(Extended)[0]).toBeInstanceOf(Function);
+		expect(getDecorators(Base)[0]).not.toBe(getDecorators(Extended)[0]);
 
-			const instance = new Extended(element, app);
+		const instance = createComponent(Extended);
 
-			await calls();
-
-			expect(decorator1).toHaveBeenCalledTimes(1);
-			expect(decorator1).toHaveBeenCalledWith(instance);
-			expect(decorator2).toHaveBeenCalledTimes(1);
-			expect(decorator2).toHaveBeenCalledWith(instance);
-		});
+		expect(decorator1).toHaveBeenCalledTimes(1);
+		expect(decorator2).toHaveBeenCalledTimes(1);
+		expect(decoratorCb1.mock.calls[0][0].instance).toBe(instance);
+		expect(decoratorCb2.mock.calls[0][0].instance).toBe(instance);
 	});
 });

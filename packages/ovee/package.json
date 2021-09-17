@@ -18,20 +18,25 @@
     "/dist"
   ],
   "dependencies": {
+    "@vue/reactivity": "^3.2.6",
+    "@vue/runtime-core": "^3.2.6",
     "lit-html": "^1.1.2",
     "on-change": "^1.6.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
     "@types/jsdom": "^16.2.3",
+    "@zerollup/ts-transform-paths": "^1.7.18",
     "acorn": "^6.0.0",
     "acorn-dynamic-import": "^4.0.0",
     "cross-env": "^5.2.0",
-    "jest": "^26.4.0",
+    "jest": "^27.1.0",
     "jsdom": "^16.4.0",
     "resolve-url-loader": "3.1.0",
+    "ts-jest": "^27.0.5",
     "ttypescript": "^1.5.11",
-    "typescript": "^4.2.0",
-    "typescript-transform-paths": "^2.0.0"
+    "typescript": "^4.2.0"
   },
   "scripts": {
     "test": "node -v && npm run test:unit",

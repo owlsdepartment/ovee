@@ -2,7 +2,7 @@ import * as protectedFields from 'src/core/protectedFields';
 import instanceDecoratorDestructor from 'src/utils/instanceDecoratorDestructor';
 import instanceDecoratorFactory from 'src/utils/instanceDecoratorFactory';
 
-jest.mock('../../../src/utils/instanceDecoratorDestructor');
+jest.mock('src/utils/instanceDecoratorDestructor');
 
 describe('instanceDecoratorFactory function', () => {
 	it('should produce a proper decorator structure', () => {
@@ -13,7 +13,7 @@ describe('instanceDecoratorFactory function', () => {
 		expect(decorator).toBeInstanceOf(Function);
 	});
 
-	it('should create an ampty array for decorators if it does not exist', () => {
+	it('should create an ampty array for decorators on prototype.constructor if it does not exist', () => {
 		const decorator = instanceDecoratorFactory(jest.fn());
 		class T {
 			@decorator()
@@ -23,6 +23,29 @@ describe('instanceDecoratorFactory function', () => {
 		expect(
 			Array.isArray((T.prototype.constructor as any)[protectedFields.INSTANCE_DECORATORS])
 		).toBeTruthy();
+	});
+
+	it('should ensure that instance decorators are properly bound to constructors in case of inheritance', () => {
+		const decorator = instanceDecoratorFactory(jest.fn())();
+		class Base {
+			@decorator
+			foo: any;
+		}
+		class Extended extends Base {
+			@decorator
+			bar: any;
+		}
+
+		const baseDecorators = (Base.prototype.constructor as any)[protectedFields.INSTANCE_DECORATORS];
+		const extendedDecorators = (Extended.prototype.constructor as any)[
+			protectedFields.INSTANCE_DECORATORS
+		];
+
+		expect(Array.isArray(baseDecorators)).toBeTruthy();
+		expect(Array.isArray(extendedDecorators)).toBeTruthy();
+		expect(baseDecorators.length).toBe(1);
+		expect(extendedDecorators.length).toBe(1);
+		expect(baseDecorators[0]).not.toBe(extendedDecorators[1]);
 	});
 
 	it('should push callback into instanceDecorators array', () => {
@@ -48,11 +71,13 @@ describe('instanceDecoratorFactory function', () => {
 			foo: any;
 		}
 		const instance = new T();
+		const proto = Object.getPrototypeOf(instance);
 
 		(T.prototype.constructor as any)[protectedFields.INSTANCE_DECORATORS][0](instance);
 
 		expect(callback.mock.calls.length).toBe(1);
 		expect(callback.mock.calls[0][0].instance).toBe(instance);
+		expect(callback.mock.calls[0][0].proto).toBe(proto);
 		expect(callback.mock.calls[0][0].addDestructor).toBeInstanceOf(Function);
 		expect(callback.mock.calls[0][1]).toBe(prop);
 		expect(callback.mock.calls[0][2]).toBe(dummyArg);

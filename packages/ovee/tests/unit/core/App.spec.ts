@@ -1,5 +1,4 @@
 /* eslint-disable max-classes-per-file */
-import { JSDOM } from 'jsdom';
 import App from 'src/core/App';
 import Component from 'src/core/Component';
 import Module from 'src/core/Module';
@@ -8,9 +7,7 @@ import EventDelegate from 'src/dom/EventDelegate';
 import ComponentError from 'src/errors/ComponentError';
 import attachMutationObserver from 'src/utils/attachMutationObserver';
 
-jest.mock('../../../src/utils/attachMutationObserver');
-
-const dom = new JSDOM('<!DOCTYPE html>');
+jest.mock('src/utils/attachMutationObserver');
 
 describe('App class', () => {
 	let _orgMutationObserver: typeof MutationObserver;
@@ -20,13 +17,13 @@ describe('App class', () => {
 		window.MutationObserver = jest.fn();
 		(window.MutationObserver as jest.Mock).mockImplementation(() => ({
 			disconnect: jest.fn(),
-			observe: jest.fn()
+			observe: jest.fn(),
 		}));
 
 		(attachMutationObserver as jest.Mock).mockImplementation(() => ({
 			observe: jest.fn(),
 			disconnect: jest.fn(),
-			takeRecords: jest.fn()
+			takeRecords: jest.fn(),
 		}));
 	});
 
@@ -53,8 +50,8 @@ describe('App class', () => {
 		const app = new App({
 			config: {
 				document: dummyOption,
-				otherDummyOption
-			} as any
+				otherDummyOption,
+			} as any,
 		});
 
 		expect(app.getConfig()).toBeInstanceOf(Object);
@@ -69,7 +66,7 @@ describe('App class', () => {
 		const dummyOption = {};
 
 		app.setConfig({
-			dummyOption
+			dummyOption,
 		} as any);
 
 		expect(app.getConfig()).toBeInstanceOf(Object);
@@ -148,9 +145,9 @@ describe('App class', () => {
 				return dummyInit();
 			}
 		};
-		const rootElement = dom.window.document.createElement('div');
+		const rootElement = document.createElement('div');
 		const app = new App({
-			modules: [DummyModule]
+			modules: [DummyModule],
 		});
 
 		app.run(rootElement);
@@ -162,7 +159,7 @@ describe('App class', () => {
 		const dummyInit = jest.fn();
 		const dummyModuleOptions = {
 			option1: true,
-			option2: 'option 2 value'
+			option2: 'option 2 value',
 		};
 		const dummyModuleConstructor = jest.fn();
 		const DummyModule = class extends Module {
@@ -179,9 +176,9 @@ describe('App class', () => {
 				return dummyInit();
 			}
 		};
-		const rootElement = dom.window.document.createElement('div');
+		const rootElement = document.createElement('div');
 		const app = new App({
-			modules: [[DummyModule, dummyModuleOptions]]
+			modules: [[DummyModule, dummyModuleOptions]],
 		});
 
 		app.run(rootElement);
@@ -204,9 +201,9 @@ describe('App class', () => {
 					return dummyDestroy();
 				}
 			};
-			const rootElement = dom.window.document.createElement('div');
+			const rootElement = document.createElement('div');
 			const app = new App({
-				modules: [DummyModule]
+				modules: [DummyModule],
 			});
 
 			app.run(rootElement);
@@ -220,15 +217,15 @@ describe('App class', () => {
 
 	it('should dispatch initialized event when ran', async () => {
 		asyncHelper(async calls => {
-			const rootElement = dom.window.document.createElement('div');
-			const documentElement = dom.window.document.createElement('body');
+			const rootElement = document.createElement('div');
+			const documentElement = document.createElement('body');
 
 			documentElement.dispatchEvent = jest.fn();
 
 			const app = new App({
 				config: {
-					document: documentElement
-				} as any
+					document: documentElement,
+				} as any,
 			});
 
 			app.run(rootElement);
@@ -254,9 +251,9 @@ describe('App class', () => {
 				return dummyModuleName;
 			}
 		};
-		const rootElement = dom.window.document.createElement('div');
+		const rootElement = document.createElement('div');
 		const app = new App({
-			modules: [DummyModule]
+			modules: [DummyModule],
 		});
 
 		app.run(rootElement);
@@ -270,7 +267,7 @@ describe('App class', () => {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const dummyInit = jest.fn();
 		const dummyModuleName = 'nonExistantModule';
-		const rootElement = dom.window.document.createElement('div');
+		const rootElement = document.createElement('div');
 		const app = new App();
 
 		app.run(rootElement);
@@ -284,7 +281,7 @@ describe('App class', () => {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const dummyInit = jest.fn();
 		const dummyComponentName = 'dummyComponent';
-		const rootElement = dom.window.document.createElement('div');
+		const rootElement = document.createElement('div');
 		const dummyRegister = jest.fn();
 		const DummyComponent = class extends Component {
 			static register(...args: any[]) {
@@ -296,7 +293,7 @@ describe('App class', () => {
 			}
 		};
 		const app = new App({
-			components: [DummyComponent]
+			components: [DummyComponent],
 		});
 
 		app.run(rootElement);
@@ -311,7 +308,7 @@ describe('App class', () => {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const dummyInit = jest.fn();
 		const dummyComponentName = 'dummyComponent';
-		const rootElement = dom.window.document.createElement('div');
+		const rootElement = document.createElement('div');
 		const dummyRegister = jest.fn();
 		const componentOptions = { option1: true };
 		const DummyComponent = class extends Component {
@@ -324,7 +321,7 @@ describe('App class', () => {
 			}
 		};
 		const app = new App({
-			components: [[DummyComponent, componentOptions]]
+			components: [[DummyComponent, componentOptions]],
 		});
 
 		app.run(rootElement);
@@ -336,7 +333,7 @@ describe('App class', () => {
 	});
 
 	it('should throw an error if trying to register a non-component class', () => {
-		const rootElement = dom.window.document.createElement('div');
+		const rootElement = document.createElement('div');
 		const app = new App();
 		const NotReallyAComponent = class {};
 		app.run(rootElement);
@@ -350,7 +347,7 @@ describe('App class', () => {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const dummyInit = jest.fn();
 		const dummyComponentName = 'dummyComponent';
-		const rootElement = dom.window.document.createElement('div');
+		const rootElement = document.createElement('div');
 		const DummyComponent = class extends Component {
 			static register() {}
 
@@ -381,7 +378,7 @@ describe('App class', () => {
 		console.info = jest.fn();
 		process.env.NODE_ENV = 'development';
 
-		const rootElement = dom.window.document.createElement('div');
+		const rootElement = document.createElement('div');
 		const app = new App();
 
 		app.run(rootElement);
@@ -402,7 +399,7 @@ describe('App class', () => {
 		console.info = jest.fn();
 		process.env.NODE_ENV = 'production';
 
-		const rootElement = dom.window.document.createElement('div');
+		const rootElement = document.createElement('div');
 		const app = new App();
 
 		app.run(rootElement);
@@ -419,7 +416,7 @@ describe('App class', () => {
 		console.info = jest.fn();
 		process.env.NODE_ENV = 'test';
 
-		const rootElement = dom.window.document.createElement('div');
+		const rootElement = document.createElement('div');
 		const app = new App();
 
 		app.run(rootElement);
@@ -436,11 +433,11 @@ describe('App class', () => {
 		console.info = jest.fn();
 		process.env.NODE_ENV = 'development';
 
-		const rootElement = dom.window.document.createElement('div');
+		const rootElement = document.createElement('div');
 		const app = new App({
 			config: {
-				productionTip: false
-			}
+				productionTip: false,
+			},
 		});
 
 		app.run(rootElement);
@@ -452,7 +449,7 @@ describe('App class', () => {
 	});
 
 	it('should attach mutation observer to root element', () => {
-		const rootElement = dom.window.document.createElement('div');
+		const rootElement = document.createElement('div');
 		const app = new App();
 
 		app.run(rootElement);
@@ -467,7 +464,7 @@ describe('App class', () => {
 
 	it('should create components instnces for matching selectors found in root element', async () => {
 		asyncHelper(async calls => {
-			const rootElement = dom.window.document.createElement('div');
+			const rootElement = document.createElement('div');
 			const dummyComponent1Name = 'component-1';
 			const dummyComponent2Name = 'component-2';
 
@@ -510,7 +507,7 @@ describe('App class', () => {
 			const dummyComponent2Options = { option1: true };
 
 			const app = new App({
-				components: [DummyComponent1, [DummyComponent2, dummyComponent2Options]]
+				components: [DummyComponent1, [DummyComponent2, dummyComponent2Options]],
 			});
 
 			app.run(rootElement);
@@ -541,7 +538,7 @@ describe('App class', () => {
 	it('should create component instnce if root matches component selector', async () => {
 		asyncHelper(async calls => {
 			const dummyComponent1Name = 'component-1';
-			const rootElement = dom.window.document.createElement(dummyComponent1Name);
+			const rootElement = document.createElement(dummyComponent1Name);
 
 			const dummyConstructor1 = jest.fn();
 			const DummyComponent1 = class extends Component {
@@ -558,7 +555,7 @@ describe('App class', () => {
 			};
 
 			const app = new App({
-				components: [DummyComponent1]
+				components: [DummyComponent1],
 			});
 
 			app.run(rootElement);
@@ -576,9 +573,9 @@ describe('App class', () => {
 	it("should not destroy component when it's moved", async () => {
 		asyncHelper(async calls => {
 			const dummyComponent1Name = 'component-1';
-			const rootElement = dom.window.document.createElement('div');
-			const child = dom.window.document.createElement('div');
-			const component = dom.window.document.createElement(dummyComponent1Name);
+			const rootElement = document.createElement('div');
+			const child = document.createElement('div');
+			const component = document.createElement(dummyComponent1Name);
 
 			rootElement.appendChild(child);
 			child.appendChild(component);
@@ -597,7 +594,7 @@ describe('App class', () => {
 			};
 
 			const app = new App({
-				components: [DummyComponent1]
+				components: [DummyComponent1],
 			});
 
 			app.run(rootElement);
@@ -612,7 +609,7 @@ describe('App class', () => {
 
 	it('should throw error when matched two components for single node', async () => {
 		asyncHelper(async calls => {
-			const rootElement = dom.window.document.createElement('div');
+			const rootElement = document.createElement('div');
 			const dummyComponent1Name = 'component-1';
 			const dummyComponent2Name = 'component-2';
 
@@ -653,7 +650,7 @@ describe('App class', () => {
 			};
 
 			const app = new App({
-				components: [DummyComponent1, DummyComponent2]
+				components: [DummyComponent1, DummyComponent2],
 			});
 
 			let error: ComponentError = {} as ComponentError;
@@ -662,7 +659,7 @@ describe('App class', () => {
 				app.run(rootElement);
 
 				await calls();
-			} catch (e) {
+			} catch (e: any) {
 				error = e;
 			}
 
@@ -677,7 +674,7 @@ describe('App class', () => {
 
 	it('should destroy component instnces when destroying the whole app', async () => {
 		asyncHelper(async calls => {
-			const rootElement = dom.window.document.createElement('div');
+			const rootElement = document.createElement('div');
 			const dummyComponent1Name = 'component-1';
 			const dummyComponent2Name = 'component-2';
 
@@ -716,7 +713,7 @@ describe('App class', () => {
 			const dummyComponent2Options = { option1: true };
 
 			const app = new App({
-				components: [DummyComponent1, [DummyComponent2, dummyComponent2Options]]
+				components: [DummyComponent1, [DummyComponent2, dummyComponent2Options]],
 			});
 
 			app.run(rootElement);
@@ -732,7 +729,7 @@ describe('App class', () => {
 
 	it('should initialize components for nodes added to dom when ovee:dom:updated event called', async () => {
 		await asyncHelper(async (calls, wipe) => {
-			const rootElement = dom.window.document.createElement('div');
+			const rootElement = document.createElement('div');
 			const dummyComponent1Name = 'component-1';
 
 			const dummyConstructor1 = jest.fn();
@@ -751,10 +748,10 @@ describe('App class', () => {
 
 			const app = new App({
 				config: {
-					global: dom.window as any,
-					document: dom.window.document
+					global: window,
+					document: document,
 				},
-				components: [DummyComponent1]
+				components: [DummyComponent1],
 			});
 
 			app.run(rootElement);
@@ -765,11 +762,11 @@ describe('App class', () => {
 
 			wipe();
 
-			const newComponent = dom.window.document.createElement('div');
+			const newComponent = document.createElement('div');
 
 			newComponent.setAttribute(`data-${dummyComponent1Name}`, 'true');
 			rootElement.appendChild(newComponent);
-			rootElement.dispatchEvent(new dom.window.Event('ovee:dom:updated'));
+			rootElement.dispatchEvent(new Event('ovee:dom:updated'));
 
 			await calls();
 

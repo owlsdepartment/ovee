@@ -1,6 +1,6 @@
 import { WithDataParam } from 'src/core/types';
 import dataParam from 'src/decorators/dataParam';
-import createDecoratorsHandler from 'tests/helpers/createDecoratorsHandler';
+import { createDecoratorsHandler } from 'tests/helpers';
 
 const createHandler = <T extends object>(obj: T) =>
 	createDecoratorsHandler(obj, { $element: document.createElement('div') });

@@ -6,7 +6,7 @@ export interface MutationCallback {
 
 const defaultObserverConfig = {
 	childList: true,
-	subtree: true
+	subtree: true,
 };
 
 function filterCallback(mutation: MutationRecord, key: CallbackKeys, callback: MutationCallback) {

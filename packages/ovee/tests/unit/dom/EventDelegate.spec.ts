@@ -1,10 +1,8 @@
-import { JSDOM } from 'jsdom';
 import AppEvent from 'src/dom/AppEvent';
 import EventDelegate from 'src/dom/EventDelegate';
 
-jest.mock('../../../src/dom/AppEvent');
+jest.mock('src/dom/AppEvent');
 
-const dom = new JSDOM('<!DOCTYPE html>');
 const createEventDelegate = (target: Element): EventDelegate<any> =>
 	new EventDelegate(target, {} as any);
 
@@ -14,7 +12,7 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should register event listener on default target if no selector nor target passed', () => {
-		const target = dom.window.document.createElement('div');
+		const target = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const listener = jest.fn();
 
@@ -35,7 +33,7 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should register event listener on default target with selector if no target passed', () => {
-		const target = dom.window.document.createElement('div');
+		const target = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const listener = jest.fn();
 
@@ -56,8 +54,8 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should register event listener on custom target with no selector if no selector passed', () => {
-		const target = dom.window.document.createElement('div');
-		const customTarget = dom.window.document.createElement('div');
+		const target = document.createElement('div');
+		const customTarget = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const listener = jest.fn();
 
@@ -81,8 +79,8 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should register event listener on custom target with selector', () => {
-		const target = dom.window.document.createElement('div');
-		const customTarget = dom.window.document.createElement('div');
+		const target = document.createElement('div');
+		const customTarget = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const listener = jest.fn();
 
@@ -106,7 +104,7 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should register separate event listeners when multiple, space separated events passed', () => {
-		const target = dom.window.document.createElement('div');
+		const target = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const listener = jest.fn();
 
@@ -127,8 +125,8 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should unbind event listener registered without custom target nor selector', () => {
-		const target = dom.window.document.createElement('div');
-		const target2 = dom.window.document.createElement('div');
+		const target = document.createElement('div');
+		const target2 = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const listener = jest.fn();
 
@@ -138,36 +136,36 @@ describe('EventDelegate class', () => {
 				target,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'bar',
 				target,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'foo',
 				target: target2,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'baz',
 				target: target2,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'baz',
 				target: target2,
 				selector: '.roar',
 				callback: listener,
-				handler: jest.fn()
-			}
+				handler: jest.fn(),
+			},
 		];
 		eventDelegate.listeners = [...listeners];
 
@@ -184,8 +182,8 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should unbind event listener registered with custom target but without selector', () => {
-		const target = dom.window.document.createElement('div');
-		const target2 = dom.window.document.createElement('div');
+		const target = document.createElement('div');
+		const target2 = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const listener = jest.fn();
 
@@ -195,36 +193,36 @@ describe('EventDelegate class', () => {
 				target,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'bar',
 				target,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'foo',
 				target: target2,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'baz',
 				target: target2,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'baz',
 				target: target2,
 				selector: '.roar',
 				callback: listener,
-				handler: jest.fn()
-			}
+				handler: jest.fn(),
+			},
 		];
 		eventDelegate.listeners = [...listeners];
 
@@ -241,8 +239,8 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should unbind event listener registered with custom selector but without target', () => {
-		const target = dom.window.document.createElement('div');
-		const target2 = dom.window.document.createElement('div');
+		const target = document.createElement('div');
+		const target2 = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const listener = jest.fn();
 
@@ -252,43 +250,43 @@ describe('EventDelegate class', () => {
 				target,
 				selector: '.bar',
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'foo',
 				target,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'bar',
 				target,
 				selector: '.bar',
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'foo',
 				target: target2,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'baz',
 				target: target2,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'baz',
 				target: target2,
 				selector: '.roar',
 				callback: listener,
-				handler: jest.fn()
-			}
+				handler: jest.fn(),
+			},
 		];
 		eventDelegate.listeners = [...listeners];
 
@@ -305,8 +303,8 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should unbind event listener registered with custom selector and target', () => {
-		const target = dom.window.document.createElement('div');
-		const target2 = dom.window.document.createElement('div');
+		const target = document.createElement('div');
+		const target2 = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const listener = jest.fn();
 
@@ -316,43 +314,43 @@ describe('EventDelegate class', () => {
 				target: target2,
 				selector: '.bar',
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'foo',
 				target,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'bar',
 				target,
 				selector: '.bar',
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'foo',
 				target: target2,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'baz',
 				target: target2,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'baz',
 				target: target2,
 				selector: '.roar',
 				callback: listener,
-				handler: jest.fn()
-			}
+				handler: jest.fn(),
+			},
 		];
 		eventDelegate.listeners = [...listeners];
 
@@ -369,7 +367,7 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should unbind separate event listeners when multiple, space separated events passed', () => {
-		const target = dom.window.document.createElement('div');
+		const target = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const listener = jest.fn();
 
@@ -379,15 +377,15 @@ describe('EventDelegate class', () => {
 				target,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'bar',
 				target,
 				selector: undefined,
 				callback: listener,
-				handler: jest.fn()
-			}
+				handler: jest.fn(),
+			},
 		];
 		eventDelegate.listeners = [...listeners];
 
@@ -404,7 +402,7 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should create an event handler that calls proper callback with proper params', () => {
-		const target = dom.window.document.createElement('div');
+		const target = document.createElement('div');
 		const context = {};
 		const eventDelegate = new EventDelegate(target, context as any);
 		const listener = jest.fn();
@@ -426,7 +424,7 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should create an event handler that checks target selector to match before calling callback', () => {
-		const target = dom.window.document.createElement('div');
+		const target = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const listener = jest.fn();
 
@@ -439,8 +437,8 @@ describe('EventDelegate class', () => {
 
 		Reflect.apply(handler, eventDelegate, [
 			{
-				target
-			}
+				target,
+			},
 		]);
 
 		expect(target.matches).toBeCalledTimes(1);
@@ -448,7 +446,7 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should call callback by event handler if target selector matches', () => {
-		const target = dom.window.document.createElement('div');
+		const target = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const listener = jest.fn();
 
@@ -461,15 +459,15 @@ describe('EventDelegate class', () => {
 
 		Reflect.apply(handler, eventDelegate, [
 			{
-				target
-			}
+				target,
+			},
 		]);
 
 		expect(listener).toBeCalledTimes(1);
 	});
 
 	it('should not call callback by event handler if target selector does not match', () => {
-		const target = dom.window.document.createElement('div');
+		const target = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const listener = jest.fn();
 
@@ -482,15 +480,15 @@ describe('EventDelegate class', () => {
 
 		Reflect.apply(handler, eventDelegate, [
 			{
-				target
-			}
+				target,
+			},
 		]);
 
 		expect(listener).not.toBeCalled();
 	});
 
 	it('should dispatch an AppEvent instance when emit called', () => {
-		const target = dom.window.document.createElement('div');
+		const target = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 
 		target.dispatchEvent = jest.fn();
@@ -504,7 +502,7 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should dispatch custom event instance if passed to emit', () => {
-		const target = dom.window.document.createElement('div');
+		const target = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 		const customEvent = new Event('baz');
 
@@ -517,8 +515,8 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should unbind all listeners with destroy method', () => {
-		const target = dom.window.document.createElement('div');
-		const target2 = dom.window.document.createElement('div');
+		const target = document.createElement('div');
+		const target2 = document.createElement('div');
 		const eventDelegate = createEventDelegate(target);
 
 		target.removeEventListener = jest.fn();
@@ -530,15 +528,15 @@ describe('EventDelegate class', () => {
 				target,
 				selector: '.bar',
 				callback: jest.fn(),
-				handler: jest.fn()
+				handler: jest.fn(),
 			},
 			{
 				event: 'baz',
 				target: target2,
 				selector: '.yeez',
 				callback: jest.fn(),
-				handler: jest.fn()
-			}
+				handler: jest.fn(),
+			},
 		];
 		eventDelegate.listeners = [...listeners];
 

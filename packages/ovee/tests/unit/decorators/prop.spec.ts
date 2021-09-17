@@ -1,13 +1,6 @@
 import prop from 'src/decorators/prop';
-import ReactiveProxy from 'src/reactive/ReactiveProxy';
-import createDecoratorsHandler from 'tests/helpers/createDecoratorsHandler';
+import { createDecoratorsHandler } from 'tests/helpers';
 
-jest.mock('src/reactive/makeReactive', () => ({
-	__esModule: true,
-	default: jest.fn(instance => new ReactiveProxy(instance))
-}));
-
-// eslint-disable-next-line @typescript-eslint/ban-types
 const createHandler = <T extends object>(obj: T) =>
 	createDecoratorsHandler(obj, { $element: document.createElement('div') });
 

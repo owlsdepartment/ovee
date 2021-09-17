@@ -1,7 +1,6 @@
 import Component from 'src/core/Component';
-import ReactiveProxy from 'src/reactive/ReactiveProxy';
-
-import { Dictionary } from '../utils/types';
+import { ReactiveProxy } from 'src/reactive/ReactiveProxy';
+import { Dictionary } from 'src/utils';
 
 export interface OveeElement {
 	_isOveeCustomElement: boolean;

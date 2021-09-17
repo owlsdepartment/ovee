@@ -9,7 +9,7 @@ interface DecoratorsHandler extends Required<typeof InstanceDecorators> {
 
 type Options = WithElement;
 
-function createDecoratorsHandler<T extends object, O extends Options>(
+export function createDecoratorsHandler<T extends object, O extends Options>(
 	base: T,
 	options?: O
 ): T & O & DecoratorsHandler {
@@ -29,5 +29,3 @@ function createDecoratorsHandler<T extends object, O extends Options>(
 
 	return ret as any;
 }
-
-export default createDecoratorsHandler;

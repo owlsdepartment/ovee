@@ -32,7 +32,7 @@ const defaultConfig: AppConfig = {
 	namespace: 'ovee',
 	productionTip: process.env.NODE_ENV !== 'production',
 	global: window,
-	document
+	document,
 };
 
 export default class App {
@@ -51,19 +51,19 @@ export default class App {
 		Object.defineProperty(this, 'modules', {
 			value: this.modules,
 			writable: false,
-			configurable: false
+			configurable: false,
 		});
 
 		Object.defineProperty(this, 'components', {
 			value: this.components,
 			writable: false,
-			configurable: false
+			configurable: false,
 		});
 
 		Object.defineProperty(this, '$eventDelegate', {
 			value: new EventDelegate(this.getConfig().global as any, this as any),
 			writable: false,
-			configurable: false
+			configurable: false,
 		});
 
 		if (components) {
@@ -121,7 +121,7 @@ export default class App {
 			throw new TypeError('A module passed to use() method must be an instance of Module');
 		}
 
-		const name = ((ModuleClass as any) as typeof Module).getName();
+		const name = (ModuleClass as any as typeof Module).getName();
 
 		if (this.modules[name]) {
 			throw new Error(`Module "${name}" is already used`);

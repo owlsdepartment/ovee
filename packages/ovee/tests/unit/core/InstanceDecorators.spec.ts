@@ -3,7 +3,7 @@ import {
 	DESTROY_DECORATORS,
 	INITIALIZE_DECORATORS,
 	INSTANCE_DECORATORS,
-	INSTANCE_DECORATORS_DESTRUCTORS
+	INSTANCE_DECORATORS_DESTRUCTORS,
 } from 'src/core/protectedFields';
 
 describe('InstanceDecorators class', () => {

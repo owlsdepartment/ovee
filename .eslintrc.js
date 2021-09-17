@@ -26,6 +26,8 @@ module.exports = {
 		'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
 		quotes: ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
 
+		'prettier/prettier': 'warn',
+
 		'@typescript-eslint/no-unused-vars': 'warn',
 		'@typescript-eslint/no-explicit-any': 'off',
 		'@typescript-eslint/explicit-module-boundary-types': 'off',

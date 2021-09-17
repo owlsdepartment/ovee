@@ -1,15 +1,19 @@
 import { html, render, TemplateResult } from 'lit-html';
-import watch from 'src/decorators/watch';
+import { doWatchEffect, ref } from 'src/reactive';
+import { Task } from 'src/utils';
 
 import App from './App';
 import Component, { ComponentOptions } from './Component';
 import * as protectedFields from './protectedFields';
 
 export default class TemplateComponent extends Component {
-	[protectedFields.UPDATE_AF]: number | null = null;
-	[protectedFields.UPDATE_PROMISE]: Promise<void> | null = null;
-
 	readonly html!: typeof html;
+
+	[protectedFields.UPDATE_TASK]: Task<void> | null = null;
+
+	private stopWatch = () => {};
+	private updateMarker = ref(false);
+	private compiledTemplate: TemplateResult | string = '';
 
 	constructor(element: Element, app: App, options?: ComponentOptions) {
 		super(element, app, options);
@@ -17,37 +21,70 @@ export default class TemplateComponent extends Component {
 		Object.defineProperty(this, 'html', {
 			value: html,
 			writable: false,
-			configurable: false
+			configurable: false,
 		});
+	}
+
+	private get updateTask() {
+		return this[protectedFields.UPDATE_TASK];
 	}
 
 	async [protectedFields.BEFORE_INIT](): Promise<void> {
 		await super[protectedFields.BEFORE_INIT]();
-		await this.$requestUpdate();
+		this.stopWatch = doWatchEffect(
+			() => {
+				this.markRefrashable();
+				this.compiledTemplate = this.template();
+				this.doUpdate();
+			},
+			{ flush: 'sync' }
+		);
+		await this.updateTask;
+	}
+
+	destroy() {
+		this.stopWatch();
+	}
+
+	private markRefrashable() {
+		this.updateMarker.value;
+	}
+
+	private forceRefresh() {
+		this.updateMarker.value = !this.updateMarker.value;
+	}
+
+	private doUpdate(): void {
+		if (this.updateTask) {
+			return;
+		}
+
+		this[protectedFields.UPDATE_TASK] = new Task();
+
+		requestAnimationFrame(() => {
+			this[protectedFields.RENDER]();
+			this.updateTask?.resolve();
+			this[protectedFields.UPDATE_TASK] = null;
+		});
+	}
+
+	[protectedFields.RENDER](): void {
+		render(this.compiledTemplate, this.$element, {
+			eventContext: this as any,
+		});
+	}
+
+	$requestUpdate(): Promise<void> {
+		if (this.updateTask && !this.updateTask.finished) {
+			return this.updateTask;
+		}
+
+		this.forceRefresh();
+
+		return this.updateTask ?? Promise.resolve();
 	}
 
 	template(): TemplateResult | string {
 		return this.html``;
-	}
-
-	@watch('*')
-	$requestUpdate(): Promise<void> {
-		if (!this[protectedFields.UPDATE_AF]) {
-			this[protectedFields.UPDATE_PROMISE] = new Promise(resolve => {
-				this[protectedFields.UPDATE_AF] = requestAnimationFrame(() => {
-					this[protectedFields.UPDATE_AF] = null;
-					this[protectedFields.RENDER]();
-					resolve();
-				});
-			});
-		}
-
-		return this[protectedFields.UPDATE_PROMISE] ?? Promise.resolve();
-	}
-
-	[protectedFields.RENDER](): void {
-		render(this.template(), this.$element, {
-			eventContext: this as any
-		});
 	}
 }

@@ -1,5 +1,5 @@
 import bind from 'src/decorators/bind';
-import createDecoratorsHandler from 'tests/helpers/createDecoratorsHandler';
+import { createDecoratorsHandler } from 'tests/helpers';
 
 describe('@bind decorator', () => {
 	const consoleSpy = spyConsole('error');
@@ -34,7 +34,7 @@ describe('@bind decorator', () => {
 		const handler = createDecoratorsHandler({
 			method() {},
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			$on(event: string, callback: any) {}
+			$on(event: string, callback: any) {},
 		});
 		const onSpy = jest.spyOn(handler, '$on');
 
@@ -49,7 +49,7 @@ describe('@bind decorator', () => {
 		const handler = createDecoratorsHandler({
 			method() {},
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			$on(event: string, selector: string, callback: any) {}
+			$on(event: string, selector: string, callback: any) {},
 		});
 		const onSpy = jest.spyOn(handler, '$on');
 

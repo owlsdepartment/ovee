@@ -1,7 +1,7 @@
 import App from 'src/core/App';
 import Module, { ModuleOptions } from 'src/core/Module';
 
-jest.mock('../../../src/core/App');
+jest.mock('src/core/App');
 
 function createModule<Opt extends ModuleOptions>(app: App, options?: Opt): Module<Opt> {
 	return new (class extends Module<Opt> {
@@ -13,7 +13,7 @@ describe('Module class', () => {
 	it('should set options property', () => {
 		const app = new App();
 		const options = {
-			lorem: 'ipsum'
+			lorem: 'ipsum',
 		};
 		const module = createModule(app, options);
 

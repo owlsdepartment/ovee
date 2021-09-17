@@ -1,17 +1,17 @@
 /* eslint-disable max-classes-per-file */
 import { WithReactiveProxy } from 'src/core/types';
-import makeReactive from 'src/reactive/makeReactive';
-import ReactiveProxy from 'src/reactive/ReactiveProxy';
+import { ReactiveProxy } from 'src/reactive';
+import { makeComponentReactive } from 'src/reactive/makeComponentReactive';
 
-jest.mock('../../../src/reactive/ReactiveProxy');
+jest.mock('src/reactive/ReactiveProxy');
 
-describe('makeReactive function', () => {
+describe('makeComponentReactive function', () => {
 	beforeEach(() => {
 		(ReactiveProxy as jest.Mock).mockReset();
 	});
 
 	it('should return a new ReactiveProxy instance', () => {
-		const result = makeReactive({});
+		const result = makeComponentReactive({});
 
 		expect(result).toBeInstanceOf(ReactiveProxy);
 		expect(ReactiveProxy).toHaveBeenCalledTimes(1);
@@ -19,8 +19,8 @@ describe('makeReactive function', () => {
 
 	it('should return an existing ReactiveProxy instance if called twice on the same instance', () => {
 		const instance = {};
-		const result1 = makeReactive(instance);
-		const result2 = makeReactive(instance);
+		const result1 = makeComponentReactive(instance);
+		const result2 = makeComponentReactive(instance);
 
 		expect(result1).toStrictEqual(result2);
 		expect(ReactiveProxy).toHaveBeenCalledTimes(1);
@@ -29,7 +29,7 @@ describe('makeReactive function', () => {
 	it('should attach ReactiveProxy instance to given instance', () => {
 		const instance: WithReactiveProxy = {};
 
-		makeReactive(instance);
+		makeComponentReactive(instance);
 
 		expect(instance.__reactiveProxy).toBeInstanceOf(ReactiveProxy);
 	});

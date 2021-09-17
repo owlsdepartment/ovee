@@ -1,15 +1,23 @@
-import reactive from 'src/decorators/reactive';
-import makeReactive from 'src/reactive/makeReactive';
-import ReactiveProxy from 'src/reactive/ReactiveProxy';
-import createDecoratorsHandler from 'tests/helpers/createDecoratorsHandler';
+import { reactive } from 'src/decorators';
+import { makeComponentReactive, ReactiveProxy } from 'src/reactive';
+import { createDecoratorsHandler } from 'tests/helpers';
 
-jest.mock('src/reactive/makeReactive', () => ({
-	__esModule: true,
-	default: jest.fn(instance => new ReactiveProxy(instance))
-}));
+jest.mock('src/reactive/makeComponentReactive', () => {
+	const originalModule = jest.requireActual('src/reactive/makeComponentReactive');
+
+	return {
+		__esModule: true,
+		...originalModule,
+		makeComponentReactive: jest.fn(originalModule.makeComponentReactive),
+	};
+});
 
 describe('@reactive decorator', () => {
 	const consoleSpy = spyConsole('error');
+
+	beforeEach(() => {
+		(makeComponentReactive as jest.Mock).mockClear();
+	});
 
 	it('logs error when applied on field other than class property', () => {
 		const handler = createDecoratorsHandler({ method() {} });
@@ -23,13 +31,13 @@ describe('@reactive decorator', () => {
 		);
 	});
 
-	it('calls makeReactive under the hood', () => {
+	it('calls makeComponentReactive under the hood', () => {
 		const handler = createDecoratorsHandler({ field: '' });
 
 		reactive()(handler, 'field');
 		handler.init();
 
-		expect(makeReactive).toBeCalledTimes(1);
+		expect(makeComponentReactive).toBeCalledTimes(1);
 	});
 
 	it('enables ReactiveProxy for decorated field', () => {
@@ -41,16 +49,5 @@ describe('@reactive decorator', () => {
 
 		expect(enableForSpy).toBeCalledTimes(1);
 		expect(enableForSpy.mock.calls[0][0]).toBe('field');
-	});
-
-	it('destroyes ReactiveProxy when destructor is called', () => {
-		const destroySpy = jest.spyOn(ReactiveProxy.prototype, 'destroy');
-		const handler = createDecoratorsHandler({ field: '' });
-
-		reactive()(handler, 'field');
-		handler.init();
-		handler.destroy();
-
-		expect(destroySpy).toBeCalledTimes(1);
 	});
 });

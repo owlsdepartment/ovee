@@ -1,58 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-declare namespace NodeJS {
-	interface Global {
-		asyncHelper: (
-			runFn: (calls: () => Promise<any[]>, wipe: () => void) => Promise<any>
-		) => Promise<void>;
+import * as globalHelpers from './global';
 
-		spyConsole: (method: 'log' | 'warning' | 'error') => { console: jest.SpyInstance };
-
-		flushPromises: () => Promise<NodeJS.Immediate>;
-	}
+declare global {
+	const flushPromises: typeof globalHelpers.flushPromises;
+	const asyncHelper: typeof globalHelpers.asyncHelper;
+	const spyConsole: typeof globalHelpers.spyConsole;
+	const waitForFrame: typeof globalHelpers.waitForFrame;
 }
 
-global.asyncHelper = async runFn => {
-	const orgSetTimeout = global.setTimeout;
-	const orgRequestAnimationFrame = window.requestAnimationFrame;
-	const asyncFn: ((...args: any[]) => Promise<any>)[] = [];
-	const getStubFn: any = () =>
-		jest.fn(
-			// eslint-disable-next-line @typescript-eslint/ban-types
-			(c: Function) => asyncFn.push(c())
-		);
+const _global = (global || window) as any;
 
-	global.setTimeout = getStubFn();
-	window.requestAnimationFrame = getStubFn();
-
-	const result = await runFn(
-		() => Promise.all(asyncFn),
-		() => {
-			asyncFn.splice(0, asyncFn.length);
-		}
-	);
-
-	global.setTimeout = orgSetTimeout;
-	window.requestAnimationFrame = orgRequestAnimationFrame;
-
-	return result;
-};
-
-global.spyConsole = method => {
-	const spy: { console: jest.SpyInstance } = {} as any;
-
-	beforeEach(() => {
-		spy.console = jest.spyOn(console, method as any).mockImplementation(() => {});
-	});
-
-	afterEach(() => {
-		spy.console.mockRestore();
-	});
-
-	return spy;
-};
-
-global.flushPromises = () => new Promise(setImmediate);
-
-declare const asyncHelper: typeof global.asyncHelper;
-declare const spyConsole: typeof global.spyConsole;
-declare const flushPromises: typeof global.flushPromises;
+_global.flushPromises = globalHelpers.flushPromises;
+_global.asyncHelper = globalHelpers.asyncHelper;
+_global.spyConsole = globalHelpers.spyConsole;
+_global.waitForFrame = globalHelpers.waitForFrame;

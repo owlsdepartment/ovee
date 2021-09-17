@@ -8,12 +8,14 @@ export { default as instanceDecoratorDestructor } from './instanceDecoratorDestr
 export * from './instanceDecoratorDestructor';
 export { default as instanceDecoratorFactory } from './instanceDecoratorFactory';
 export * from './instanceDecoratorFactory';
+export { isString } from './isString';
 export { default as isValidNode } from './isValidNode';
 export * from './isValidNode';
 export { default as mixPrototypes } from './mixPrototypes';
 export * from './mixPrototypes';
 export { default as registerCustomElement } from './registerCustomElement';
 export * from './registerCustomElement';
+export * from './Task';
 export { default as toKebabCase } from './toKebabCase';
 export * from './toKebabCase';
 export * from './types';

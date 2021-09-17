@@ -1,6 +1,6 @@
 import { WithElements } from 'src/core/types';
 import el from 'src/decorators/el';
-import createDecoratorsHandler from 'tests/helpers/createDecoratorsHandler';
+import { createDecoratorsHandler } from 'tests/helpers';
 
 const createHandler = <T extends object>(obj: T) => {
 	const $element = document.createElement('div');
@@ -68,7 +68,7 @@ describe('@el decorator', () => {
 	});
 
 	it('binds array of results when used with option `list: true`', async () => {
-		const handler = createHandler({ field: (null as unknown) as NodeList });
+		const handler = createHandler({ field: null as unknown as NodeList });
 
 		el('.el-test', { list: true })(handler, 'field');
 		handler.init();
