@@ -20,8 +20,7 @@
   "dependencies": {
     "@vue/reactivity": "^3.2.6",
     "@vue/runtime-core": "^3.2.6",
-    "lit-html": "^1.1.2",
-    "on-change": "^1.6.2"
+    "lit-html": "^1.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
