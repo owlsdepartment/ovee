@@ -18,6 +18,14 @@ module.exports = {
             '/components',
             '/component-decorators',
             '/modules',
+            {
+                title: 'Reactivity',
+                collapsable: false,
+                children: [
+                    '/reactivity/overview',
+                    '/reactivity/api',
+                ]
+            },
             '/typescript',
             '/addons',
             '/meta'
