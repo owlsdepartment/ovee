@@ -4,7 +4,7 @@ import Component from 'src/core/Component';
 import * as protectedFields from 'src/core/protectedFields';
 import EventDelegate from 'src/dom/EventDelegate';
 import attachMutationObserver from 'src/utils/attachMutationObserver';
-import registerCustomElement from 'src/utils/registerCustomElement';
+import { registerCustomElement } from 'src/utils/registerCustomElement';
 
 jest.mock('src/core/App');
 jest.mock('src/dom/EventDelegate');
@@ -236,7 +236,6 @@ describe('Component class', () => {
 		expect(mock).toHaveBeenCalledTimes(1);
 		expect(typeof mock.mock.calls[0][0]).toBe('function');
 		expect(mock.mock.calls[0][1]).toBe('custom-component');
-		expect(mock.mock.calls[0][2]).toBe('div');
 	});
 
 	it('should emit event from $emit', () => {

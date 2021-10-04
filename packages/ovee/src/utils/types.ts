@@ -12,3 +12,5 @@ export interface Dictionary<T> {
 export type AnyFunction = (...args: any[]) => any;
 
 export type AnyObject = Record<string, any>;
+
+export type HTMLTagName = keyof HTMLElementTagNameMap;

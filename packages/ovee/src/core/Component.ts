@@ -189,11 +189,15 @@ export default class Component
 				_OveeComponent = target;
 			},
 			toKebabCase(this.getName()),
-			'div'
+			this.getExtends()
 		);
 	}
 
 	static getName(): string {
 		throw new Error('Component class needs to implement static getName() method');
+	}
+
+	static getExtends(): string | undefined {
+		return;
 	}
 }

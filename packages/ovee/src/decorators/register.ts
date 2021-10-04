@@ -1,9 +1,9 @@
 import { Logger } from 'src/errors';
-import toKebabCase from 'src/utils/toKebabCase';
+import { HTMLTagName, toKebabCase } from 'src/utils';
 
 const logger = new Logger('@register');
 
-function decorate(target: any, name: string) {
+function decorate(target: any, name: string, extendsEl?: HTMLTagName) {
 	if (!name) {
 		logger.error('Component name must be provided', target);
 		return target;
@@ -25,9 +25,17 @@ function decorate(target: any, name: string) {
 		return name;
 	};
 
+	if (extendsEl) {
+		target.getExtends = function () {
+			return extendsEl;
+		};
+	}
+
+	document.querySelector('p');
+
 	return target;
 }
 
-export default function (name: string) {
-	return (target: any): any => decorate(target, name);
+export default function (name: string, extendsEl?: HTMLTagName) {
+	return (target: any): any => decorate(target, name, extendsEl);
 }

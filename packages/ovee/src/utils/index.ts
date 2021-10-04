@@ -10,7 +10,6 @@ export * from './instanceDecoratorFactory';
 export { isString } from './isString';
 export { default as isValidNode } from './isValidNode';
 export * from './isValidNode';
-export { default as registerCustomElement } from './registerCustomElement';
 export * from './registerCustomElement';
 export * from './Task';
 export { default as toKebabCase } from './toKebabCase';
