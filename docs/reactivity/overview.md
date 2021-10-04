@@ -33,7 +33,7 @@ export class DialogSystem {
 }
 ```
 
-So, what's going on here? We have a singleton pattern, with static method `getInstance`. Every time, we try to call `DialogSystem.getInstance()`, we would check if `DialogSystem` instance exists and if not, we create one. Then return new instance or a cached one. With this approach, we ensure to always have one single instance.
+So, what's going on here? We have a singleton pattern, with the static method `getInstance`. Every time, we try to call `DialogSystem.getInstance()`, we would check if `DialogSystem` instance exists and if not, we create one. Then return a new instance or a cached one. With this approach, we ensure to always have one single instance.
 
 Then, in constructor we create new `div` element, and append it to `body`. We don't care about either styling or HTML structure, we are focusing on JS functionality.
 
