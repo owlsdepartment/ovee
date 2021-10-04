@@ -152,7 +152,7 @@ Let's take a look on one more example: global state management.
 
 ## Building your own state managment system (store)
 
-In frameworks like `Vue` or `React`, there is often some sort of a global state management tool. In `React`, it's `Flux`, and in `Vue` it's `Vuex`. But you can make something much simpler for you small needs with little to none effort! Let's create an object that would store fetched posts.
+In frameworks like `Vue` or `React`, there is often some sort of a global state management tool. In `React`, it's `Flux`, and in `Vue` it's `Vuex`. But you can make something much simpler for your small needs with little to no effort! Let's create an object that would store fetched posts.
 
 ```js
 export const postsStore = makeReactive({
