@@ -170,7 +170,7 @@ class extends Component {
     @watchEffect()
     updateCounterText() {
         this.counterText = `Current counter value: ${this.counter}`;
-        this.$el.innerHTML = this.counterText;
+        this.$element.innerHTML = this.counterText;
     }
 
     init() {

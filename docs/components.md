@@ -153,7 +153,7 @@ export default class extends Component {
 }
 ```
 
-Notice, that we don't have to remove those listeners. When component is destroying, they would be automatically removed. If you would like to remove listener earlier, for any reason, you an do it manually by using `$off`. Decorator `@bind` uses `$on` internally.
+Notice, that we don't have to remove those listeners. When component is being destroyed, they are automatically removed. If you would like to remove listener earlier, for any reason, you can do it manually by using `$off`. Decorator `@bind` uses `$on` internally.
 
 Full signature for methods `$on` and `$off`:
 

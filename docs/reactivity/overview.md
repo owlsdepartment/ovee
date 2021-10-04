@@ -8,7 +8,7 @@ Here you can find API with list of all available tools for reactivity and links 
 
 Now, let's jump to some examples!
 
-## Building dialog system
+## Example: Building dialog system
 
 Let's say you have a lot of dialogs and would like to keep and manage them in one, global place. We can start with singleton class:
 
@@ -59,7 +59,7 @@ export class DialogSystem {
 }
 ```
 
-We used our first reactivity tool: `ref`. It creates reactive object with field `.value`. If reference under `.value` changes, we would now. Example:
+We used our first reactivity tool: `ref`. It creates a reactive object with the field `.value`. If reference under `.value` changes, we would now. Example:
 
 ```js
 const arr = ref([1, 2, 3])
@@ -67,7 +67,7 @@ const arr = ref([1, 2, 3])
 arr.value = [1, 2, 3] // <- this will trigger a change!
 ```
 
-Coming back to our example! Let's add a method, that allow us to create dialogs!.
+Coming back to our example! Let's add a method, that allows us to create dialogs!.
 
 ```js
 import { ref, markRaw } from 'ovee.js';
@@ -150,7 +150,7 @@ This just a core concept, where you can optioanlly transform it into an `Ovee.js
 
 Let's take a look on one more example: global state management.
 
-## Building your own state managment system (store)
+## Example: Building your own state management system (store)
 
 In frameworks like `Vue` or `React`, there is often some sort of a global state management tool. In `React`, it's `Flux`, and in `Vue` it's `Vuex`. But you can make something much simpler for you small needs with little to none effort! Let's create an object that would store fetched posts.
 
@@ -169,7 +169,9 @@ export const postsStore = makeReactive({
 })
 ```
 
-Now we use `makeReactive` to create reactive object that can track changes of it's fields. Wi initialized `posts` field, to keep out posts and created to computeds: `getPostsByUserId`, that returns a function which than, based on passed id and state, returns different values, and `readPosts` that always returns only `read` posts.
+Now we use `makeReactive` to create a reactive object that can track changes in it's fields. We initialized `posts` field, to keep our posts and created two computeds:
+ - `getPostsByUserId`, that returns a function which than, based on passed `id` and state, returns different values
+ - `readPosts` that always returns only `read` posts
 
 Now we can use it in our component, especially cool in `TemplateComponent`:
 
