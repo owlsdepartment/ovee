@@ -97,7 +97,7 @@ So creating dialogs is quite simple: we create `Dialog` class instance (its impl
 
 The further part is pretty simple, if the user wants to open dialog immediately, he just needs to pass 2nd argument as `true`.
 
-Currently, we have a way to store and create our dialogs. Let's just define our `Dialog` class with it's most important feature: opening and closing itself!
+Currently, we have a way to store and create our dialogs. Let's just define our `Dialog` class with its most important feature: opening and closing itself!
 
 ```js
 export class Dialog {
