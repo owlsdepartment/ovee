@@ -146,7 +146,7 @@ First things first: we add a helper `computed` using `makeComputed`, to track an
 
 Next, we use our `computed` to render dialogs. We use magic `reduce` function and merge all dialogs in one, long, HTML string and then set it as `innerHTML` of our root element. To rerun this method everytime we open/close one of the dialogs, we wrap it in `watchEffect`. This watcher automatically tracks all reactive references and reruns everytime something changes, in our case: when some dialog is opened or closed.
 
-This just a core concept, where you can optioanlly transform it into an `Ovee.js` component, add a way to destroy dialogs, to unregister them, etc., but it shows you that you're free to use reactive variables and watcher's in different scenarios.
+This is just a core concept, where you can optionally transform it into an `Ovee.js` component, add a way to destroy dialogs, unregister them, etc., but it shows you that you're free to use reactive variables and watcher's in different scenarios.
 
 Let's take a look on one more example: global state management.
 
