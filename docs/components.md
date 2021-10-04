@@ -207,7 +207,7 @@ Method, that we decorate, will receive 2 arguments:
 
 __Important!__ `@watch` can only watch properties marked as `@reactive` as in `Ovee.js` nothing is reactive by default in opposite to frameworks like `Vue`, `React` or `Angular`.
 
-__Deprecation Note:__ In `Ovee,js` versions below `2.1`, watch callback received 3rd argument, watch path, but it's was removed.
+__Deprecation Note:__ In `Ovee,js` versions below `2.1`, watch callback received 3rd argument, watch path, which was removed as of `2.1`.
 
 Since `v2.1`, we can also use another decorator `@watchEffect`, which doesn't require specific watch source. It automatically catches all reactive references.
 
@@ -224,7 +224,7 @@ export default class extends Component {
 }
 ```
 
-`@watchEffect` runs immediately and on a first run do magic with gathering necessary references. More on that: [@watchEffect](/component-decorators.md#watcheffect)
+`@watchEffect` runs immediately and on a first run does magic with gathering necessary references. More on that: [@watchEffect](/component-decorators.md#watcheffect)
 
 You can read more about `reactivity` in [Reactivity overview](/reactivity/overview).
 
@@ -260,7 +260,7 @@ export default class extends TemplateComponent {
 
 We do not need `valueElement` property and `update` method. If property used in `template` method is reactive, DOM will be updated automatically.
 
-Sometimes, you would like to force template to rerender, because of some none-reactive change. Then you can use `this.$requestUpdate()` method that returns `Promise` that will resolve after rerender.
+Sometimes, you would like to force template to rerender, because of some non-reactive change. Then you can use `this.$requestUpdate()` method that returns `Promise` that will resolve after rerender.
 
 To render template, template components uses [`lit-html`](https://github.com/polymer/lit-html). Guide: <https://lit-html.polymer-project.org/guide>.
 

@@ -2,7 +2,7 @@
 
 In version `2.1`, we replaced custom-made `Ovee.js` reactivity and use the one from `Vue 3` as it's fully independent from framework and is based on `Proxy` system: the same way we did! But maintaining so complex system, like reactivity, is tough, especially for a small team. So we choose to use tested and safe solution.
 
-In this article, we run over some basic examples how we can use reactivity outside of the components as currently, it's totally independent! If you're looking for a deep dive into reactivity system implemented by `Vue` team and how it works, we recommend you this article: 👉 [Reactivity in Depth](https://v3.vuejs.org/guide/reactivity.html).
+In this article, we run over some basic examples of how we can use reactivity outside of the components, as currently, it's totally independent! If you're looking for a deep dive into the reactivity system implemented by `Vue` team and how it works, we recommend you this article: 👉 [Reactivity in Depth](https://v3.vuejs.org/guide/reactivity.html).
 
 Here you can find API with list of all available tools for reactivity and links to specific places in `Vue 3` docs: 👉 [Reactivity API](./api).
 
@@ -10,7 +10,7 @@ Now, let's jump to some examples!
 
 ## Example: Building dialog system
 
-Let's say you have a lot of dialogs and would like to keep and manage them in one, global place. We can start with singleton class:
+Let's say you have a lot of dialogs and would like to keep and manage them in one, global place. We can start with a singleton class:
 
 ```js
 let instance;
@@ -33,9 +33,9 @@ export class DialogSystem {
 }
 ```
 
-So, what's going on here? We have a singleton pattern, with static method `getInstance`. Every time, we try to call `DialogSystem.getInstance()`, we would check if `DialogSystem` instance exists and if not, we create one. Then return new instance or a cached one. With this approach, we ensure to always have one single instance.
+So, what's going on here? We have a singleton pattern, with the static method `getInstance`. Every time, we try to call `DialogSystem.getInstance()`, we would check if `DialogSystem` instance exists and if not, we create one. Then return a new instance or a cached one. With this approach, we ensure to always have one single instance.
 
-Then, in constructor we create new `div` element, and append it to `body`. We don't care about either styling or HTML structure, we are focusing on JS functionality.
+Then, in the constructor, we create a new `div` element and append it to `body`. We don't care about either styling or HTML structure, we are focusing on JS functionality.
 
 Next, we need to add a way to store new dialogs. Let's change out `constructor`!
 
@@ -92,12 +92,12 @@ export class DialogSystem {
 }
 ```
 
-So creating dialogs is quite simple: we create `Dialog` class instance (it's implemantation is irrelevant currently for us) and push it to the array. But what's about this `markRaw` method?!
-`ref` and `makeReactive` does a little bit of magic, that uwraps any nested `ref` inside it. To prevent it, we use `markRaw` to say: "We want to keep it that way, don't touch it!".
+So creating dialogs is quite simple: we create `Dialog` class instance (its implementation is irrelevant currently for us) and push it to the array. But what's about this `markRaw` method?!
+`ref` and `makeReactive` do a little bit of magic, that unwraps any nested `ref` inside it. To prevent it, we use `markRaw` to say: "We want to keep it that way, don't touch it!".
 
-Further part is pretty simple, if user want's to open dialog immediately, he just needs to pass 2nd argument as `true`.
+The further part is pretty simple, if the user wants to open dialog immediately, he just needs to pass 2nd argument as `true`.
 
-Currently, we have a way to store and create our dialogs. Let's just define our `Dialog` class with it's most important feature: opening and closing itself!
+Currently, we have a way to store and create our dialogs. Let's just define our `Dialog` class with its most important feature: opening and closing itself!
 
 ```js
 export class Dialog {
@@ -117,7 +117,7 @@ export class Dialog {
 }
 ```
 
-`Dialog` class is super simple: it just keeps it's own state about being open or not. Very important note: `isOpen` is reactive!
+The `Dialog` class is super simple: it just keeps its own state about being open or not. Very important note: `isOpen` is reactive!
 
 Now let's add a way to show our dialogs:
 
@@ -142,17 +142,17 @@ export class DialogSystem {
 }
 ```
 
-First things first: we add a helper `computed` using `makeComputed`, to track and return all of our open dialogs. It's cached, so event if we access it 1000 times, we would return the same value, if none of those dialogs changed it's state. Similar to `ref`, it returns object with field `.value`.
+First things first: we add a helper `computed` using `makeComputed`, to track and return all of our open dialogs. It's cached, so even if we access it 1000 times, we would return the same value if none of those dialogs changed its state. Similar to `ref`, it returns an object with the `.value` field.
 
-Next, we use our `computed` to render dialogs. We use magic `reduce` function and merge all dialogs in one, long, HTML string and then set it as `innerHTML` of our root element. To rerun this method everytime we open/close one of the dialogs, we wrap it in `watchEffect`. This watcher automatically tracks all reactive references and reruns everytime something changes, in our case: when some dialog is opened or closed.
+Next, we use our `computed` to render dialogs. We use the magic `reduce` function and merge all dialogs in one, long, HTML string and then set it as `innerHTML` of our root element. To rerun this method every time we open/close one of the dialogs, we wrap it in `watchEffect`. This watcher automatically tracks all reactive references and reruns every time something changes, in our case: when some dialog is opened or closed.
 
-This just a core concept, where you can optioanlly transform it into an `Ovee.js` component, add a way to destroy dialogs, to unregister them, etc., but it shows you that you're free to use reactive variables and watcher's in different scenarios.
+This is just a core concept, where you can optionally transform it into an `Ovee.js` component, add a way to destroy dialogs, unregister them, etc., but it shows you that you're free to use reactive variables and watcher's in different scenarios.
 
 Let's take a look on one more example: global state management.
 
 ## Example: Building your own state management system (store)
 
-In frameworks like `Vue` or `React`, there is often some sort of a global state management tool. In `React`, it's `Flux`, and in `Vue` it's `Vuex`. But you can make something much simpler for you small needs with little to none effort! Let's create an object that would store fetched posts.
+In frameworks like `Vue` or `React`, there is often some sort of a global state management tool. In `React`, it's `Flux`, and in `Vue` it's `Vuex`. But you can make something much simpler for your small needs with little to no effort! Let's create an object that would store fetched posts.
 
 ```js
 export const postsStore = makeReactive({
@@ -188,7 +188,7 @@ export class PostsList extends TemplateComponent {
     }
 }
 ```
-Note, that because we used `makeReactive`, we don't need to use `.value` when accesing `makeComputed` values.
+Note, that because we used `makeReactive`, we don't need to use `.value` when accessing `makeComputed` values.
 
 We can also make a list of all user-specific posts using `data-` attribute:
 
@@ -212,7 +212,7 @@ export class PostsList extends TemplateComponent {
 }
 ```
 
-Because `postsStore` is super simple and in no way protected, everybody can change it's state.
+Because `postsStore` is super simple and in no way protected, everybody can change its state.
 
 To prevent that and minimalize bugs potential, you can restrict yourself and create special `postsMutations` or `postsActions` that only these methods will be allowed to change this state.
 
@@ -220,7 +220,7 @@ To prevent that and minimalize bugs potential, you can restrict yourself and cre
 export const postsActions = {
     fetchPosts() {
         /* just do some fecthing... */
-        const posts = ajax.fecth( /* ... */ );
+        const posts = ajax.fetch( /* ... */ );
 
         postsStore.posts = posts;
     }
