@@ -224,7 +224,7 @@ export default class extends Component {
 }
 ```
 
-`@watchEffect` runs immediately and on a first run do magic with gathering necessary references. More on that: [@watchEffect](/component-decorators.md#watcheffect)
+`@watchEffect` runs immediately and on a first run does magic with gathering necessary references. More on that: [@watchEffect](/component-decorators.md#watcheffect)
 
 You can read more about `reactivity` in [Reactivity overview](/reactivity/overview).
 
