@@ -186,7 +186,7 @@ export class PostsList extends TemplateComponent {
     }
 }
 ```
-Note, that because we used `makeReactive`, we don't need to use `.value` when accesing `makeComputed` values.
+Note, that because we used `makeReactive`, we don't need to use `.value` when accessing `makeComputed` values.
 
 We can also make a list of all user-specific posts using `data-` attribute:
 
