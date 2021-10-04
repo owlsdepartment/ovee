@@ -2,7 +2,7 @@
 
 In version `2.1`, we replaced custom-made `Ovee.js` reactivity and use the one from `Vue 3` as it's fully independent from framework and is based on `Proxy` system: the same way we did! But maintaining so complex system, like reactivity, is tough, especially for a small team. So we choose to use tested and safe solution.
 
-In this article, we run over some basic examples how we can use reactivity outside of the components as currently, it's totally independent! If you're looking for a deep dive into reactivity system implemented by `Vue` team and how it works, we recommend you this article: 👉 [Reactivity in Depth](https://v3.vuejs.org/guide/reactivity.html).
+In this article, we run over some basic examples of how we can use reactivity outside of the components, as currently, it's totally independent! If you're looking for a deep dive into the reactivity system implemented by `Vue` team and how it works, we recommend you this article: 👉 [Reactivity in Depth](https://v3.vuejs.org/guide/reactivity.html).
 
 Here you can find API with list of all available tools for reactivity and links to specific places in `Vue 3` docs: 👉 [Reactivity API](./api).
 
