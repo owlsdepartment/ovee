@@ -1,6 +1,6 @@
 import Component from 'src/core/Component';
 import { Callback } from 'src/dom/EventDelegate';
-import { Logger } from 'src/errors/logger';
+import { Logger } from 'src/errors/Logger';
 import instanceDecoratorFactory, { DecoratorContext } from 'src/utils/instanceDecoratorFactory';
 
 type OnArgs = [string, string, Callback<Component>];
