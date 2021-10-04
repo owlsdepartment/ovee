@@ -95,7 +95,7 @@ export class DialogSystem {
 So creating dialogs is quite simple: we create `Dialog` class instance (its implementation is irrelevant currently for us) and push it to the array. But what's about this `markRaw` method?!
 `ref` and `makeReactive` do a little bit of magic, that unwraps any nested `ref` inside it. To prevent it, we use `markRaw` to say: "We want to keep it that way, don't touch it!".
 
-Further part is pretty simple, if user want's to open dialog immediately, he just needs to pass 2nd argument as `true`.
+The further part is pretty simple, if the user wants to open dialog immediately, he just needs to pass 2nd argument as `true`.
 
 Currently, we have a way to store and create our dialogs. Let's just define our `Dialog` class with it's most important feature: opening and closing itself!
 
