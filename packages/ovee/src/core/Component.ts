@@ -83,13 +83,13 @@ export default class Component
 		// we need to postpone further initialization
 		// to allow properties to get defined
 		// before decorators are ran
-		setTimeout(async () => {
-			await this[protectedFields.BEFORE_INIT]();
+		setTimeout(() => {
+			this[protectedFields.BEFORE_INIT]();
 			this.init();
 		});
 	}
 
-	async [protectedFields.BEFORE_INIT](): Promise<void> {
+	[protectedFields.BEFORE_INIT](): void {
 		this[protectedFields.INITIALIZE_DECORATORS]();
 	}
 

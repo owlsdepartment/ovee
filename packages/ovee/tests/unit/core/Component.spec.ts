@@ -5,6 +5,7 @@ import * as protectedFields from 'src/core/protectedFields';
 import EventDelegate from 'src/dom/EventDelegate';
 import attachMutationObserver from 'src/utils/attachMutationObserver';
 import registerCustomElement from 'src/utils/registerCustomElement';
+import { createComponent } from 'tests/helpers';
 
 jest.mock('src/core/App');
 jest.mock('src/dom/EventDelegate');
@@ -300,5 +301,95 @@ describe('Component class', () => {
 		expect(() => {
 			Component.getName();
 		}).toThrow('Component class needs to implement static getName() method');
+	});
+
+	describe('lifecycle hooks', () => {
+		it(`should call 'init' hook after component initialization`, () => {
+			const initFn = jest.fn(() => console.log('init'));
+			class Test extends Component {
+				init() {
+					initFn();
+				}
+			}
+
+			createComponent(Test);
+
+			expect(initFn).toBeCalledTimes(1);
+		});
+
+		it(`should call 'beforeDestroy' hook when component is destroyed`, () => {
+			const beforeDestroyFn = jest.fn();
+			class Test extends Component {
+				beforeDestroy() {
+					beforeDestroyFn();
+				}
+			}
+			const test = createComponent(Test);
+
+			test.$destroy();
+
+			expect(beforeDestroyFn).toBeCalledTimes(1);
+		});
+
+		it(`should call 'destroy' hook when component is destroyed`, () => {
+			const destroyFn = jest.fn();
+			class Test extends Component {
+				init() {
+					destroyFn();
+				}
+			}
+			const test = createComponent(Test);
+
+			test.$destroy();
+
+			expect(destroyFn).toBeCalledTimes(1);
+		});
+
+		it(`should call 'beforeDestroy' hook before 'destroy' hook is called`, () => {
+			let called = false;
+			const beforeDestroyFn = jest.fn(() => (called = true));
+			const destroyFn = jest.fn(() => (called = true));
+			class Test extends Component {
+				beforeDestroy() {
+					if (!called) {
+						beforeDestroyFn();
+					}
+				}
+
+				destroy() {
+					if (!called) {
+						destroyFn();
+					}
+				}
+			}
+			const test = createComponent(Test);
+
+			test.$destroy();
+
+			expect(beforeDestroyFn).toBeCalledTimes(1);
+			expect(destroyFn).not.toBeCalled();
+		});
+
+		it(`should throw error in every lifecycle hook`, () => {
+			class TestInit extends Component {
+				init() {
+					throw Error();
+				}
+			}
+			class TestBeforeDestroy extends Component {
+				beforeDestroy() {
+					throw Error();
+				}
+			}
+			class TestDestroy extends Component {
+				destroy() {
+					throw Error();
+				}
+			}
+
+			expect(() => createComponent(TestInit)).toThrow();
+			expect(() => createComponent(TestBeforeDestroy).$destroy()).toThrow();
+			expect(() => createComponent(TestDestroy).$destroy()).toThrow();
+		});
 	});
 });
