@@ -117,7 +117,7 @@ export class Dialog {
 }
 ```
 
-`Dialog` class is super simple: it just keeps it's own state about being open or not. Very important note: `isOpen` is reactive!
+The `Dialog` class is super simple: it just keeps its own state about being open or not. Very important note: `isOpen` is reactive!
 
 Now let's add a way to show our dialogs:
 
