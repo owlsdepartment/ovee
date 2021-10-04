@@ -46,4 +46,4 @@ Applies `ReactiveProxy` on a component and saves it's instance under `protectedF
 
  - `doWatch` - Watch for changes in specified source. Alias for Vue 3: [watch](https://v3.vuejs.org/api/computed-watch-api.html#watch)
  - `doWatchEffect` - Immediate watch, that can automatically detect all reactive sources used inside. Alias for Vue 3: [watchEffect](https://v3.vuejs.org/api/computed-watch-api.html#watcheffect)
- - `makeComputed` - Creates a cachable function that recalculates it's value whenever reactive values change inside. Alias for Vue 3: [computed](https://v3.vuejs.org/api/computed-watch-api.html#computed)
+ - `makeComputed` - Creates a cachable function that recalculates its value whenever reactive values change inside. Alias for Vue 3: [computed](https://v3.vuejs.org/api/computed-watch-api.html#computed)
