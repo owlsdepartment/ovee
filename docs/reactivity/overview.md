@@ -210,7 +210,7 @@ export class PostsList extends TemplateComponent {
 }
 ```
 
-Because `postsStore` is super simple and in no way protected, everybody can change it's state.
+Because `postsStore` is super simple and in no way protected, everybody can change its state.
 
 To prevent that and minimalize bugs potential, you can restrict yourself and create special `postsMutations` or `postsActions` that only these methods will be allowed to change this state.
 
