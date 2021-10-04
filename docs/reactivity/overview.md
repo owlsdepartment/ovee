@@ -218,7 +218,7 @@ To prevent that and minimalize bugs potential, you can restrict yourself and cre
 export const postsActions = {
     fetchPosts() {
         /* just do some fecthing... */
-        const posts = ajax.fecth( /* ... */ );
+        const posts = ajax.fetch( /* ... */ );
 
         postsStore.posts = posts;
     }
