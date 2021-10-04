@@ -207,7 +207,7 @@ Method, that we decorate, will receive 2 arguments:
 
 __Important!__ `@watch` can only watch properties marked as `@reactive` as in `Ovee.js` nothing is reactive by default in opposite to frameworks like `Vue`, `React` or `Angular`.
 
-__Deprecation Note:__ In `Ovee,js` versions below `2.1`, watch callback received 3rd argument, watch path, but it's was removed.
+__Deprecation Note:__ In `Ovee,js` versions below `2.1`, watch callback received 3rd argument, watch path, which was removed as of `2.1`.
 
 Since `v2.1`, we can also use another decorator `@watchEffect`, which doesn't require specific watch source. It automatically catches all reactive references.
 
