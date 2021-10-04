@@ -10,7 +10,7 @@ Now, let's jump to some examples!
 
 ## Building dialog system
 
-Let's say you have a lot of dialogs and would like to keep and manage them in one, global place. We can start with singleton class:
+Let's say you have a lot of dialogs and would like to keep and manage them in one, global place. We can start with a singleton class:
 
 ```js
 let instance;
