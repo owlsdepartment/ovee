@@ -49,3 +49,5 @@ fix(ovee-content-loader): make config optional
 ## Publishing new release
 
 <!-- WIP -->
+<!-- Proposed workflow: https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli#recommended-workflow -->
+<!-- Proposed workflow: https://github.com/conventional-changelog/conventional-changelog/issues/376 -->
