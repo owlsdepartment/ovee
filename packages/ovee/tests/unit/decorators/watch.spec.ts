@@ -1,91 +1,106 @@
+import { WithReactiveProxy } from 'src/core';
+import * as protectedFields from 'src/core/protectedFields';
 import watch from 'src/decorators/watch';
-import ReactiveProxy from 'src/reactive/ReactiveProxy';
-import makeReactive from 'src/reactive/makeReactive';
-import createDecoratorsHandler from 'tests/helpers/createDecoratorsHandler';
+import { handleCombinedWatch, ReactiveProxy } from 'src/reactive';
+import { createDecoratorsHandler, createLoggerRegExp } from 'tests/helpers';
 
-jest.mock('src/reactive/makeReactive', () => ({
-    __esModule: true,
-    default: jest.fn((instance) => new ReactiveProxy(instance))
-}));
+jest.mock('src/reactive/watch/handleCombinedWatch', () => {
+	const originalModule = jest.requireActual('src/reactive/watch/handleCombinedWatch');
+
+	return {
+		__esModule: true,
+		...originalModule,
+		handleCombinedWatch: jest.fn((...args: any[]) => {
+			return jest.fn(originalModule.handleCombinedWatch(...args));
+		}),
+	};
+});
 
 describe('@watch decorator', () => {
-    const spy = spyConsole('error');
+	const spy = spyConsole('error');
 
-    it('logs an error when not applied on a function', () => {
-        const handler = createDecoratorsHandler({ field: '' });
+	beforeEach(() => {
+		(handleCombinedWatch as jest.Mock).mockClear();
+	});
 
-        watch('a')(handler, 'field');
-        handler.init();
+	it('logs an error when not applied on a function', () => {
+		const handler = createDecoratorsHandler({ field: '' });
 
-        expect(spy.console).toHaveBeenCalledTimes(1);
-        expect(spy.console.mock.calls[0][0]).toBe('Watch decorator should be only applied to a function');
-    });
+		watch('a')(handler, 'field');
+		handler.init();
 
-    it('requires path to be passed', () => {
-        const handler = createDecoratorsHandler({ method: () => {} });
+		expect(spy.console).toHaveBeenCalledTimes(1);
+		expect(spy.console.mock.calls[0][0]).toMatch(createLoggerRegExp('@watch'));
+	});
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        watch()(handler, 'method');
-        handler.init();
+	it('requires path to be passed', () => {
+		const handler = createDecoratorsHandler({ method: () => {} });
 
-        expect(spy.console).toHaveBeenCalledTimes(1);
-        expect(spy.console.mock.calls[0][0]).toBe('Path name must be provided for watch decorator');
-    });
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		watch()(handler, 'method');
+		handler.init();
 
-    it('calls makeReactive under the hood', () => {
-        const handler = createDecoratorsHandler({
-            a: '',
-            method() {}
-        });
+		expect(spy.console).toHaveBeenCalledTimes(1);
+		expect(spy.console.mock.calls[0][0]).toMatch(createLoggerRegExp('@watch'));
+	});
 
-        watch('a')(handler, 'method');
-        handler.init();
+	it('ensures that target is reactive', () => {
+		const target = {
+			a: '',
+			method() {},
+		};
+		const handler = createDecoratorsHandler(target);
 
-        expect(makeReactive).toBeCalledTimes(1);
-    });
+		watch('a')(handler, 'method');
+		handler.init();
 
-    it('binds callback and watched property', () => {
-        const watchSpy = jest.spyOn(ReactiveProxy.prototype, 'watch');
-        const handler = createDecoratorsHandler({
-            b: '',
-            method() {}
-        });
+		expect((handler as WithReactiveProxy)[protectedFields.REACTIVE_PROXY]).toBeInstanceOf(
+			ReactiveProxy
+		);
+	});
 
-        watch('b')(handler, 'method');
-        handler.init();
+	it('passes all arguments to handleCombinedWatch', () => {
+		const instance = { method: () => {} };
+		const handler = createDecoratorsHandler(instance);
+		const source = 'a';
+		const options = {};
 
-        expect(watchSpy).toBeCalledTimes(1);
-        expect(watchSpy.mock.calls[0][0]).toBe('b');
-        expect(watchSpy.mock.calls[0][1]).toBeInstanceOf(Function);
-    });
+		watch(source, options)(handler, 'method');
+		handler.init();
 
-    it('applies immediate check', () => {
-        const stubFn = jest.fn();
-        const handler = createDecoratorsHandler({
-            a: '',
-            method() {
-                stubFn();
-            }
-        });
+		expect((handleCombinedWatch as jest.Mock).mock.calls[0][0]).toBe(handler);
+		expect((handleCombinedWatch as jest.Mock).mock.calls[0][1]).toBe(source);
+		expect((handleCombinedWatch as jest.Mock).mock.calls[0][2]).toBeInstanceOf(Function);
+		expect((handleCombinedWatch as jest.Mock).mock.calls[0][3]).toBe(options);
+	});
 
-        watch('a', { immediate: true })(handler, 'method');
-        handler.init();
+	it(`binds method to 'this' instance`, () => {
+		const methodStub = jest.fn();
+		const instance = {
+			a: {},
+			method() {
+				methodStub(this.a);
+			},
+		};
+		const handler = createDecoratorsHandler(instance);
 
-        expect(stubFn).toBeCalledTimes(1);
-    });
+		watch('a', { immediate: true })(handler, 'method');
+		handler.init();
 
-    it('destroyes ReactiveProxy when destructor is called', () => {
-        const destroySpy = jest.spyOn(ReactiveProxy.prototype, 'destroy');
-        const handler = createDecoratorsHandler({
-            a: '',
-            method() {}
-        });
+		expect(methodStub.mock.calls[0][0]).toBe(instance.a);
+	});
 
-        watch('a', { immediate: true })(handler, 'method');
-        handler.init();
-        handler.destroy();
+	it('destroyes watcher when destructor is called', () => {
+		const handler = createDecoratorsHandler({
+			a: '',
+			method() {},
+		});
 
-        expect(destroySpy).toBeCalledTimes(1);
-    });
+		watch('a')(handler, 'method');
+		handler.init();
+		handler.destroy();
+
+		expect((handleCombinedWatch as jest.Mock).mock.results[0].value).toBeCalledTimes(1);
+	});
 });

@@ -1,6 +1,6 @@
 {
   "name": "@ovee.js/content-loader",
-  "version": "2.0.0",
+  "version": "2.1.0-alpha.0",
   "private": false,
   "description": "Content loader module for for ovee.js",
   "author": "Owls Department",
@@ -13,7 +13,7 @@
   "devDependencies": {
     "install-peers-cli": "^2.2.0",
     "ttypescript": "^1.5.11",
-    "typescript": "3.9.7",
+    "typescript": "^4.2.0",
     "typescript-transform-paths": "^2.0.0"
   },
   "peerDependencies": {
@@ -33,6 +33,7 @@
   },
   "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11",
   "dependencies": {
-    "ovee.js": "^2.0.7"
-  }
+    "ovee.js": "^2.1.0-alpha.0"
+  },
+  "gitHead": "803d4b89d6092ef596e4f5cbac4c86a3af835487"
 }

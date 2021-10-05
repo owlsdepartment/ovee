@@ -7,57 +7,62 @@ const { history, dom, request } = Barba;
 export const DEFAULT_TIMEOUT = 20000;
 
 export interface ContentLoaderOptions {
-    timeout?: number;
-    resolvers?: Record<string, ResolverClass>;
+	timeout?: number;
+	resolvers?: Record<string, ResolverClass>;
 }
 
 export class ContentLoader extends Module<ContentLoaderOptions> {
-    timeout = DEFAULT_TIMEOUT;
-    resolvers: Record<string, ResolverClass> = {}
+	timeout = DEFAULT_TIMEOUT;
+	resolvers: Record<string, ResolverClass> = {};
 
-    init(): void {
-        this.timeout = this.options.timeout ?? DEFAULT_TIMEOUT;
-        this.resolvers = this.options.resolvers ?? {};
-    }
+	init(): void {
+		this.timeout = this.options.timeout ?? DEFAULT_TIMEOUT;
+		this.resolvers = this.options.resolvers ?? {};
+	}
 
-    getResolver(name: string): ResolverClass | false {
-        if (this.resolvers[name] === undefined) {
-            console.error(`Resolver not registered for key ${name}`);
+	getResolver(name: string): ResolverClass | false {
+		if (this.resolvers[name] === undefined) {
+			console.error(`Resolver not registered for key ${name}`);
 
-            return false;
-        }
+			return false;
+		}
 
-        return this.resolvers[name];
-    }
+		return this.resolvers[name];
+	}
 
-    async loadPage(url: string, resolverName: string, target: Element | null = null, pushState = true): Promise<void> {
-        const ResolverCtor = this.getResolver(resolverName);
+	async loadPage(
+		url: string,
+		resolverName: string,
+		target: Element | null = null,
+		pushState = true
+	): Promise<void> {
+		const ResolverCtor = this.getResolver(resolverName);
 
-        if (!ResolverCtor) {
-            return;
-        }
+		if (!ResolverCtor) {
+			return;
+		}
 
-        const resolver = new ResolverCtor(this.$app, target, url, pushState);
-        const requestPage = request(url, this.timeout, (_url, err) => {
-            console.error(`[ContentLoader] Error while requesting ${_url}`, err);
+		const resolver = new ResolverCtor(this.$app, target, url, pushState);
+		const requestPage = request(url, this.timeout, (_url, err) => {
+			console.error(`[ContentLoader] Error while requesting ${_url}`, err);
 
-            return false;
-        });
+			return false;
+		});
 
-        await resolver.contentOut();
+		await resolver.contentOut();
 
-        const content = dom.toDocument(await requestPage);
+		const content = dom.toDocument(await requestPage);
 
-        if (resolver.pushState && resolver.shouldPushState) {
-            document.title = content.title;
-            history.add(url, 'barba');
-        }
+		if (resolver.pushState && resolver.shouldPushState) {
+			document.title = content.title;
+			history.add(url, 'barba');
+		}
 
-        await resolver.updateContent(content);
-        await resolver.contentIn();
-    }
+		await resolver.updateContent(content);
+		await resolver.contentIn();
+	}
 
-    static getName(): string {
-        return 'ContentLoader';
-    }
+	static getName(): string {
+		return 'ContentLoader';
+	}
 }

@@ -1,6 +1,6 @@
 {
   "name": "ovee.js",
-  "version": "2.0.7",
+  "version": "2.1.0-alpha.0",
   "description": "A modern, optionally reactive framework for markup you already have",
   "author": "Jakub Przyborowski",
   "license": "MIT",
@@ -18,20 +18,24 @@
     "/dist"
   ],
   "dependencies": {
-    "lit-html": "^1.1.2",
-    "on-change": "^1.6.2"
+    "@vue/reactivity": "^3.2.6",
+    "@vue/runtime-core": "^3.2.6",
+    "lit-html": "^1.1.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
     "@types/jsdom": "^16.2.3",
+    "@zerollup/ts-transform-paths": "^1.7.18",
     "acorn": "^6.0.0",
     "acorn-dynamic-import": "^4.0.0",
     "cross-env": "^5.2.0",
-    "jest": "^26.4.0",
+    "jest": "^27.1.0",
     "jsdom": "^16.4.0",
     "resolve-url-loader": "3.1.0",
+    "ts-jest": "^27.0.5",
     "ttypescript": "^1.5.11",
-    "typescript": "3.9.7",
-    "typescript-transform-paths": "^2.0.0"
+    "typescript": "^4.2.0"
   },
   "scripts": {
     "test": "node -v && npm run test:unit",
@@ -41,8 +45,8 @@
     "lint:no-fix": "eslint ./src",
     "build": "ttsc",
     "clean": "rm -rf ./dist",
-    "prepare": "npm run clean && npm run build"
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11",
-  "gitHead": "6bb8cbd08616b715a882e06a598410b28dfe2fa2"
+  "gitHead": "803d4b89d6092ef596e4f5cbac4c86a3af835487"
 }

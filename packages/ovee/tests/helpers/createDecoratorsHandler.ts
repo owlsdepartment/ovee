@@ -1,30 +1,31 @@
+import InstanceDecorators from 'src/core/InstanceDecorators';
 import * as protectedFields from 'src/core/protectedFields';
-import { WithInstanceDecorators, WithInstanceDestructors, WithElement } from 'src/core/types';
+import { WithElement } from 'src/core/types';
 
-interface DecoratorsHandler extends Required<WithInstanceDecorators & WithInstanceDestructors> {
-    init(): void;
-    destroy(): void;
+interface DecoratorsHandler extends Required<typeof InstanceDecorators> {
+	init(): void;
+	destroy(): void;
 }
 
-interface Options extends WithElement {}
+type Options = WithElement;
 
-function createDecoratorsHandler<
-    T extends object, O extends Options
->(base: T, options?: O): T & DecoratorsHandler & O {
-    return {
-        ...base,
-        ...options ?? {} as any,
-        [protectedFields.INSTANCE_DECORATORS]: [],
-        [protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]: [],
+export function createDecoratorsHandler<T extends object, O extends Options>(
+	base: T,
+	options?: O
+): T & O & DecoratorsHandler {
+	class Handler extends InstanceDecorators {
+		init() {
+			this[protectedFields.INITIALIZE_DECORATORS]();
+		}
 
-        init() {
-            this[protectedFields.INSTANCE_DECORATORS].forEach((fn) => fn(this));
-        },
+		destroy() {
+			this[protectedFields.DESTROY_DECORATORS]();
+		}
+	}
+	const ret = new Handler();
 
-        destroy() {
-            this[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS].forEach((fn) => fn(this));
-        }
-    };
+	Object.assign(ret, base);
+	Object.assign(ret, options);
+
+	return ret as any;
 }
-
-export default createDecoratorsHandler;

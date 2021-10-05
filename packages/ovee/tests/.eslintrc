@@ -1,6 +1,6 @@
 {
     "env": {
-        "jest/globals": true
+        "jest": true
     },
     "rules": {
         "no-undef": 0,

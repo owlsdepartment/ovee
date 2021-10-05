@@ -1,139 +1,109 @@
 /* eslint-disable max-classes-per-file */
-import { JSDOM } from 'jsdom';
 import { html, render } from 'lit-html';
-
 import App from 'src/core/App';
 import Component from 'src/core/Component';
 import TemplateComponent from 'src/core/TemplateComponent';
-import EventDelegate from 'src/dom/EventDelegate';
-import attachMutationObserver from 'src/utils/attachMutationObserver';
+import { createComponent } from 'tests/helpers';
 
-jest.mock('../../../src/core/App');
-jest.mock('../../../src/dom/EventDelegate');
-jest.mock('../../../src/utils/attachMutationObserver');
 jest.mock('lit-html', () => ({
-    __esModule: true,
-    html: jest.fn().mockImplementation(String.raw),
-    render: jest.fn()
+	__esModule: true,
+	html: jest.fn().mockImplementation(String.raw),
+	render: jest.fn(),
 }));
 
-const dom = new JSDOM('<!DOCTYPE html>');
-
 describe('TemplateComponent class', () => {
-    let _orgMutationObserver: typeof MutationObserver;
+	beforeEach(async () => {
+		await waitForFrame();
+		(html as jest.Mock).mockClear();
+		(render as jest.Mock).mockClear();
+	});
 
-    beforeAll(() => {
-        _orgMutationObserver = window.MutationObserver;
-        window.MutationObserver = jest.fn();
-        (window.MutationObserver as jest.Mock).mockImplementation(() => ({
-            disconnect: jest.fn(),
-            observe: jest.fn()
-        }));
+	it('should extend Component', () => {
+		const element = document.createElement('div');
+		const app = new App();
+		const options = {};
 
-        (EventDelegate as jest.Mock).mockImplementation(() => ({
-            on: jest.fn(),
-            off: jest.fn(),
-            emit: jest.fn(),
-            destroy: jest.fn()
-        }));
+		const component = new TemplateComponent(element, app, options);
 
-        (attachMutationObserver as jest.Mock).mockImplementation(() => ({
-            observe: jest.fn(),
-            disconnect: jest.fn(),
-            takeRecords: jest.fn()
-        }));
-    });
+		expect(component).toBeInstanceOf(Component);
+	});
 
-    afterAll(() => {
-        window.MutationObserver = _orgMutationObserver;
-    });
+	it('should expose html property', () => {
+		const element = document.createElement('div');
+		const app = new App();
+		const options = {};
 
-    beforeEach(() => {
-        (App as jest.Mock).mockClear();
-        (EventDelegate as jest.Mock).mockClear();
-        (attachMutationObserver as jest.Mock).mockClear();
-    });
+		const component = new TemplateComponent(element, app, options);
 
-    it('should extend Component', () => {
-        const element = dom.window.document.createElement('div');
-        const app = new App();
-        const options = {};
+		expect(component.html).toBe(html);
+	});
 
-        const component = new TemplateComponent(element, app, options);
+	it('should render as soon as initialized', async () => {
+		const element = document.createElement('div');
+		const app = new App();
+		const options = {};
 
-        expect(component).toBeInstanceOf(Component);
-    });
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const component = new TemplateComponent(element, app, options);
 
-    it('should expose html property', () => {
-        const element = dom.window.document.createElement('div');
-        const app = new App();
-        const options = {};
+		await flushPromises();
+		await waitForFrame();
 
-        const component = new TemplateComponent(element, app, options);
+		expect(render).toBeCalledTimes(1);
+	});
 
-        expect(component.html).toBe(html);
-    });
+	it('should call lit-html render when update is requested', async () => {
+		const element = document.createElement('div');
+		const app = new App();
+		const options = {};
+		const templateString = '<div>Lorem ipsum dolor</div>';
 
-    it('should render as soon as initialized', async () => {
-        await asyncHelper(async (calls) => {
-            const element = dom.window.document.createElement('div');
-            const app = new App();
-            const options = {};
+		const component = new (class extends TemplateComponent {
+			template() {
+				return templateString;
+			}
+		})(element, app, options);
 
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const component = new TemplateComponent(element, app, options);
+		await flushPromises();
+		await waitForFrame();
+		await component.$requestUpdate();
 
-            await calls();
+		expect(render).toBeCalledTimes(2);
+		expect((render as jest.Mock).mock.calls[1][0]).toBe(templateString);
+	});
 
-            expect(render).toBeCalledTimes(1);
-        });
-    });
+	it('should try to rerender only if no rerender is pending', async () => {
+		const element = document.createElement('div');
+		const app = new App();
+		const options = {};
+		const component = new TemplateComponent(element, app, options);
 
-    it('should call lit-html render when update is requested', async () => {
-        await asyncHelper(async (calls) => {
-            const element = dom.window.document.createElement('div');
-            const app = new App();
-            const options = {};
-            const templateString = '<div>Lorem ipsum dolor</div>';
+		await flushPromises();
+		await waitForFrame();
 
-            const component = new class extends TemplateComponent {
-                template() {
-                    return templateString;
-                }
-            }(element, app, options);
+		component.$requestUpdate();
+		await component.$requestUpdate();
+		await waitForFrame();
 
-            await calls();
-            component.$requestUpdate();
+		expect(render).toBeCalledTimes(2);
+	});
 
-            // eslint-disable-next-line no-console
-            expect(render).toBeCalledTimes(2);
-            expect((render as jest.Mock).mock.calls[1][0]).toBe(templateString);
-        });
-    });
+	it('should render empty template by default', () => {
+		const element = document.createElement('div');
+		const app = new App();
+		const options = {};
 
-    it('should try to rerender only if no rerender is pending', async () => {
-        await asyncHelper(async (calls) => {
-            const element = dom.window.document.createElement('div');
-            const app = new App();
-            const options = {};
-            const component = new TemplateComponent(element, app, options);
+		const component = new TemplateComponent(element, app, options);
 
-            await calls();
+		expect(component.template()).toBe('');
+	});
 
-            component.$requestUpdate();
-            component.$requestUpdate();
+	it('stopsRerenderWatch on destroy', () => {
+		const test = createComponent(TemplateComponent);
+		const stopWatchSpy = jest.spyOn(test, 'stopWatch' as any);
 
-            expect(requestAnimationFrame).toBeCalledTimes(1);
-        });
-    });
+		test.$destroy();
 
-    it('should render empty template by default', () => {
-        const element = dom.window.document.createElement('div');
-        const app = new App();
-        const options = {};
-
-        const component = new TemplateComponent(element, app, options);
-
-        expect(component.template()).toBe('');
-    });
+		expect(stopWatchSpy).toBeCalledTimes(1);
+	});
 });

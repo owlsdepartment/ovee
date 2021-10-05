@@ -1,38 +1,29 @@
 import Component from 'src/core/Component';
-import ReactiveProxy from 'src/reactive/ReactiveProxy';
-
-import { Dictionary } from '../utils/types';
-import * as protectedFields from './protectedFields';
+import * as protectedFields from 'src/core/protectedFields';
+import { ReactiveProxy } from 'src/reactive/ReactiveProxy';
+import { Dictionary } from 'src/utils';
 
 export interface OveeElement {
-    _isOveeCustomElement: boolean;
-    _OveeComponent: Component;
+	_isOveeCustomElement: boolean;
+	_OveeComponent: Component;
 }
 
 export interface OveeComponent {
-    _oveeComponentInstance?: Component;
+	_oveeComponentInstance?: Component;
 }
 
 export interface WithReactiveProxy {
-    __reactiveProxy?: ReactiveProxy;
+	[protectedFields.REACTIVE_PROXY]?: ReactiveProxy;
 }
 
 export interface WithDataParam {
-    __dataParams?: Dictionary<() => void>;
+	__dataParams?: Dictionary<() => void>;
 }
 
 export interface WithElements {
-    __els?: Dictionary<() => void>;
+	__els?: Dictionary<() => void>;
 }
 
 export interface WithElement {
-    readonly $element: Element;
-}
-
-export interface WithInstanceDecorators {
-    [protectedFields.INSTANCE_DECORATORS]?: ((ctx: any) => any)[];
-}
-
-export interface WithInstanceDestructors {
-    [protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]?: ((ctx: any) => any)[];
+	readonly $element: Element;
 }

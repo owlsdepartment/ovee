@@ -1,19 +1,23 @@
+import InstanceDecorators from 'src/core/InstanceDecorators';
 import * as protectedFields from 'src/core/protectedFields';
-import { WithInstanceDestructors } from 'src/core/types';
+import { Logger } from 'src/errors';
 
-type Callback<T> = (ctx: T) => any
+type Callback<T> = (ctx: T) => any;
 
-function instanceDecoratorDestructor<T>(instance: T & WithInstanceDestructors, callback: Callback<T>): void {
-    if (typeof (callback) !== 'function') {
-        console.error('callback passed to instanceDecoratorDestructor should be a function');
-        return;
-    }
+const logger = new Logger('instanceDecoratorDestructor');
 
-    if (!instance[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]) {
-        instance[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS] = [];
-    }
+export function instanceDecoratorDestructor<T = any>(target: any, callback: Callback<T>): void {
+	if (typeof callback !== 'function') {
+		logger.error('callback passed to instanceDecoratorDestructor should be a function');
 
-    instance[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]!.push(callback);
+		return;
+	}
+
+	const ctor = target.constructor as typeof InstanceDecorators;
+
+	if (!ctor[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]) {
+		ctor[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS] = [];
+	}
+
+	ctor[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]!.push(callback);
 }
-
-export default instanceDecoratorDestructor;

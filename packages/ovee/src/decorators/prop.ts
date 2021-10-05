@@ -1,26 +1,31 @@
 import { WithElement } from 'src/core/types';
-import instanceDecoratorFactory from 'src/utils/instanceDecoratorFactory';
+import { Logger } from 'src/errors';
+import instanceDecoratorFactory, { DecoratorContext } from 'src/utils/instanceDecoratorFactory';
 
-export default instanceDecoratorFactory((instance: WithElement, instancePropName, elementPropName?: string) => {
-    const originalKey = Symbol(instancePropName);
+const logger = new Logger('@prop');
 
-    elementPropName = elementPropName || instancePropName;
+export default instanceDecoratorFactory(
+	({ instance }: DecoratorContext<WithElement>, instancePropName, elementPropName?: string) => {
+		const originalKey = Symbol(instancePropName);
 
-    if (typeof (instance as any)[instancePropName] === 'function') {
-        console.error('Prop decorator should be only applied to a property');
-    } else {
-        Reflect.set(instance, instancePropName, Reflect.get(instance.$element, elementPropName));
-        Reflect.set(instance.$element, originalKey, Reflect.get(instance.$element, elementPropName));
+		elementPropName = elementPropName || instancePropName;
 
-        Object.defineProperty(instance.$element, elementPropName, {
-            configurable: true,
-            get() {
-                return Reflect.get(instance.$element, originalKey);
-            },
-            set(v) {
-                Reflect.set(instance.$element, originalKey, v);
-                Reflect.set(instance, instancePropName, v);
-            }
-        });
-    }
-});
+		if (typeof (instance as any)[instancePropName] === 'function') {
+			return logger.error('Decorator should only be applied to a property');
+		}
+
+		Reflect.set(instance, instancePropName, Reflect.get(instance.$element, elementPropName));
+		Reflect.set(instance.$element, originalKey, Reflect.get(instance.$element, elementPropName));
+
+		Object.defineProperty(instance.$element, elementPropName, {
+			configurable: true,
+			get() {
+				return Reflect.get(instance.$element, originalKey);
+			},
+			set(v) {
+				Reflect.set(instance.$element, originalKey, v);
+				Reflect.set(instance, instancePropName, v);
+			},
+		});
+	}
+);

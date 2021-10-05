@@ -1,18 +1,18 @@
 import { WithReactiveProxy } from 'src/core/types';
-import makeReactive from 'src/reactive/makeReactive';
-import instanceDecoratorDestructor from 'src/utils/instanceDecoratorDestructor';
-import instanceDecoratorFactory from 'src/utils/instanceDecoratorFactory';
+import { Logger } from 'src/errors';
+import { makeComponentReactive } from 'src/reactive';
+import instanceDecoratorFactory, { DecoratorContext } from 'src/utils/instanceDecoratorFactory';
 
-export default instanceDecoratorFactory((instance: WithReactiveProxy, propName) => {
-    if (typeof (instance as any)[propName] === 'function') {
-        console.error('Reactive decorator should be only applied to a property');
-    } else {
-        const reactiveProxy = makeReactive(instance);
+const logger = new Logger('@reactive');
 
-        reactiveProxy.enableFor(propName);
+export default instanceDecoratorFactory(
+	({ instance }: DecoratorContext<WithReactiveProxy>, propName) => {
+		if (typeof instance[propName] === 'function') {
+			return logger.error('Decorator should only be applied to a property');
+		}
 
-        instanceDecoratorDestructor(instance, () => {
-            reactiveProxy.destroy();
-        });
-    }
-});
+		const reactiveProxy = makeComponentReactive(instance);
+
+		reactiveProxy.enableFor(propName);
+	}
+);

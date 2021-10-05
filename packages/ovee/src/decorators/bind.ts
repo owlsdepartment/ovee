@@ -1,23 +1,38 @@
 import Component from 'src/core/Component';
 import { Callback } from 'src/dom/EventDelegate';
-import instanceDecoratorFactory from 'src/utils/instanceDecoratorFactory';
+import { Logger } from 'src/errors/Logger';
+import instanceDecoratorFactory, { DecoratorContext } from 'src/utils/instanceDecoratorFactory';
 
-type OnArgs = [string, string, Callback<Component>]
+type OnArgs = [string, Element, string, Callback<Component>];
 
-export default instanceDecoratorFactory((instance: Component, methodName, eventName: string, selector?: string) => {
-    if (typeof (instance as any)[methodName] !== 'function') {
-        console.error('Bind decorator should be only applied to a function');
-    } else if (!eventName) {
-        console.error('Event name must be provided for bind decorator');
-    } else {
-        const callback: Callback<Component> = (instance as any)[methodName].bind(instance);
-        const args: any[] = [eventName];
+const logger = new Logger('@bind');
 
-        if (selector) {
-            args.push(selector);
-        }
-        args.push(callback);
+export default instanceDecoratorFactory(
+	(
+		{ instance }: DecoratorContext<Component>,
+		methodName,
+		eventName: string,
+		target?: string | Element,
+		selector?: string
+	) => {
+		if (typeof (instance as any)[methodName] !== 'function') {
+			return logger.error('Bind decorator should be only applied to a function');
+		}
+		if (!eventName) {
+			return logger.error('Event name must be provided for bind decorator');
+		}
 
-        instance.$on(...args as OnArgs);
-    }
-});
+		const callback: Callback<Component> = (instance as any)[methodName].bind(instance);
+		const args: any[] = [eventName];
+
+		if (target) {
+			args.push(target);
+		}
+		if (selector) {
+			args.push(selector);
+		}
+		args.push(callback);
+
+		instance.$on(...(args as OnArgs));
+	}
+);

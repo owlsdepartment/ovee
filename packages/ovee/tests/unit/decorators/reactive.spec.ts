@@ -1,54 +1,51 @@
-import reactive from 'src/decorators/reactive';
-import ReactiveProxy from 'src/reactive/ReactiveProxy';
-import makeReactive from 'src/reactive/makeReactive';
-import createDecoratorsHandler from 'tests/helpers/createDecoratorsHandler';
+import { reactive } from 'src/decorators';
+import { makeComponentReactive, ReactiveProxy } from 'src/reactive';
+import { createDecoratorsHandler, createLoggerRegExp } from 'tests/helpers';
 
-jest.mock('src/reactive/makeReactive', () => ({
-    __esModule: true,
-    default: jest.fn((instance) => new ReactiveProxy(instance))
-}));
+jest.mock('src/reactive/makeComponentReactive', () => {
+	const originalModule = jest.requireActual('src/reactive/makeComponentReactive');
+
+	return {
+		__esModule: true,
+		...originalModule,
+		makeComponentReactive: jest.fn(originalModule.makeComponentReactive),
+	};
+});
 
 describe('@reactive decorator', () => {
-    const consoleSpy = spyConsole('error');
+	const consoleSpy = spyConsole('error');
 
-    it('logs error when applied on field other than class property', () => {
-        const handler = createDecoratorsHandler({ method() {} });
+	beforeEach(() => {
+		(makeComponentReactive as jest.Mock).mockClear();
+	});
 
-        reactive()(handler, 'method');
-        handler.init();
+	it('logs error when applied on field other than class property', () => {
+		const handler = createDecoratorsHandler({ method() {} });
 
-        expect(consoleSpy.console).toHaveBeenCalledTimes(1);
-        expect(consoleSpy.console.mock.calls[0][0]).toBe('Reactive decorator should be only applied to a property');
-    });
+		reactive()(handler, 'method');
+		handler.init();
 
-    it('calls makeReactive under the hood', () => {
-        const handler = createDecoratorsHandler({ field: '' });
+		expect(consoleSpy.console).toHaveBeenCalledTimes(1);
+		expect(consoleSpy.console.mock.calls[0][0]).toMatch(createLoggerRegExp('@reactive'));
+	});
 
-        reactive()(handler, 'field');
-        handler.init();
+	it('calls makeComponentReactive under the hood', () => {
+		const handler = createDecoratorsHandler({ field: '' });
 
-        expect(makeReactive).toBeCalledTimes(1);
-    });
+		reactive()(handler, 'field');
+		handler.init();
 
-    it('enables ReactiveProxy for decorated field', () => {
-        const enableForSpy = jest.spyOn(ReactiveProxy.prototype, 'enableFor');
-        const handler = createDecoratorsHandler({ field: '' });
+		expect(makeComponentReactive).toBeCalledTimes(1);
+	});
 
-        reactive()(handler, 'field');
-        handler.init();
+	it('enables ReactiveProxy for decorated field', () => {
+		const enableForSpy = jest.spyOn(ReactiveProxy.prototype, 'enableFor');
+		const handler = createDecoratorsHandler({ field: '' });
 
-        expect(enableForSpy).toBeCalledTimes(1);
-        expect(enableForSpy.mock.calls[0][0]).toBe('field');
-    });
+		reactive()(handler, 'field');
+		handler.init();
 
-    it('destroyes ReactiveProxy when destructor is called', () => {
-        const destroySpy = jest.spyOn(ReactiveProxy.prototype, 'destroy');
-        const handler = createDecoratorsHandler({ field: '' });
-
-        reactive()(handler, 'field');
-        handler.init();
-        handler.destroy();
-
-        expect(destroySpy).toBeCalledTimes(1);
-    });
+		expect(enableForSpy).toBeCalledTimes(1);
+		expect(enableForSpy.mock.calls[0][0]).toBe('field');
+	});
 });

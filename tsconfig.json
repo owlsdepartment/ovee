@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
         "declaration": true,
-        "module": "commonjs",
+        "module": "ESNext",
         "moduleResolution": "node",
         "noImplicitAny": true,
         "lib": ["ES2017", "ES7", "ES6", "DOM"],
-        "target": "ES6",
+        "target": "ESNext",
         "strict": true,
         "experimentalDecorators": true,
         "esModuleInterop": true,
@@ -14,8 +14,7 @@
             "ovee": ["packages/ovee/src"]
         },
         "plugins": [
-            { "transform": "typescript-transform-paths" },
-            { "transform": "typescript-transform-paths", "afterDeclarations": true }
+            { "transform": "@zerollup/ts-transform-paths" }
         ]
     },
     "exclude": [

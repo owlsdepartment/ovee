@@ -1,33 +1,39 @@
-import { WithReactiveProxy } from 'src/core/types';
-import { WatcherCallback } from 'src/reactive/ReactiveProxy';
-import makeReactive from 'src/reactive/makeReactive';
-import instanceDecoratorDestructor from 'src/utils/instanceDecoratorDestructor';
-import instanceDecoratorFactory from 'src/utils/instanceDecoratorFactory';
+import { WithReactiveProxy } from 'src/core';
+import { Logger } from 'src/errors';
+import {
+	handleCombinedWatch,
+	makeComponentReactive,
+	MultiWatchSources,
+	WatchCallback,
+	WatchOptions,
+	WatchSource,
+} from 'src/reactive';
+import { DecoratorContext, instanceDecoratorFactory } from 'src/utils';
 
-export interface WatchOptions {
-    immediate?: boolean;
-}
+const logger = new Logger('@watch');
 
 export default instanceDecoratorFactory(
-    (instance: WithReactiveProxy, methodName, path: string, options: WatchOptions = {}) => {
-        const method: WatcherCallback<any> = (instance as any)[methodName];
+	(
+		{ instance, addDestructor }: DecoratorContext<WithReactiveProxy>,
+		methodName,
+		source: string | WatchSource | MultiWatchSources,
+		options: WatchOptions = {}
+	) => {
+		const method: WatchCallback = instance[methodName];
 
-        if (typeof (method) !== 'function') {
-            console.error('Watch decorator should be only applied to a function');
-        } else if (!path) {
-            console.error('Path name must be provided for watch decorator');
-        } else {
-            const reactiveProxy = makeReactive(instance);
+		if (typeof method !== 'function') {
+			return logger.error('Decorator should only be applied to a function');
+		}
+		if (!source) {
+			return logger.error('Path name or source must be provided');
+		}
 
-            reactiveProxy.watch(path, method.bind(instance));
+		const callback = method.bind(instance);
 
-            if (options.immediate === true) {
-                method.apply(instance, [(instance as any)[path], undefined, path]);
-            }
+		makeComponentReactive(instance);
 
-            instanceDecoratorDestructor(instance, () => {
-                reactiveProxy.destroy();
-            });
-        }
-    }
+		const destroyWatcher = handleCombinedWatch(instance, source, callback, options);
+
+		addDestructor(() => destroyWatcher());
+	}
 );
