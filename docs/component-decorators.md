@@ -40,7 +40,8 @@ Bind method as a callback for specified event listeners. Automaticlly removes th
 
 Parameters:
  - `events: string` - string of space separated events to listen to.
- - `selector?: string` - optional selector for which child element bind listeners. If not specified, root element will be used.
+ - `target?: string | Element` - optional selector or specific element for which child element bind listeners. If not specified, root element will be used.
+ - `selector?: string` - optional selector. If target was specified, selector will be used relatively to passed target and listener will be bound to found element
 
 Example:
 ```js
@@ -53,13 +54,23 @@ class extends Component {
 
     @bind('click', '.base__submit')
     onSubmit() {
-        // ...   
+        // ...
+    }
+
+    @bind('resize', window)
+    onResize() {
+        // ...
+    }
+
+    @bind('click', '.dialog--upper', '.close-button')
+    onCloseDialog() {
+        // ...
     }
 }
 ```
 
 ## @reactive
-Makes property reactive by using [Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy).
+Makes property reactive by using [`makeReactive`](/reactivity#makeReactive).
 
 Example:
 ```js
@@ -113,10 +124,10 @@ class extends Component {
 ```
 
 ## @watch
-Watch given path and call method that decorates, when value under given path change. Can only watch properties, that are marked as reactive.
+Watch given path and call method that decorates, when value under given path change. Can only watch properties, that are marked as reactive. Uses [`doWatch`](/reactivity#doWatch) underneath.
 
 Parameters:
- - `path: string` - path to watch under `this`, f.ex.: `counter`, `obj.a`.
+ - `path: string | WatchSource | Array<WatchSource | object>` - source to watch. If source is path, than it's path to watch under `this`, f.ex.: `counter`, `obj.a`. Otherwise, it needs to be either: `ref` or `makeComputed` instance, `function` that returns reactive value like: `() => data.test`, or multisource as `array` of previous options. More on that in [`doWatch`](/reactivity#doWatch)
  - `options?: { immediate?: boolean }` - optional object with property `immediate`. When set to `true`, decorated method will be called immediatly after init. In other case, it will be called only after watched value changes.
 
 Example:
@@ -140,3 +151,81 @@ class extends Component {
     }
 }
 ```
+
+## @watchEffect
+Works almost the same way as `@watch`, but don't require from you to specify what sources to watch for.
+If you reference reactive value inside, `@watchEffect` will catch it and remember, so it's actually much more pleasent to use than classic `@watch`.
+
+Also, in opposite to `@watch`, `@watchEffect` will run almost immediately after declaration as it needs to catch initial reactive references. Uses [`doWatchEffect`](/reactivity#doWatchEffect) underneath.
+
+Example:
+```js
+@register('baseComponent')
+class extends Component {
+    @reactive()
+    counter = 0
+
+    counterText = ''
+
+    @watchEffect()
+    updateCounterText() {
+        this.counterText = `Current counter value: ${this.counter}`;
+        this.$element.innerHTML = this.counterText;
+    }
+
+    init() {
+        setInterval(() => {
+            // this will make the counter update every 1s
+            // and will cause our innerHTML to update as well
+            this.counter += 1;
+        }, 1000)
+    }
+}
+```
+
+
+## @computed
+Creates a reactive function that is lazy and caches it's last result. It also works when reactive objects and reevaluates only if any reactive reference inside was changed.
+
+It's the same concept and implementation as Vue's `computed`.
+
+This decorator can only be used on a `get` accessor.
+
+Example:
+```js
+import { ref } from 'ovee.js'
+
+// we can use external reactive variable
+const counter = ref(0)
+
+@register('baseComponent')
+class extends Component {
+    multiplier = 2
+
+    @computed()
+    get multipliedCounter() {
+        return counter.value * this.multiplier;
+    }
+
+    init() {
+        // counter: 0, multiplier: 2
+        console.log(this.multipliedCounter) // 0
+
+        counter.value += 1;
+        // counter: 1, multiplier: 2
+        console.log(this.multipliedCounter) // 2
+
+        this.multiplier = 4;
+        // we changed multiplier value, but computed is not reevaluated,
+        // because multiplier is not reactive
+        // counter: 1, multiplier: 4
+        console.log(this.multipliedCounter) // 2
+
+        counter.value += 1
+        // counter: 2, multiplier: 4
+        console.log(this.multipliedCounter) // 8
+    }
+}
+```
+
+Computed properties can freely be used inside `TemplateComponent's` `template` method and will trigger rerender.

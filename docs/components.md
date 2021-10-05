@@ -143,11 +143,6 @@ export default class extends Component {
             .$on('focus blur', this.onFocusChange);
     }
 
-    destroy() {
-        this.$off('click', '.counter__button', this.onButtonClick)
-            .$off('focus blur', this.onFocusChange);
-    }
-
     onButtonClick() {
         // handle click
     }
@@ -158,7 +153,7 @@ export default class extends Component {
 }
 ```
 
-Notice, that when using `$on` we have to use coresponding method `$off` to remove event listeners. Decorator `@bind` do this automatically fo us. `@bind` also uses `$on` and `$off` underhood.
+Notice, that we don't have to remove those listeners. When component is being destroyed, they are automatically removed. If you would like to remove listener earlier, for any reason, you can do it manually by using `$off`. Decorator `@bind` uses `$on` internally.
 
 Full signature for methods `$on` and `$off`:
 
@@ -203,15 +198,35 @@ export default class extends Component {
 Now we will be notified when `counter` is changed.
 
 Decorator `@watch` accepts two arguments:
- - path to watch (could be something like `obj.a`)
+ - `watchSource` - string path to component reactive property (could be something like `obj.a`), `ref` instance, or method that returns value from reactive object (more details in [@watch](/component-decorators.md#watch) section)
  - optional object with field `immediate` that accepts `boolean`. If `immediate` is `true`, watching method will be called immediatly after component initialization with current value. In other case, it will be called only when something changes.
 
-Method, that we decorate, will receive 3 arguments:
+Method, that we decorate, will receive 2 arguments:
  - current value
  - previous value
- - path that we are watching
 
 __Important!__ `@watch` can only watch properties marked as `@reactive` as in `Ovee.js` nothing is reactive by default in opposite to frameworks like `Vue`, `React` or `Angular`.
+
+__Deprecation Note:__ In `Ovee,js` versions below `2.1`, watch callback received 3rd argument, watch path, which was removed as of `2.1`.
+
+Since `v2.1`, we can also use another decorator `@watchEffect`, which doesn't require specific watch source. It automatically catches all reactive references.
+
+Example:
+```js
+export default class extends Component {
+    @reactive()
+    counter = 0;
+
+    @watchEffect()
+    onCounterChange() {
+        console.log(`Counter was changed to: ${this.counter}`)
+    }
+}
+```
+
+`@watchEffect` runs immediately and on a first run does magic with gathering necessary references. More on that: [@watchEffect](/component-decorators.md#watcheffect)
+
+You can read more about `reactivity` in [Reactivity overview](/reactivity/overview).
 
 ## Template Components
 In earlier example, with `counter` component, we had to update DOM manually when `this.counter` value was changed. But we can do it easier, by using `TemplateComponent` and implementing it's method `template`. Example:
@@ -245,6 +260,8 @@ export default class extends TemplateComponent {
 
 We do not need `valueElement` property and `update` method. If property used in `template` method is reactive, DOM will be updated automatically.
 
-Sometimes, you would like to do something after whole template would be rerendered. Then you can use `this.$requestUpdate()` method that returns `Promise` that will resolve after rerender.
+Sometimes, you would like to force template to rerender, because of some non-reactive change. Then you can use `this.$requestUpdate()` method that returns `Promise` that will resolve after rerender.
 
-To render template, template components uses [`lit-html`](https://github.com/polymer/lit-html). Guide: <https://lit-html.polymer-project.org/guide>. We are also recomending some tools and helpers for `lit-html` to use with your IDE: <https://lit-html.polymer-project.org/guide/tools#ide-plugins> or for `VS Code`: <https://marketplace.visualstudio.com/items?itemName=bierner.lit-html>.
+To render template, template components uses [`lit-html`](https://github.com/polymer/lit-html). Guide: <https://lit-html.polymer-project.org/guide>.
+
+We are also recomending some tools and helpers for `lit-html` to use with your IDE: <https://lit-html.polymer-project.org/guide/tools#ide-plugins> or for `VS Code`: <https://marketplace.visualstudio.com/items?itemName=bierner.lit-html>.

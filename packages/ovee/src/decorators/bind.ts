@@ -3,12 +3,18 @@ import { Callback } from 'src/dom/EventDelegate';
 import { Logger } from 'src/errors/Logger';
 import instanceDecoratorFactory, { DecoratorContext } from 'src/utils/instanceDecoratorFactory';
 
-type OnArgs = [string, string, Callback<Component>];
+type OnArgs = [string, Element, string, Callback<Component>];
 
 const logger = new Logger('@bind');
 
 export default instanceDecoratorFactory(
-	({ instance }: DecoratorContext<Component>, methodName, eventName: string, selector?: string) => {
+	(
+		{ instance }: DecoratorContext<Component>,
+		methodName,
+		eventName: string,
+		target?: string | Element,
+		selector?: string
+	) => {
 		if (typeof (instance as any)[methodName] !== 'function') {
 			return logger.error('Bind decorator should be only applied to a function');
 		}
@@ -19,6 +25,9 @@ export default instanceDecoratorFactory(
 		const callback: Callback<Component> = (instance as any)[methodName].bind(instance);
 		const args: any[] = [eventName];
 
+		if (target) {
+			args.push(target);
+		}
 		if (selector) {
 			args.push(selector);
 		}
