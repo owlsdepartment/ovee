@@ -40,4 +40,22 @@ describe('Instance Decorators System', () => {
 		expect(decoratorCb1.mock.calls[0][0].instance).toBe(instance);
 		expect(decoratorCb2.mock.calls[0][0].instance).toBe(instance);
 	});
+
+	it('makes decorators reusabel between multiple instances', () => {
+		const decoratorCb = jest.fn();
+		const decorator = jest.fn(instanceDecoratorFactory(decoratorCb)());
+
+		class TestComponent extends Component {
+			@decorator
+			test: any;
+		}
+
+		const instance1 = createComponent(TestComponent);
+		const instance2 = createComponent(TestComponent);
+
+		expect(decorator).toHaveBeenCalledTimes(1);
+		expect(decoratorCb).toHaveBeenCalledTimes(2);
+		expect(decoratorCb.mock.calls[0][0].instance).toBe(instance1);
+		expect(decoratorCb.mock.calls[1][0].instance).toBe(instance2);
+	});
 });
