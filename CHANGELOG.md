@@ -1,3 +1,12 @@
+# [2.1.1](https://github.com/owlsdepartment/ovee/compare/v2.1.0...v) (2021-10-27)
+
+
+### Bug Fixes
+
+* Component decorators would not work if Component was used more than one time ([5564173](https://github.com/owlsdepartment/ovee/commit/55641732e9e8604d5b85d0071bbf404d57e62117))
+
+
+
 # [2.1.0](https://github.com/owlsdepartment/ovee/compare/v2.1.0-alpha.0...v2.1.0) (2021-10-05)
 
 
