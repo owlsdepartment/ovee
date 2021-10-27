@@ -1,6 +1,6 @@
 {
   "name": "@ovee.js/content-loader",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "private": false,
   "description": "Content loader module for for ovee.js",
   "author": "Owls Department",
@@ -33,7 +33,7 @@
   },
   "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11",
   "dependencies": {
-    "ovee.js": "^2.1.0"
+    "ovee.js": "^2.1.1"
   },
   "gitHead": "803d4b89d6092ef596e4f5cbac4c86a3af835487"
 }
