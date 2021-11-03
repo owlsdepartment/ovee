@@ -2,6 +2,7 @@
 import barba, { IBarbaOptions, LinkEvent, Trigger } from '@barba/core';
 import barbaCss from '@barba/css';
 import barbaPrefetch from '@barba/prefetch';
+import barbaRouter, { IRoute } from '@barba/router';
 import { Module } from 'ovee.js';
 
 declare module 'ovee.js' {
@@ -22,16 +23,21 @@ type Hook =
 	| 'afterEnter'
 	| 'after';
 
+export type BarbaRoute = IRoute;
+
 export interface OveeBarbaOptions extends IBarbaOptions {
 	useCss?: boolean;
 	usePrefetch?: boolean;
+	useRouter?: boolean;
 	hooks?: BarbaHooks;
+	routes?: BarbaRoute[];
 }
 
 export type BarbaHooks = Partial<Record<Hook, () => any>>;
 
 const defaultOptions: OveeBarbaOptions = {
 	useCss: false,
+	useRouter: false,
 	usePrefetch: true,
 };
 
@@ -46,58 +52,14 @@ export default class extends Module<OveeBarbaOptions> {
 			...this.options,
 		};
 
-		if (this.options.usePrefetch) {
-			barba.use(barbaPrefetch);
-		}
-
-		if (this.options.useCss) {
-			barba.use(barbaCss);
-		}
+		this.usePrefetch();
+		this.useCss();
+		this.useRouter();
 
 		barba.init(this.options);
-
-		barba.hooks.before(() => {
-			this.$app.$emit('barbaBefore');
-			this.callHook('before');
-		});
-
-		barba.hooks.beforeLeave(() => {
-			this.callHook('beforeLeave');
-		});
-
-		barba.hooks.leave(() => {
-			this.callHook('leave');
-		});
-
-		barba.hooks.afterLeave(() => {
-			this.callHook('afterLeave');
-		});
-
-		barba.hooks.beforeEnter(() => {
-			this.callHook('beforeEnter');
-		});
-
-		barba.hooks.enter(data => {
-			const { next } = data ?? {};
-			const { bodyClass } = next!.container.dataset;
-
-			this.$app.getConfig().document.body.classList.value = bodyClass ?? '';
-
-			this.$app.$emit('barbaEnter');
-			this.callHook('enter');
-		});
-
-		barba.hooks.afterEnter(() => {
-			this.callHook('afterEnter');
-		});
-
-		barba.hooks.after(() => {
-			this.$app.$emit('barbaAfter');
-			this.callHook('after');
-		});
+		this.initHooks();
 
 		this.$app.$go = (...args) => barba.go(...args);
-
 		this.$app.$prefetch = (...args) => barba.prefetch(...args);
 	}
 
@@ -107,9 +69,54 @@ export default class extends Module<OveeBarbaOptions> {
 		barba.destroy();
 	}
 
-	private callHook(name: Hook): void {
+	private usePrefetch() {
+		if (this.options.usePrefetch) {
+			barba.use(barbaPrefetch);
+		}
+	}
+
+	private useCss() {
+		if (this.options.useCss) {
+			barba.use(barbaCss);
+		}
+	}
+
+	private useRouter() {
+		const { useRouter, routes } = this.options;
+
+		if (useRouter) {
+			barba.use(barbaRouter, { routes });
+		}
+	}
+
+	private initHooks(): void {
+		this.registerHook('before');
+		this.registerHook('beforeLeave', 'before-leave');
+		this.registerHook('leave');
+		this.registerHook('afterLeave', 'after-leave');
+		this.registerHook('beforeEnter', 'before-enter');
+
+		barba.hooks.enter(data => {
+			const { next } = data ?? {};
+			const { bodyClass } = next!.container.dataset;
+
+			this.$app.getConfig().document.body.classList.value = bodyClass ?? '';
+
+			this.callHook('enter');
+		});
+
+		this.registerHook('afterEnter', 'after-enter');
+		this.registerHook('after');
+	}
+
+	private registerHook(name: Hook, appName?: string): void {
+		barba.hooks[name](() => this.callHook(name, appName));
+	}
+
+	private callHook(name: Hook, appName?: string): void {
 		// eslint-disable-next-line no-unused-expressions
 		this.hooks[name]?.();
+		this.$app.$emit(`barba:${appName ?? name}`);
 	}
 
 	static getName(): string {
