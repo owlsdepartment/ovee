@@ -1,3 +1,9 @@
+# [](https://github.com/owlsdepartment/ovee/compare/v2.1.2...v) (2021-11-03)
+
+### Features
+
+* __barba__: add `@barba/router` to available plugins and update emitted events names
+
 # [2.1.1](https://github.com/owlsdepartment/ovee/compare/v2.1.0...v) (2021-10-27)
 
 
