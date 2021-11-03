@@ -48,6 +48,20 @@ fix(ovee-content-loader): make config optional
 
 ## Publishing new release
 
+Either:
+ - commit all changes
+ - run `yarn changelog`
+ - set version that packaged will be released at
+ - commit changes
+ - publish packages with `yarn run publish`
+
+Or:
+ - commit and push all changes
+ - publish packages with `yarn run publish`
+ - run `yarn changelog`
+ - commit and push all changes
+ - no need for another publish, as `CHANGELOG.md` is not part of `npm` packages in registry
+
 <!-- WIP -->
 <!-- Proposed workflow: https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli#recommended-workflow -->
 <!-- Proposed workflow: https://github.com/conventional-changelog/conventional-changelog/issues/376 -->

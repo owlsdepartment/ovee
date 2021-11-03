@@ -66,7 +66,8 @@ The module's options object accepts same set of options that Barba would use. Ad
 |:------ |:------------- |:----------- |
 | `usePrefetch` | `true` | sets Barba's [Prefetch Plugin](https://barba.js.org/docs/plugins/prefetch/) on or off |
 | `useCss` | `false` | sets Barba's [CSS Plugin](https://barba.js.org/docs/plugins/css/) on or off |
-| `hooks` | `{}` | you can pass methods to hook into Barba's lifecycle. Available hooks are `before()`, `beforeLeave()`, `leave()`, `afterLeave()`, `beforeEnter()`,`enter()`, `afterEnter()`, `after()` |
+| `useRouter` | `false` | sets Barba's [Router Plugin](https://barba.js.org/docs/plugins/router/) on or off |
+| `hooks` | `{}` | you can pass methods to hook into Barba's lifecycle globally. More in section [Hooks](#hooks) |
 
 ### Methods
 
@@ -75,6 +76,18 @@ The module's options object accepts same set of options that Barba would use. Ad
 | `$go(href: string, trigger?: Trigger, e?: LinkEvent | PopStateEvent)` | Tell Barba to go to a specific URL |
 | `$prefetch(href: string)` | Prefetch the given URL |
 
+
+### Hooks
+
+You can add globall hooks callbacks in module options under `hooks` option. Every hook also emits global event on `$app` instance. Available hooks and theire events are:
+ - `before` | event: `barba:before`
+ - `beforeLeave` | event: `barba:before-leave`
+ - `leave` | event: `barba:leave`
+ - `afterLeave` | event: `barba:after-leave`
+ - `beforeEnter` | event: `barba:before-enter`
+ - `enter` | event: `barba:enter`
+ - `afterEnter` | event: `barba:after-enter`
+ - `after` | event: `barba:after`
 
 ### Defining Custom Transitions
 
