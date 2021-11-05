@@ -1,10 +1,22 @@
-# [](https://github.com/owlsdepartment/ovee/compare/v2.1.2...v) (2021-11-03)
+# [2.2.0](https://github.com/owlsdepartment/ovee/compare/v2.1.2...v2.2.0) (2021-11-05)
+
 
 ### Features
 
-* __barba__: add `@barba/router` to available plugins and update emitted events names
+* **barba:** update how plugins are added to Barba in a more modular way ([1e35e58](https://github.com/owlsdepartment/ovee/commit/1e35e58a9a90c36c37a87520808162b18915a001))
 
-# [2.1.1](https://github.com/owlsdepartment/ovee/compare/v2.1.0...v) (2021-10-27)
+
+
+## [2.1.2](https://github.com/owlsdepartment/ovee/compare/v2.1.1...v2.1.2) (2021-11-03)
+
+
+### Features
+
+* **barba:** add `@barba/router` to available plugins and update emitted events names ([937c855](https://github.com/owlsdepartment/ovee/commit/937c855bcd6c8f23ddb179bf26e2b3c2578c1e85))
+
+
+
+## [2.1.1](https://github.com/owlsdepartment/ovee/compare/v2.1.0...v2.1.1) (2021-10-27)
 
 
 ### Bug Fixes
@@ -18,12 +30,21 @@
 
 ### Bug Fixes
 
+* docs typos ([412fc9a](https://github.com/owlsdepartment/ovee/commit/412fc9ab1565d456e1adc09f2e21f67fe82a4c99))
+* docs typos ([5811b46](https://github.com/owlsdepartment/ovee/commit/5811b464c25ff2a1ee4af2c57d47b944e38181c1))
 * errors are now longer catched by mistake in lifecycle hooks ([8c9cda4](https://github.com/owlsdepartment/ovee/commit/8c9cda4a1b9fc0ed313717bfa7fd364d417e0858))
 * typo in import ([a128315](https://github.com/owlsdepartment/ovee/commit/a12831528014f5c981013db31c871dba3932cb95))
+* new logging system ([de9e980](https://github.com/owlsdepartment/ovee/commit/de9e9804b2f0e8691bb52c3362d74771c1b8cd93))
+* added new external reactivity system with watchers ([80289f7](https://github.com/owlsdepartment/ovee/commit/80289f74abff68372858cd282e846a755346be1b))
+
+
+
+# [2.1.0-alpha.0](https://github.com/owlsdepartment/ovee/compare/v2.0.8...v2.1.0-alpha.0) (2021-09-17)
+
+
+### Bug Fixes
+
 * instance decorators inheritance ([5d93eed](https://github.com/owlsdepartment/ovee/commit/5d93eed17de2601f91ec4dfc0fe0202777e14d1e))
 * make Barba config optional ([92def1c](https://github.com/owlsdepartment/ovee/commit/92def1ceb9dcd088bbb84b6c966ee5432cad9f67))
 
-### Features
 
-* new logging system ([de9e980](https://github.com/owlsdepartment/ovee/commit/de9e9804b2f0e8691bb52c3362d74771c1b8cd93))
-* added new external reactivity system with watchers ([80289f7](https://github.com/owlsdepartment/ovee/commit/80289f74abff68372858cd282e846a755346be1b))
