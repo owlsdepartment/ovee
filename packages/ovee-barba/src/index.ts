@@ -1,8 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import barba, { IBarbaOptions, LinkEvent, Trigger } from '@barba/core';
-import barbaCss from '@barba/css';
-import barbaPrefetch from '@barba/prefetch';
-import barbaRouter, { IRoute } from '@barba/router';
+import barba, { IBarbaOptions, IBarbaPlugin, LinkEvent, Trigger } from '@barba/core';
 import { Module } from 'ovee.js';
 
 declare module 'ovee.js' {
@@ -23,22 +20,18 @@ type Hook =
 	| 'afterEnter'
 	| 'after';
 
-export type BarbaRoute = IRoute;
-
 export interface OveeBarbaOptions extends IBarbaOptions {
-	useCss?: boolean;
-	usePrefetch?: boolean;
-	useRouter?: boolean;
-	hooks?: BarbaHooks;
-	routes?: BarbaRoute[];
+	plugins: BarbaPlugin[];
+	hooks: BarbaHooks;
 }
 
 export type BarbaHooks = Partial<Record<Hook, () => any>>;
 
+export type BarbaPlugin<T = any> = IBarbaPlugin<T> | [IBarbaPlugin<T>, T];
+
 const defaultOptions: OveeBarbaOptions = {
-	useCss: false,
-	useRouter: false,
-	usePrefetch: true,
+	plugins: [],
+	hooks: {},
 };
 
 export default class extends Module<OveeBarbaOptions> {
@@ -52,9 +45,8 @@ export default class extends Module<OveeBarbaOptions> {
 			...this.options,
 		};
 
-		this.usePrefetch();
-		this.useCss();
-		this.useRouter();
+		this.checkOptions();
+		this.usePlugins();
 
 		barba.init(this.options);
 		this.initHooks();
@@ -69,23 +61,23 @@ export default class extends Module<OveeBarbaOptions> {
 		barba.destroy();
 	}
 
-	private usePrefetch() {
-		if (this.options.usePrefetch) {
-			barba.use(barbaPrefetch);
+	private checkOptions(): void {
+		const opt = this.options as any;
+
+		if (opt.useCss || opt.useRouter || opt.usePrefetch) {
+			throw Error(
+				`[@ovee/barba] One of old options 'useCss' or 'useRouter' or 'usePrefetch' was used in options object, which is deprecated. To use barba plugins, you need to install them and pass in 'plugins' field.`
+			);
 		}
 	}
 
-	private useCss() {
-		if (this.options.useCss) {
-			barba.use(barbaCss);
-		}
-	}
-
-	private useRouter() {
-		const { useRouter, routes } = this.options;
-
-		if (useRouter) {
-			barba.use(barbaRouter, { routes });
+	private usePlugins(): void {
+		for (const plugin of this.options.plugins) {
+			if (Array.isArray(plugin)) {
+				barba.use(plugin[0], plugin[1]);
+			} else {
+				barba.use(plugin);
+			}
 		}
 	}
 
