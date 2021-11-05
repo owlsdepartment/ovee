@@ -37,7 +37,6 @@ app.use(OveeBarba, {
     ],
     timeout: 20000,
     preventRunning: true,
-    usePrefetch: true,
     hooks: {
         after() {
             if (global.dataLayer !== undefined) {
@@ -64,9 +63,7 @@ The module's options object accepts same set of options that Barba would use. Ad
 
 | Option | Default Value | Description |
 |:------ |:------------- |:----------- |
-| `usePrefetch` | `true` | sets Barba's [Prefetch Plugin](https://barba.js.org/docs/plugins/prefetch/) on or off |
-| `useCss` | `false` | sets Barba's [CSS Plugin](https://barba.js.org/docs/plugins/css/) on or off |
-| `useRouter` | `false` | sets Barba's [Router Plugin](https://barba.js.org/docs/plugins/router/) on or off |
+| `plugins` | `[]` | add Barba plugins from [Plugins](https://barba.js.org/docs/plugins/). More in section [Plugins](#plugins) |
 | `hooks` | `{}` | you can pass methods to hook into Barba's lifecycle globally. More in section [Hooks](#hooks) |
 
 ### Methods
@@ -88,6 +85,30 @@ You can add globall hooks callbacks in module options under `hooks` option. Ever
  - `enter` | event: `barba:enter`
  - `afterEnter` | event: `barba:after-enter`
  - `after` | event: `barba:after`
+
+### Plugins
+
+To add Barba plugins, you need to install it in you project and pass to `plugins` option. Example:
+
+```js
+import { App } from 'ovee.js';
+import OveeBarba from '@ovee.js/barba';
+
+import barbaPrefetch from '@barba/prefetch';
+import barbaRouter from '@barba/router';
+
+const root = document.body;
+const app = new App();
+
+app.use(OveeBarba, {
+    plugins: [
+        barbaPrefetch,
+        [barbaRouter, { routes: [ /* barba routes here */ ] }]
+    ],
+});
+
+app.run(root);
+```
 
 ### Defining Custom Transitions
 
