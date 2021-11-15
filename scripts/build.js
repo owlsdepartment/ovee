@@ -22,7 +22,6 @@ async function build() {
 
 	fs.rmdirSync(path.resolve(packagePath, `dist`), { recursive: true, force: true });
 
-	// eslint-disable-next-line no-unreachable
 	for (const format of ['es', 'cjs']) {
 		const bundle = await rollup({
 			external: ['ovee.js'],
