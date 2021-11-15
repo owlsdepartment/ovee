@@ -5,10 +5,10 @@
         "baseUrl": ".",
         "rootDir": "./src",
         "outDir": "./dist/src",
-        "declarationDir": "./dist/types",
+        "declarationDir": "./types",
         "paths": {
-            "src": ["./src"],
-            "tests": ["./tests"]
+            "src/*": ["./src/*"],
+            "tests/*": ["./tests/*"]
         }
     },
 

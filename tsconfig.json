@@ -5,14 +5,11 @@
         "moduleResolution": "node",
         "noImplicitAny": true,
         "lib": ["ES2017", "ES7", "ES6", "DOM"],
-        "target": "ES6",
+        "target": "ESNext",
         "strict": true,
         "experimentalDecorators": true,
         "esModuleInterop": true,
         "baseUrl": ".",
-        "paths": {
-            "ovee": ["packages/ovee/src"]
-        },
         "plugins": [
             { "transform": "@zerollup/ts-transform-paths" }
         ]
