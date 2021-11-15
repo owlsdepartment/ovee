@@ -32,6 +32,7 @@
   },
   "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11",
   "dependencies": {
+    "@babel/runtime": "^7.16.3",
     "ovee.js": "^2.1.1"
   },
   "gitHead": "803d4b89d6092ef596e4f5cbac4c86a3af835487"

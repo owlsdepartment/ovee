@@ -41,7 +41,12 @@ async function build() {
 		await bundle.write({
 			format,
 
-			plugins: [getBabelOutputPlugin({ presets: ['@babel/preset-env'] })],
+			plugins: [
+				getBabelOutputPlugin({
+					presets: ['@babel/preset-env'],
+					plugins: [['@babel/plugin-transform-runtime', { useESModules: format === 'es' }]],
+				}),
+			],
 			file: path.resolve(packagePath, 'dist', format === 'es' ? 'index.esm.js' : 'index.js'),
 		});
 		await bundle.close();
