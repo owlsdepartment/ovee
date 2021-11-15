@@ -43,7 +43,8 @@ async function build() {
 
 			plugins: [
 				getBabelOutputPlugin({
-					presets: ['@babel/preset-env'],
+					// A hacky way to force ES6
+					presets: [['@babel/preset-env', { targets: { node: '6.10' } }]],
 					plugins: [['@babel/plugin-transform-runtime', { useESModules: format === 'es' }]],
 				}),
 			],
