@@ -1,6 +1,6 @@
 import { JSDOM } from 'jsdom';
 
-import attachMutationObserver from '../../../src/utils/attachMutationObserver';
+import { attachMutationObserver } from '../../../src/utils/attachMutationObserver';
 
 const dom = new JSDOM('<!DOCTYPE html>');
 

@@ -1,5 +1,5 @@
 import { JSDOM } from 'jsdom';
-import isValidNode from 'src/utils/isValidNode';
+import { isValidNode } from 'src/utils/isValidNode';
 
 const dom = new JSDOM('<!DOCTYPE html>');
 

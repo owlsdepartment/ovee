@@ -12,7 +12,7 @@ import { DecoratorContext, instanceDecoratorFactory } from 'src/utils';
 
 const logger = new Logger('@watch');
 
-export default instanceDecoratorFactory(
+export const watch = instanceDecoratorFactory(
 	(
 		{ instance, addDestructor }: DecoratorContext<WithReactiveProxy>,
 		methodName,

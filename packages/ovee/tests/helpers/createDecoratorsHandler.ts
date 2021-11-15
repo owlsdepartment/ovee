@@ -1,4 +1,4 @@
-import InstanceDecorators from 'src/core/InstanceDecorators';
+import { InstanceDecorators } from 'src/core/InstanceDecorators';
 import * as protectedFields from 'src/core/protectedFields';
 import { WithElement } from 'src/core/types';
 

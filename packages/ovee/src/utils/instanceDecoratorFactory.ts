@@ -1,4 +1,4 @@
-import InstanceDecorators from 'src/core/InstanceDecorators';
+import { InstanceDecorators } from 'src/core/InstanceDecorators';
 import * as protectedFields from 'src/core/protectedFields';
 
 import { instanceDecoratorDestructor } from './instanceDecoratorDestructor';
@@ -30,7 +30,7 @@ export interface DecoratorContext<T = AnyObject, P = AnyObject> {
 
 export type AddDestructor = (cb: (instance: any) => any) => void;
 
-function instanceDecoratorFactory<T, Cb extends DecoratorFactoryCallback<T>>(
+export function instanceDecoratorFactory<T, Cb extends DecoratorFactoryCallback<T>>(
 	callback: Cb
 ): ExtractDecorator<T, Cb> {
 	return (...args) =>
@@ -51,5 +51,3 @@ function instanceDecoratorFactory<T, Cb extends DecoratorFactoryCallback<T>>(
 			);
 		};
 }
-
-export default instanceDecoratorFactory;

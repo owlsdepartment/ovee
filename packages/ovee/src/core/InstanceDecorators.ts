@@ -1,4 +1,4 @@
-import forEachStaticPrototype from 'src/utils/forEachStaticPrototype';
+import { forEachStaticPrototype } from 'src/utils';
 
 import {
 	DESTROY_DECORATORS,
@@ -7,7 +7,7 @@ import {
 	INSTANCE_DECORATORS_DESTRUCTORS,
 } from './protectedFields';
 
-export default class InstanceDecorators {
+export class InstanceDecorators {
 	static [INSTANCE_DECORATORS]?: ((ctx: any) => any)[];
 	static [INSTANCE_DECORATORS_DESTRUCTORS]?: ((ctx: any) => any)[];
 

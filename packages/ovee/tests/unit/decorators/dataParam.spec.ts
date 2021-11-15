@@ -1,5 +1,5 @@
 import { WithDataParam } from 'src/core/types';
-import dataParam from 'src/decorators/dataParam';
+import { dataParam } from 'src/decorators/dataParam';
 import { createDecoratorsHandler, createLoggerRegExp } from 'tests/helpers';
 
 const createHandler = <T extends object>(obj: T) =>

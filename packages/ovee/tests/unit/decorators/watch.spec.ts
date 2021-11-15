@@ -1,6 +1,6 @@
 import { WithReactiveProxy } from 'src/core';
 import * as protectedFields from 'src/core/protectedFields';
-import watch from 'src/decorators/watch';
+import { watch } from 'src/decorators/watch';
 import { handleCombinedWatch, ReactiveProxy } from 'src/reactive';
 import { createDecoratorsHandler, createLoggerRegExp } from 'tests/helpers';
 

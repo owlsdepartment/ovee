@@ -1,4 +1,4 @@
-import toKebabCase from 'src/utils/toKebabCase';
+import { toKebabCase } from 'src/utils/toKebabCase';
 
 describe('toKebabCase function', () => {
 	it('should replace whitespace with dash', () => {

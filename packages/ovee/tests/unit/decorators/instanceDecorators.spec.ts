@@ -1,7 +1,7 @@
 import Component from 'src/core/Component';
 import * as protectedFields from 'src/core/protectedFields';
 import { ClassConstructor } from 'src/utils';
-import instanceDecoratorFactory from 'src/utils/instanceDecoratorFactory';
+import { instanceDecoratorFactory } from 'src/utils/instanceDecoratorFactory';
 import { createComponent } from 'tests/helpers';
 
 const getDecorators = (classDef: ClassConstructor<any>) => {

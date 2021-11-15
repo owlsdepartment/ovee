@@ -1,4 +1,4 @@
-import forEachPrototype from 'src/utils/forEachPrototype';
+import { forEachPrototype } from 'src/utils/forEachPrototype';
 
 describe('forEachPrototype iterator', () => {
 	it('calls callback for each inherited prototype of passed object', () => {

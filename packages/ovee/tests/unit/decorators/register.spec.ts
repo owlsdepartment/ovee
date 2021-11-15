@@ -1,4 +1,4 @@
-import register from 'src/decorators/register';
+import { register } from 'src/decorators/register';
 import { createLoggerRegExp } from 'tests/helpers';
 
 describe('@register decorator', () => {

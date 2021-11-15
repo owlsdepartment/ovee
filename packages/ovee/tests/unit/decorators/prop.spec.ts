@@ -1,4 +1,4 @@
-import prop from 'src/decorators/prop';
+import { prop } from 'src/decorators/prop';
 import { createDecoratorsHandler, createLoggerRegExp } from 'tests/helpers';
 
 const createHandler = <T extends object>(obj: T) =>

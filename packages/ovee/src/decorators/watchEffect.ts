@@ -5,7 +5,7 @@ import { DecoratorContext, instanceDecoratorFactory } from 'src/utils';
 
 const logger = new Logger('@watchEffect');
 
-export default instanceDecoratorFactory(
+export const watchEffect = instanceDecoratorFactory(
 	(
 		{ instance, addDestructor }: DecoratorContext<WithReactiveProxy>,
 		methodName,

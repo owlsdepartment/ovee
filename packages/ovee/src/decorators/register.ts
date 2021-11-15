@@ -1,5 +1,5 @@
 import { Logger } from 'src/errors';
-import toKebabCase from 'src/utils/toKebabCase';
+import { toKebabCase } from 'src/utils';
 
 const logger = new Logger('@register');
 
@@ -28,6 +28,6 @@ function decorate(target: any, name: string) {
 	return target;
 }
 
-export default function (name: string) {
+export function register(name: string) {
 	return (target: any): any => decorate(target, name);
 }

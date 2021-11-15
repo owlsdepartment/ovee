@@ -1,13 +1,12 @@
 import { WithDataParam, WithElement } from 'src/core/types';
 import { Logger } from 'src/errors';
-import instanceDecoratorFactory, { DecoratorContext } from 'src/utils/instanceDecoratorFactory';
-import toKebabCase from 'src/utils/toKebabCase';
+import { DecoratorContext, instanceDecoratorFactory, toKebabCase } from 'src/utils';
 
 type Target = WithDataParam & WithElement;
 
 const logger = new Logger('@dataParam');
 
-export default instanceDecoratorFactory(
+export const dataParam = instanceDecoratorFactory(
 	(
 		{ instance, addDestructor }: DecoratorContext<Target>,
 		dataParamName,

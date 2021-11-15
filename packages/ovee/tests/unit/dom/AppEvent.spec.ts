@@ -1,4 +1,4 @@
-import AppEvent from 'src/dom/AppEvent';
+import { AppEvent } from 'src/dom/AppEvent';
 
 describe('AppEvent class', () => {
 	it('should be instance of CustomEvent', () => {

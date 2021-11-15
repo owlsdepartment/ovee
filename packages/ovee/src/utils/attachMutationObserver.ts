@@ -18,7 +18,7 @@ function filterCallback(mutation: MutationRecord, key: CallbackKeys, callback: M
 /**
  * Moved nodes can come as removed, but they can be distinquished by checking if they have parent
  */
-function attachMutationObserver(
+export function attachMutationObserver(
 	root: Node,
 	onAddedCallback: MutationCallback,
 	onRemovedCallback: MutationCallback
@@ -34,5 +34,3 @@ function attachMutationObserver(
 
 	return DOMObserver;
 }
-
-export default attachMutationObserver;

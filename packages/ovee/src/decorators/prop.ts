@@ -1,10 +1,10 @@
 import { WithElement } from 'src/core/types';
 import { Logger } from 'src/errors';
-import instanceDecoratorFactory, { DecoratorContext } from 'src/utils/instanceDecoratorFactory';
+import { DecoratorContext, instanceDecoratorFactory } from 'src/utils/instanceDecoratorFactory';
 
 const logger = new Logger('@prop');
 
-export default instanceDecoratorFactory(
+export const prop = instanceDecoratorFactory(
 	({ instance }: DecoratorContext<WithElement>, instancePropName, elementPropName?: string) => {
 		const originalKey = Symbol(instancePropName);
 

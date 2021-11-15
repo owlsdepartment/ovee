@@ -1,4 +1,4 @@
-import registerCustomElement from 'src/utils/registerCustomElement';
+import { registerCustomElement } from 'src/utils/registerCustomElement';
 
 describe('registerCustomElement function', () => {
 	beforeAll(() => {

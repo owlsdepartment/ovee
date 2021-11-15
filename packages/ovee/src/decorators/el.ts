@@ -1,8 +1,12 @@
 import { WithElement, WithElements } from 'src/core/types';
 import { Logger } from 'src/errors';
-import attachMutationObserver, { MutationCallback } from 'src/utils/attachMutationObserver';
-import instanceDecoratorFactory, { DecoratorContext } from 'src/utils/instanceDecoratorFactory';
-import isValidNode from 'src/utils/isValidNode';
+import {
+	attachMutationObserver,
+	DecoratorContext,
+	instanceDecoratorFactory,
+	isValidNode,
+	MutationCallback,
+} from 'src/utils';
 
 interface ElDecoratorOptions {
 	list?: boolean;
@@ -12,7 +16,7 @@ type Target = WithElements & WithElement;
 
 const logger = new Logger('@el');
 
-export default instanceDecoratorFactory(
+export const el = instanceDecoratorFactory(
 	(
 		{ instance, addDestructor }: DecoratorContext<Target>,
 		prop,

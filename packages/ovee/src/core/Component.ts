@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { OveeElement, WithDataParam, WithElements, WithReactiveProxy } from 'src/core';
-import { Callback, EventDelegate, EventDesc } from 'src/dom';
+import { Callback, EventDelegate, EventDesc } from 'src/dom/EventDelegate';
 import { ReactiveProxy } from 'src/reactive';
 import {
 	attachMutationObserver,
@@ -12,7 +12,7 @@ import {
 } from 'src/utils';
 
 import App from './App';
-import InstanceDecorators from './InstanceDecorators';
+import { InstanceDecorators } from './InstanceDecorators';
 import * as protectedFields from './protectedFields';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

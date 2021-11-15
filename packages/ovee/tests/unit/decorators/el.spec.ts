@@ -1,5 +1,5 @@
 import { WithElements } from 'src/core/types';
-import el from 'src/decorators/el';
+import { el } from 'src/decorators/el';
 import { createDecoratorsHandler, createLoggerRegExp } from 'tests/helpers';
 
 const createHandler = <T extends object>(obj: T) => {

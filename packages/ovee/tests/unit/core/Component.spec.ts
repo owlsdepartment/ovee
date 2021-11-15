@@ -2,9 +2,9 @@
 import App from 'src/core/App';
 import Component from 'src/core/Component';
 import * as protectedFields from 'src/core/protectedFields';
-import EventDelegate from 'src/dom/EventDelegate';
-import attachMutationObserver from 'src/utils/attachMutationObserver';
-import registerCustomElement from 'src/utils/registerCustomElement';
+import { EventDelegate } from 'src/dom/EventDelegate';
+import { attachMutationObserver } from 'src/utils/attachMutationObserver';
+import { registerCustomElement } from 'src/utils/registerCustomElement';
 import { createComponent } from 'tests/helpers';
 
 jest.mock('src/core/App');

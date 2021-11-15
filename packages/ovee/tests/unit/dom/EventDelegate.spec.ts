@@ -1,5 +1,5 @@
-import AppEvent from 'src/dom/AppEvent';
-import EventDelegate from 'src/dom/EventDelegate';
+import { AppEvent } from 'src/dom/AppEvent';
+import { EventDelegate } from 'src/dom/EventDelegate';
 
 jest.mock('src/dom/AppEvent');
 

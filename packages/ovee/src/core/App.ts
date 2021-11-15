@@ -1,10 +1,14 @@
 import { FRAMEWORK_NAME } from 'src/constants';
 import { OveeComponent } from 'src/core/types';
-import EventDelegate, { Callback, EventDesc } from 'src/dom/EventDelegate';
+import { Callback, EventDelegate, EventDesc } from 'src/dom';
 import { ComponentError } from 'src/errors';
-import attachMutationObserver from 'src/utils/attachMutationObserver';
-import isValidNode from 'src/utils/isValidNode';
-import { Class, ClassConstructor, Dictionary } from 'src/utils/types';
+import {
+	attachMutationObserver,
+	Class,
+	ClassConstructor,
+	Dictionary,
+	isValidNode,
+} from 'src/utils';
 
 import Component, { ComponentOptions } from './Component';
 import Module, { ModuleOptions } from './Module';

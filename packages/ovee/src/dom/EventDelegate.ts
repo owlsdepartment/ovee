@@ -1,6 +1,6 @@
 import Component from 'src/core/Component';
 
-import emitEvent from './emitEvent';
+import { emitEvent } from './emitEvent';
 
 interface Listener<T extends Component> {
 	event: string;
@@ -23,7 +23,7 @@ export interface Callback<T extends Component> extends Function {
 
 export type EventDesc = string | Event;
 
-export default class EventDelegate<Context extends Component> {
+export class EventDelegate<Context extends Component> {
 	listeners: Listener<Context>[] = [];
 	targetElement: Element;
 	context: Context;

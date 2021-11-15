@@ -1,13 +1,13 @@
 import Component from 'src/core/Component';
 import { Callback } from 'src/dom/EventDelegate';
 import { Logger } from 'src/errors/Logger';
-import instanceDecoratorFactory, { DecoratorContext } from 'src/utils/instanceDecoratorFactory';
+import { DecoratorContext, instanceDecoratorFactory } from 'src/utils/instanceDecoratorFactory';
 
 type OnArgs = [string, Element, string, Callback<Component>];
 
 const logger = new Logger('@bind');
 
-export default instanceDecoratorFactory(
+export const bind = instanceDecoratorFactory(
 	(
 		{ instance }: DecoratorContext<Component>,
 		methodName,

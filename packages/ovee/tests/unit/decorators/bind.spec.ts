@@ -1,5 +1,4 @@
-import { FRAMEWORK_NAME } from 'src/constants';
-import bind from 'src/decorators/bind';
+import { bind } from 'src/decorators/bind';
 import { createDecoratorsHandler, createLoggerRegExp } from 'tests/helpers';
 
 describe('@bind decorator', () => {

@@ -1,4 +1,4 @@
-import InstanceDecorators from 'src/core/InstanceDecorators';
+import { InstanceDecorators } from 'src/core/InstanceDecorators';
 import {
 	DESTROY_DECORATORS,
 	INITIALIZE_DECORATORS,

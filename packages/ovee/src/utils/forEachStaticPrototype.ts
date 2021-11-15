@@ -1,4 +1,4 @@
-export default function forEachStaticPrototype<T = any>(obj: any, cb: (target: T) => void): void {
+export function forEachStaticPrototype<T = any>(obj: any, cb: (target: T) => void): void {
 	if (obj === null || obj === undefined) {
 		return;
 	}
