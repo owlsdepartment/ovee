@@ -1,9 +1,31 @@
+# [](https://github.com/owlsdepartment/ovee/compare/v2.1.6...v) (2021-11-26)
+
+
+
+## [2.1.6](https://github.com/owlsdepartment/ovee/compare/v2.1.5...v2.1.6) (2021-11-26)
+
+
+### Bug Fixes
+
+* **ovee:** accelerate template first render and allow for `updateTask` to be awaitable inside `init` hook ([9e00200](https://github.com/owlsdepartment/ovee/commit/9e0020035f89287444b9fa7b5c738d8c4c80aaf9))
+
+
+
+## [2.1.4](https://github.com/owlsdepartment/ovee/compare/v2.2.0...v2.1.4) (2021-11-12)
+
+
+### Bug Fixes
+
+* lower all packages target ES version to ES6 ([cefdc86](https://github.com/owlsdepartment/ovee/commit/cefdc86b288dddf0bc42c772852aacb5e2381292))
+
+
+
 # [2.2.0](https://github.com/owlsdepartment/ovee/compare/v2.1.2...v2.2.0) (2021-11-05)
 
 
 ### Features
 
-* **barba:** update how plugins are added to Barba in a more modular way ([1e35e58](https://github.com/owlsdepartment/ovee/commit/1e35e58a9a90c36c37a87520808162b18915a001))
+* **@ovee/barba:** update how plugins are added to Barba in a more modular way ([1e35e58](https://github.com/owlsdepartment/ovee/commit/1e35e58a9a90c36c37a87520808162b18915a001))
 
 
 
@@ -12,7 +34,7 @@
 
 ### Features
 
-* **barba:** add `@barba/router` to available plugins and update emitted events names ([937c855](https://github.com/owlsdepartment/ovee/commit/937c855bcd6c8f23ddb179bf26e2b3c2578c1e85))
+* **@ovee/barba:** add `@barba/router` to available plugins and update emitted events names ([937c855](https://github.com/owlsdepartment/ovee/commit/937c855bcd6c8f23ddb179bf26e2b3c2578c1e85))
 
 
 
@@ -48,3 +70,10 @@
 * make Barba config optional ([92def1c](https://github.com/owlsdepartment/ovee/commit/92def1ceb9dcd088bbb84b6c966ee5432cad9f67))
 
 
+
+## [2.0.8](https://github.com/owlsdepartment/ovee/compare/v2.0.6...v2.0.8) (2021-08-25)
+
+
+### Bug Fixes
+
+* typings in `@ovee/barba` and make Barba options optional ([822ec1e](https://github.com/owlsdepartment/ovee/commit/822ec1e8f11e5d9cd609b6c411c9cb556333bf69))
