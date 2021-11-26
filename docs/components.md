@@ -260,7 +260,31 @@ export default class extends TemplateComponent {
 
 We do not need `valueElement` property and `update` method. If property used in `template` method is reactive, DOM will be updated automatically.
 
-Sometimes, you would like to force template to rerender, because of some non-reactive change. Then you can use `this.$requestUpdate()` method that returns `Promise` that will resolve after rerender.
+Sometimes, you would like to force template to rerender, because of some non-reactive change or you would like to wait for current pending updates.
+Then you can use `this.$requestUpdate()` method that returns `Promise` that will resolve after rerender.
+
+If you want to run init code after the template is first time rendered into DOM, then you can `await this.$requestUpdate()` in `init` function.
+
+```js
+import { TemplateComponent, register } from 'ovee.js';
+
+@register('counter')
+export default class extends TemplateComponent {
+    async init() {
+        console.log(this.$element.querySelector('.some-wrapper')) // will print `null`, as template wasn't rendered yet
+
+        await this.$requestUpdate();
+
+        console.log(this.$element.querySelector('.some-wrapper')) // will print element instance
+    }
+
+    template() {
+        return this.html`
+            <div class="some-wrapper"></div>
+        `
+    }
+}
+```
 
 To render template, template components uses [`lit-html`](https://github.com/polymer/lit-html). Guide: <https://lit-html.polymer-project.org/guide>.
 

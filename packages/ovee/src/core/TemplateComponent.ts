@@ -29,8 +29,9 @@ export default class TemplateComponent extends Component {
 		return this[protectedFields.UPDATE_TASK];
 	}
 
-	async [protectedFields.BEFORE_INIT](): Promise<void> {
-		await super[protectedFields.BEFORE_INIT]();
+	[protectedFields.BEFORE_INIT](): void {
+		super[protectedFields.BEFORE_INIT]();
+
 		this.stopWatch = doWatchEffect(
 			() => {
 				this.markRefrashable();
@@ -39,7 +40,6 @@ export default class TemplateComponent extends Component {
 			},
 			{ flush: 'sync' }
 		);
-		await this.updateTask;
 	}
 
 	destroy() {

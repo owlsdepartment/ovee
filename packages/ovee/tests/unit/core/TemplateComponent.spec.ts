@@ -1,5 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { html, render } from 'lit-html';
+import { protectedFields } from 'src/core';
 import App from 'src/core/App';
 import Component from 'src/core/Component';
 import TemplateComponent from 'src/core/TemplateComponent';
@@ -50,6 +51,26 @@ describe('TemplateComponent class', () => {
 		await waitForFrame();
 
 		expect(render).toBeCalledTimes(1);
+	});
+
+	it('should create update task before init, so you can await it', async () => {
+		let wasRenderedCalled = false;
+		let wasInitFirst = false;
+
+		class Test extends TemplateComponent {
+			async init() {
+				await this.$requestUpdate();
+				wasInitFirst = !wasRenderedCalled;
+			}
+
+			[protectedFields.RENDER]() {
+				wasRenderedCalled = true;
+			}
+		}
+
+		createComponent(Test);
+
+		expect(wasInitFirst).toBeFalsy();
 	});
 
 	it('should call lit-html render when update is requested', async () => {
