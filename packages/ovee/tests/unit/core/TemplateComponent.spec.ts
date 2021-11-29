@@ -119,6 +119,22 @@ describe('TemplateComponent class', () => {
 		expect(component.template()).toBe('');
 	});
 
+	it('should allow for overriding renderTarget', () => {
+		const element = document.createElement('div');
+		const newTarget = document.createElement('div');
+
+		class CustomComponent extends TemplateComponent {
+			get renderTarget() {
+				return newTarget;
+			}
+		}
+
+		createComponent(CustomComponent, { element });
+
+		expect(render).toBeCalledTimes(1);
+		expect((render as jest.Mock).mock.calls[0][1]).toBe(newTarget);
+	});
+
 	it('stopsRerenderWatch on destroy', () => {
 		const test = createComponent(TemplateComponent);
 		const stopWatchSpy = jest.spyOn(test, 'stopWatch' as any);

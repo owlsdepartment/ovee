@@ -15,6 +15,10 @@ export default class TemplateComponent extends Component {
 	private updateMarker = ref(false);
 	private compiledTemplate: TemplateResult | string = '';
 
+	protected get renderTarget(): Element {
+		return this.$element;
+	}
+
 	constructor(element: Element, app: App, options?: ComponentOptions) {
 		super(element, app, options);
 
@@ -69,7 +73,7 @@ export default class TemplateComponent extends Component {
 	}
 
 	[protectedFields.RENDER](): void {
-		render(this.compiledTemplate, this.$element, {
+		render(this.compiledTemplate, this.renderTarget, {
 			eventContext: this as any,
 		});
 	}
