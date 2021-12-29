@@ -98,4 +98,19 @@ describe('@computed decorator', () => {
 
 		expect(spyGetter).toBeCalledTimes(2);
 	});
+
+	it(`preserves propper 'this' context`, () => {
+		class Test extends Component {
+			testObj = {};
+
+			@computed()
+			get testGetter() {
+				return this.testObj;
+			}
+		}
+
+		const test = createComponent(Test);
+
+		expect(test.testGetter).toBe(test.testObj);
+	});
 });

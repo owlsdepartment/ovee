@@ -19,7 +19,7 @@ export const computed = instanceDecoratorFactory(
 			return;
 		}
 
-		const fieldComputed = makeComputed(descriptor.get);
+		const fieldComputed = makeComputed(descriptor.get.bind(instance));
 
 		Object.defineProperty(instance, fieldName, {
 			...descriptor,
