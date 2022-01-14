@@ -19,7 +19,7 @@ npm install --save ovee.js
 Ovee.js used with babel supports all modern browsers. Currently it's meant to be used with a bundler to provide support for novel features like MutationObserver and decorators.
 
 ## Quick Start
-We made a quick start setup than can help you go up and running with few commands. It uses [Vite](https://vitejs.dev/), and excluding simple example, is quite plain, so feel free to test Ovee there or even use it as a base for your future project!
+We made a quick start setup that can help you go up and running with a few commands. It uses [Vite](https://vitejs.dev/), and excluding one simple example, is quite plain, so feel free to test Ovee there or even use it as a base for your future project!
 
 To install it:
 
