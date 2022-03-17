@@ -3,13 +3,13 @@ module.exports = {
 	env: {
 		browser: true,
 		node: true,
-		es6: true
+		es6: true,
 	},
 	ignorePatterns: ['**/dist/*'],
 
 	parser: '@typescript-eslint/parser',
 	parserOptions: {
-		ecmaVersion: 2020
+		ecmaVersion: 2020,
 	},
 
 	plugins: ['@typescript-eslint', 'simple-import-sort', 'lit'],
@@ -19,7 +19,7 @@ module.exports = {
 		'plugin:lit/recommended',
 		'plugin:@typescript-eslint/eslint-recommended',
 		'plugin:@typescript-eslint/recommended',
-		'plugin:prettier/recommended'
+		'plugin:prettier/recommended',
 	],
 
 	rules: {
@@ -38,9 +38,9 @@ module.exports = {
 		'simple-import-sort/imports': [
 			'warn',
 			{
-				groups: [['^\\u0000'], ['^@?\\w'], ['^', '^@pdf\\/'], ['^\\.\\.?\\/']]
-			}
+				groups: [['^\\u0000'], ['^@?\\w'], ['^', '^@pdf\\/'], ['^\\.\\.?\\/']],
+			},
 		],
-		'simple-import-sort/exports': 'warn'
-	}
+		'simple-import-sort/exports': 'warn',
+	},
 };

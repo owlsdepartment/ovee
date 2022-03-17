@@ -36,7 +36,6 @@ export function instanceDecoratorFactory<T, Cb extends DecoratorFactoryCallback<
 	return (...args) =>
 		(target, prop) => {
 			const ctor = target.constructor as typeof InstanceDecorators;
-			const addDestructor: AddDestructor = cb => instanceDecoratorDestructor(target, cb);
 			const hasInstanceDecorators = Object.prototype.hasOwnProperty.call(
 				ctor,
 				protectedFields.INSTANCE_DECORATORS
@@ -46,8 +45,14 @@ export function instanceDecoratorFactory<T, Cb extends DecoratorFactoryCallback<
 				ctor[protectedFields.INSTANCE_DECORATORS] = [];
 			}
 
-			ctor[protectedFields.INSTANCE_DECORATORS]!.push(instance =>
-				callback({ instance, proto: Object.getPrototypeOf(instance), addDestructor }, prop, ...args)
-			);
+			ctor[protectedFields.INSTANCE_DECORATORS]!.push(instance => {
+				const addDestructor: AddDestructor = cb => instanceDecoratorDestructor(instance, cb);
+
+				callback(
+					{ instance, proto: Object.getPrototypeOf(instance), addDestructor },
+					prop,
+					...args
+				);
+			});
 		};
 }

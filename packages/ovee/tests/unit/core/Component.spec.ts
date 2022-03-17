@@ -277,18 +277,14 @@ describe('Component class', () => {
 	});
 
 	it('should call instance decorator destructors from $destroy', () => {
-		const element = document.createElement('div');
-		const app = new App();
+		class C extends Component {}
+
 		const destructor1 = jest.fn();
 		const destructor2 = jest.fn();
+		const instance = createComponent(C);
 
-		const C = class extends Component {};
-		(C.prototype.constructor as any)[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS] = [
-			destructor1,
-			destructor2,
-		];
+		instance[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS] = [destructor1, destructor2];
 
-		const instance = new C(element, app);
 		instance.$destroy();
 
 		expect(destructor1).toHaveBeenCalledTimes(1);
