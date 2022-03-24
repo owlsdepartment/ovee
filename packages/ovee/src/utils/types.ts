@@ -12,3 +12,9 @@ export interface Dictionary<T> {
 export type AnyFunction = (...args: any[]) => any;
 
 export type AnyObject = Record<string, any>;
+
+export type OmitConstructorKeys<T> = {
+	[P in keyof T]: T[P] extends new () => any ? never : P;
+}[keyof T];
+
+export type OmitConstructor<T> = Pick<T, OmitConstructorKeys<T>>;

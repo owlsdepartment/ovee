@@ -1,7 +1,10 @@
+import { AnyObject, OmitConstructor } from '../utils';
 import App from './App';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type ModuleOptions = object;
+export type ModuleOptions = AnyObject;
+
+export type ModuleClass = OmitConstructor<typeof Module> &
+	(new (app: App, options?: ModuleOptions) => Module);
 
 abstract class Module<Options = ModuleOptions> {
 	$app!: App;

@@ -1,8 +1,6 @@
-import Component from 'src/core/Component';
-
 import { emitEvent } from './emitEvent';
 
-interface Listener<T extends Component> {
+interface Listener<T> {
 	event: string;
 	target: Element;
 	selector?: string;
@@ -10,28 +8,23 @@ interface Listener<T extends Component> {
 	handler: (...args: any[]) => void;
 }
 
-interface CastedParams<C extends Component> {
+interface CastedParams<C> {
 	events: string;
 	target: Element;
 	selector?: string;
 	callback: Callback<C>;
 }
 
-export interface Callback<T extends Component> extends Function {
+export interface Callback<T> extends Function {
 	(this: T, ...args: any[]): void;
 }
 
 export type EventDesc = string | Event;
 
-export class EventDelegate<Context extends Component> {
+export class EventDelegate<Context = any> {
 	listeners: Listener<Context>[] = [];
-	targetElement: Element;
-	context: Context;
 
-	constructor(targetElement: Element, context: Context) {
-		this.targetElement = targetElement;
-		this.context = context;
-	}
+	constructor(public targetElement: Element, public context: Context) {}
 
 	on(events: string, callback: Callback<Context>): void;
 	on(events: string, selector: string, callback: Callback<Context>): void;

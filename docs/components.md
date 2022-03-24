@@ -51,7 +51,23 @@ As we can see, within component class we can reference children elements that ar
 ## Declaring and Registering Components
 A component has to extend base `Component` class. For convenience, we provide `@register()` decorator, which defines the name that will be used to corelate it with a matching DOM element. Underneath, we define a custom element. Alternatively, you may define a `static getName()` method that would return a name.
 
-In normal circumstances, you would not instantiate a `Component` manually. Instead, you should use `registerComponent()` method of `App` or pass it as an `App` argument. The `App` instance is responsible of handling instantiating and destroying components. More info about registering components within the `App` [here](/guide#initialization).
+In normal circumstances, you would not instantiate a `Component` manually. Instead, you should use `registerComponent()` method of `App` or pass it as an `App` argument. The `App` instance is responsible of handling, instantiating, and destroying components. More info about registering components within the `App` [here](/guide#initialization).
+
+## Component options
+
+You can register component with default global options. Every new instance of that component will get these options as a default ones.
+
+```js
+// passing options via App constructor
+const app = new App({
+    components: [
+        [MyComponent, { option1: 'a', option2: true }]
+    ]
+})
+
+// or via dynamic registration 
+app.registerComponent(MyComponent, { option1: 'a', option2: true })
+```
 
 ## Component Lifecycle
 A component's lifecycle is prerty straightforward. In most cases, you shuld not override its constructor. Instead, use lifecycle hooks.
