@@ -1,3 +1,4 @@
+import { InstanceDecorators } from 'src/core/InstanceDecorators';
 import * as protectedFields from 'src/core/protectedFields';
 import { instanceDecoratorDestructor } from 'src/utils/instanceDecoratorDestructor';
 import { createLoggerRegExp } from 'tests/helpers';
@@ -23,25 +24,40 @@ describe('instanceDecoratorDestructor function', () => {
 	});
 
 	it('should create an ampty array for destructors if it does not exist', () => {
-		class Test {}
+		class Test extends InstanceDecorators {}
 
-		instanceDecoratorDestructor(Test.prototype, jest.fn());
+		const test = new Test();
 
-		expect(
-			Array.isArray(
-				(Test.prototype.constructor as any)[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]
-			)
-		).toBeTruthy();
+		instanceDecoratorDestructor(test, jest.fn());
+
+		expect(Array.isArray(test[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS])).toBeTruthy();
 	});
 
 	it('should push callback into instanceDecoratorDestructors array', () => {
-		class T {}
+		class T extends InstanceDecorators {}
 		const callback = jest.fn();
+		const test = new T();
 
-		instanceDecoratorDestructor(T.prototype, callback);
-		const ctor = T.prototype.constructor as any;
+		instanceDecoratorDestructor(test, callback);
 
-		expect(ctor[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS].length).toBe(1);
-		expect(ctor[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS][0]).toBe(callback);
+		expect(test[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]?.length).toBe(1);
+		expect(test[protectedFields.INSTANCE_DECORATORS_DESTRUCTORS]?.[0]).toBe(callback);
+	});
+
+	it('should only call destructor of currently destroyed instance', () => {
+		class T extends InstanceDecorators {}
+
+		const test1 = new T();
+		const test2 = new T();
+		const callback1 = jest.fn();
+		const callback2 = jest.fn();
+
+		instanceDecoratorDestructor(test1, callback1);
+		instanceDecoratorDestructor(test2, callback2);
+
+		test1[protectedFields.DESTROY_DECORATORS]();
+
+		expect(callback1).toBeCalledTimes(1);
+		expect(callback2).not.toBeCalled();
 	});
 });

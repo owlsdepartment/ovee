@@ -1,5 +1,18 @@
 # Change Log
 
+# [](https://github.com/owlsdepartment/ovee/compare/v2.1.9...v) (2022-03-17)
+
+
+
+## [2.1.9](https://github.com/owlsdepartment/ovee/compare/v2.1.8...v2.1.9) (2022-03-17)
+
+
+### Bug Fixes
+
+* **core:** move instance decorators destructors from class prototype to instance ([719ca72](https://github.com/owlsdepartment/ovee/commit/719ca7236a1b87ef78ae29dece74cf4e139be1a1))
+
+
+
 ## [2.1.8](https://github.com/owlsdepartment/ovee/compare/v2.1.7...v2.1.8) (2021-12-29)
 
 
