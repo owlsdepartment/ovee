@@ -76,4 +76,19 @@ describe('InstanceDecorators class', () => {
 
 		expect(aDecorator.mock.calls[0][0]).toBe(b);
 	});
+
+	it(`calls decorators from extended class only once, if no decorators are present in higher class`, () => {
+		const decorator = jest.fn();
+
+		class A extends InstanceDecorators {
+			static [INSTANCE_DECORATORS] = [decorator];
+		}
+
+		class B extends A {}
+
+		const b = new B();
+		b[INITIALIZE_DECORATORS]();
+
+		expect(decorator).toBeCalledTimes(1);
+	});
 });

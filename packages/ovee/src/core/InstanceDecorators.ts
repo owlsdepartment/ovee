@@ -17,7 +17,9 @@ export class InstanceDecorators {
 
 	[INITIALIZE_DECORATORS](): void {
 		forEachStaticPrototype<typeof InstanceDecorators>(this, ctor => {
-			ctor[INSTANCE_DECORATORS]?.forEach(fn => fn(this));
+			if (Object.prototype.hasOwnProperty.call(ctor, INSTANCE_DECORATORS)) {
+				ctor[INSTANCE_DECORATORS]?.forEach(fn => fn(this));
+			}
 		});
 	}
 
