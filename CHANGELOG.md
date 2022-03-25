@@ -1,6 +1,11 @@
 # Change Log
 
-# [](https://github.com/owlsdepartment/ovee/compare/v2.1.9...v) (2022-03-17)
+## [2.1.10](https://github.com/owlsdepartment/ovee/compare/v2.1.9...v2.1.10) (2022-03-25)
+
+
+### Bug Fixes
+
+* **ovee:** [#31](https://github.com/owlsdepartment/ovee/issues/31) prevent from double call of decorators init function, when components extend from each other ([b614441](https://github.com/owlsdepartment/ovee/commit/b6144412fdd5f321c96a47d0f5023ebcd60f69a5))
 
 
 
