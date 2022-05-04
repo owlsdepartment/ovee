@@ -11,9 +11,9 @@ export default class TemplateComponent extends Component {
 
 	[protectedFields.UPDATE_TASK]: Task<void> | null = null;
 
-	private stopWatch = () => {};
-	private updateMarker = ref(false);
-	private compiledTemplate: TemplateResult | string = '';
+	private $stopWatch = () => {};
+	private $updateMarker = ref(false);
+	private $compiledTemplate: TemplateResult | string = '';
 
 	protected get renderTarget(): Element {
 		return this.$element;
@@ -29,37 +29,39 @@ export default class TemplateComponent extends Component {
 		});
 	}
 
-	private get updateTask() {
+	private get $updateTask() {
 		return this[protectedFields.UPDATE_TASK];
 	}
 
 	[protectedFields.BEFORE_INIT](): void {
 		super[protectedFields.BEFORE_INIT]();
 
-		this.stopWatch = doWatchEffect(
+		this.$stopWatch = doWatchEffect(
 			() => {
-				this.markRefrashable();
-				this.compiledTemplate = this.template();
-				this.doUpdate();
+				this.$markRefrashable();
+				this.$compiledTemplate = this.template();
+				this.$doUpdate();
 			},
 			{ flush: 'sync' }
 		);
 	}
 
-	destroy() {
-		this.stopWatch();
+	$destroy() {
+		this.$stopWatch();
+
+		super.$destroy();
 	}
 
-	private markRefrashable() {
-		this.updateMarker.value;
+	private $markRefrashable() {
+		this.$updateMarker.value;
 	}
 
-	private forceRefresh() {
-		this.updateMarker.value = !this.updateMarker.value;
+	private $forceRefresh() {
+		this.$updateMarker.value = !this.$updateMarker.value;
 	}
 
-	private doUpdate(): void {
-		if (this.updateTask) {
+	private $doUpdate(): void {
+		if (this.$updateTask) {
 			return;
 		}
 
@@ -67,25 +69,25 @@ export default class TemplateComponent extends Component {
 
 		requestAnimationFrame(() => {
 			this[protectedFields.RENDER]();
-			this.updateTask?.resolve();
+			this.$updateTask?.resolve();
 			this[protectedFields.UPDATE_TASK] = null;
 		});
 	}
 
 	[protectedFields.RENDER](): void {
-		render(this.compiledTemplate, this.renderTarget, {
+		render(this.$compiledTemplate, this.renderTarget, {
 			eventContext: this as any,
 		});
 	}
 
 	$requestUpdate(): Promise<void> {
-		if (this.updateTask && !this.updateTask.finished) {
-			return this.updateTask;
+		if (this.$updateTask && !this.$updateTask.finished) {
+			return this.$updateTask;
 		}
 
-		this.forceRefresh();
+		this.$forceRefresh();
 
-		return this.updateTask ?? Promise.resolve();
+		return this.$updateTask ?? Promise.resolve();
 	}
 
 	template(): TemplateResult | string {
