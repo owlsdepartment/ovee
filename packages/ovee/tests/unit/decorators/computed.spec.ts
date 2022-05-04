@@ -113,4 +113,20 @@ describe('@computed decorator', () => {
 
 		expect(test.testGetter).toBe(test.testObj);
 	});
+
+	it('works on base class when inherited', () => {
+		class Base extends Component {
+			@computed()
+			get test() {
+				return true;
+			}
+		}
+
+		class Upper extends Base {}
+
+		const test = createComponent(Upper);
+
+		expect(test.test).toBe(true);
+		expect(errorSpy.console).not.toBeCalled();
+	});
 });

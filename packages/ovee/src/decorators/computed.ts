@@ -1,15 +1,13 @@
 import { Component } from 'src/core';
 import { Logger } from 'src/errors';
 import { makeComputed } from 'src/reactive';
-import { DecoratorContext, instanceDecoratorFactory } from 'src/utils';
+import { DecoratorContext, getPropertyDescriptor, instanceDecoratorFactory } from 'src/utils';
 
 const logger = new Logger('@computed');
 
 export const computed = instanceDecoratorFactory(
-	({ instance, proto, addDestructor }: DecoratorContext<Component>, fieldName) => {
-		const descriptor =
-			Object.getOwnPropertyDescriptor(instance, fieldName) ??
-			Object.getOwnPropertyDescriptor(proto, fieldName);
+	({ instance, addDestructor }: DecoratorContext<Component>, fieldName) => {
+		const descriptor = getPropertyDescriptor(instance, fieldName);
 
 		if (!descriptor?.get) {
 			logger.error(

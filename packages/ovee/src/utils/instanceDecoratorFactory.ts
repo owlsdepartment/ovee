@@ -49,7 +49,7 @@ export function instanceDecoratorFactory<T, Cb extends DecoratorFactoryCallback<
 				const addDestructor: AddDestructor = cb => instanceDecoratorDestructor(instance, cb);
 
 				callback(
-					{ instance, proto: Object.getPrototypeOf(instance), addDestructor },
+					{ instance, proto: Reflect.getPrototypeOf(instance)!, addDestructor },
 					prop,
 					...args
 				);
