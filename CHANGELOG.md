@@ -1,5 +1,14 @@
 # Change Log
 
+## [2.1.11](https://github.com/owlsdepartment/ovee/compare/v2.1.10...v2.1.11) (2022-03-28)
+
+
+### Bug Fixes
+
+* **ovee:** increase TemplateComponent safe usage ([b766b20](https://github.com/owlsdepartment/ovee/commit/b766b20ea66e5537c5b00ed8491efb6629363362))
+
+
+
 ## [2.1.10](https://github.com/owlsdepartment/ovee/compare/v2.1.9...v2.1.10) (2022-03-25)
 
 
