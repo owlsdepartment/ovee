@@ -1,5 +1,14 @@
 # Change Log
 
+## [2.1.12](https://github.com/owlsdepartment/ovee/compare/v2.1.11...v2.1.12) (2022-05-04)
+
+
+### Bug Fixes
+
+* **ovee:** make computed decorator work in nested prototype chain ([aeff377](https://github.com/owlsdepartment/ovee/commit/aeff377140d20a962cb85a68954bd1e47c5fbec3))
+
+
+
 ## [2.1.11](https://github.com/owlsdepartment/ovee/compare/v2.1.10...v2.1.11) (2022-03-28)
 
 
