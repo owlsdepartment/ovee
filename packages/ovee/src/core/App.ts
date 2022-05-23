@@ -3,20 +3,20 @@ import { OveeComponent } from 'src/core/types';
 import { Callback, EventDelegate, EventDesc } from 'src/dom';
 import { ComponentError } from 'src/errors';
 import {
+	AnyObject,
 	attachMutationObserver,
-	Class,
 	ClassConstructor,
 	Dictionary,
 	isValidNode,
 } from 'src/utils';
 
-import Component, { ComponentOptions } from './Component';
-import Module, { ModuleOptions } from './Module';
+import Component, { ComponentClass, ComponentOptions } from './Component';
+import Module, { ModuleClass, ModuleOptions } from './Module';
 
 export interface AppConstructorParams {
 	config?: Partial<AppConfig>;
-	components?: RegisterPayload<Class<Component, typeof Component>, ComponentOptions>;
-	modules?: RegisterPayload<ClassConstructor<Module>, ModuleOptions>;
+	components?: RegisterPayload<ComponentClass, ComponentOptions>;
+	modules?: RegisterPayload<ModuleClass, ModuleOptions>;
 }
 
 export interface AppConfig {
@@ -28,8 +28,8 @@ export interface AppConfig {
 
 type RegisterPayload<C, O> = (C | [C, O])[];
 
-export interface ComponentStorage<C extends Component> {
-	ComponentClass: Class<C, typeof Component>;
+export interface ComponentStorage {
+	ComponentClass: ComponentClass;
 	options: ComponentOptions;
 }
 
@@ -42,7 +42,7 @@ const defaultConfig: AppConfig = {
 
 export default class App {
 	readonly modules: Dictionary<Module> = {};
-	readonly components: Dictionary<ComponentStorage<Component>> = {};
+	readonly components: Dictionary<ComponentStorage> = {};
 	readonly $eventDelegate!: EventDelegate<any>;
 	initialized = false;
 	rootElement?: Element;
@@ -106,7 +106,7 @@ export default class App {
 		return { ...this.config };
 	}
 
-	registerModules(modules: RegisterPayload<ClassConstructor<Module>, ModuleOptions>): this {
+	registerModules(modules: RegisterPayload<ModuleClass, ModuleOptions>): this {
 		modules.forEach(module => {
 			if (Array.isArray(module)) {
 				this.use(module[0], module[1]);
@@ -118,7 +118,7 @@ export default class App {
 		return this;
 	}
 
-	use<M extends Module, Opt = M extends Module<infer O> ? O : Record<string, any>>(
+	use<M extends Module, Opt = M extends Module<infer O> ? O : AnyObject>(
 		ModuleClass: ClassConstructor<M>,
 		options?: Opt
 	): M {
@@ -153,9 +153,7 @@ export default class App {
 		return this.modules[name];
 	}
 
-	registerComponents(
-		components: RegisterPayload<Class<Component, typeof Component>, ComponentOptions>
-	): this {
+	registerComponents(components: RegisterPayload<ComponentClass, ComponentOptions>): this {
 		components.forEach(component => {
 			if (Array.isArray(component)) {
 				this.registerComponent(component[0], component[1]);
@@ -167,8 +165,8 @@ export default class App {
 		return this;
 	}
 
-	registerComponent<C extends Component>(
-		ComponentClass: Class<C, typeof Component>,
+	registerComponent<C extends ComponentClass>(
+		ComponentClass: C,
 		options: ComponentOptions = {}
 	): this {
 		if (!(ComponentClass.prototype instanceof Component)) {
@@ -240,15 +238,15 @@ export default class App {
 		);
 	}
 
-	makeComponent<C extends Component>(
+	makeComponent<C extends ComponentClass>(
 		el: Element & OveeComponent,
-		ComponentClass: Class<C, typeof Component>,
+		ComponentClass: C,
 		options: ComponentOptions = {}
-	): C {
+	): InstanceType<C> {
 		// @todo handle multi-component elements
 		if (!el._oveeComponentInstance) {
 			el.classList.add(`${this.config.namespace}-component`);
-			el._oveeComponentInstance = new ComponentClass(el, this, options) as C;
+			el._oveeComponentInstance = new ComponentClass(el, this, options);
 		} else if (!(el._oveeComponentInstance instanceof ComponentClass)) {
 			throw new ComponentError(
 				'Component instance has already been initialized for this element',
@@ -257,7 +255,7 @@ export default class App {
 			);
 		}
 
-		return el._oveeComponentInstance as C;
+		return el._oveeComponentInstance as InstanceType<C>;
 	}
 
 	destroyComponent(el: Element & OveeComponent): void {

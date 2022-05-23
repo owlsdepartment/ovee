@@ -311,7 +311,7 @@ describe('App class', () => {
 		const rootElement = document.createElement('div');
 		const dummyRegister = jest.fn();
 		const componentOptions = { option1: true };
-		const DummyComponent = class extends Component {
+		const DummyComponent = class extends Component<HTMLElement, { option1: boolean }> {
 			static register(...args: any[]) {
 				dummyRegister(...args);
 			}
@@ -830,4 +830,4 @@ describe('App class', () => {
 	});
 });
 
-type ComponentArgs = [Element, App];
+type ComponentArgs = [HTMLElement, App];
