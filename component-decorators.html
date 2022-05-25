@@ -7,7 +7,7 @@
     <meta name="generator" content="VuePress 1.5.4">
     
     <meta name="description" content="Optionally reactive framework for server-side generated markup">
-    <link rel="preload" href="/ovee/assets/css/0.styles.1650b211.css" as="style"><link rel="preload" href="/ovee/assets/js/app.d7fc607b.js" as="script"><link rel="preload" href="/ovee/assets/js/2.9220a685.js" as="script"><link rel="preload" href="/ovee/assets/js/8.bc41a916.js" as="script"><link rel="prefetch" href="/ovee/assets/js/10.9de1dc0f.js"><link rel="prefetch" href="/ovee/assets/js/11.3738ecdd.js"><link rel="prefetch" href="/ovee/assets/js/12.145a2ff9.js"><link rel="prefetch" href="/ovee/assets/js/13.52ffd53f.js"><link rel="prefetch" href="/ovee/assets/js/14.12883d14.js"><link rel="prefetch" href="/ovee/assets/js/15.1fe3e458.js"><link rel="prefetch" href="/ovee/assets/js/16.dff017db.js"><link rel="prefetch" href="/ovee/assets/js/17.7588fcdf.js"><link rel="prefetch" href="/ovee/assets/js/3.20240b92.js"><link rel="prefetch" href="/ovee/assets/js/4.0249dfe0.js"><link rel="prefetch" href="/ovee/assets/js/5.782d4282.js"><link rel="prefetch" href="/ovee/assets/js/6.f76ee8e5.js"><link rel="prefetch" href="/ovee/assets/js/7.9bdc9d34.js"><link rel="prefetch" href="/ovee/assets/js/9.ab1d7e51.js">
+    <link rel="preload" href="/ovee/assets/css/0.styles.1650b211.css" as="style"><link rel="preload" href="/ovee/assets/js/app.eefd44f3.js" as="script"><link rel="preload" href="/ovee/assets/js/2.9220a685.js" as="script"><link rel="preload" href="/ovee/assets/js/8.9f7eb3b7.js" as="script"><link rel="prefetch" href="/ovee/assets/js/10.f9f5c72b.js"><link rel="prefetch" href="/ovee/assets/js/11.ab3e3307.js"><link rel="prefetch" href="/ovee/assets/js/12.bfdb302b.js"><link rel="prefetch" href="/ovee/assets/js/13.ee17a14c.js"><link rel="prefetch" href="/ovee/assets/js/14.19d5dc7f.js"><link rel="prefetch" href="/ovee/assets/js/15.eb5af6d3.js"><link rel="prefetch" href="/ovee/assets/js/16.249348c6.js"><link rel="prefetch" href="/ovee/assets/js/17.7588fcdf.js"><link rel="prefetch" href="/ovee/assets/js/3.20240b92.js"><link rel="prefetch" href="/ovee/assets/js/4.0249dfe0.js"><link rel="prefetch" href="/ovee/assets/js/5.782d4282.js"><link rel="prefetch" href="/ovee/assets/js/6.f76ee8e5.js"><link rel="prefetch" href="/ovee/assets/js/7.9bdc9d34.js"><link rel="prefetch" href="/ovee/assets/js/9.ef0ac1b6.js">
     <link rel="stylesheet" href="/ovee/assets/css/0.styles.1650b211.css">
   </head>
   <body>
@@ -33,25 +33,30 @@
     @<span class="token function">el</span><span class="token punctuation">(</span><span class="token string">'.slide'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> list<span class="token operator">:</span> <span class="token boolean">true</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
     slides<span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
-</code></pre></div><h2 id="bind"><a href="#bind" class="header-anchor">#</a> @bind</h2> <p>Bind method as a callback for specified event listeners. Automaticlly removes them on <code>destroy</code>.</p> <p>Parameters:</p> <ul><li><code>events: string</code> - string of space separated events to listen to.</li> <li><code>target?: string | Element</code> - optional selector or specific element for which child element bind listeners. If not specified, root element will be used.</li> <li><code>selector?: string</code> - optional selector. If target was specified, selector will be used relatively to passed target and listener will be bound to found element</li></ul> <p>Example:</p> <div class="language-js extra-class"><pre class="language-js"><code>@<span class="token function">register</span><span class="token punctuation">(</span><span class="token string">'baseComponent'</span><span class="token punctuation">)</span>
+</code></pre></div><h2 id="bind"><a href="#bind" class="header-anchor">#</a> @bind</h2> <p>Bind method as a callback for specified event listeners. Automaticlly removes them on <code>destroy</code>.</p> <p>Parameters:</p> <ul><li><code>events: string</code> - string of space separated events to listen to</li> <li><code>options?: ListenerOptions</code> - optional config object with the same parameters as <code>$on</code>. We can change target for event listener or pass <code>addEventListener</code> config options</li></ul> <p>Example:</p> <div class="language-js extra-class"><pre class="language-js"><code>@<span class="token function">register</span><span class="token punctuation">(</span><span class="token string">'baseComponent'</span><span class="token punctuation">)</span>
 <span class="token keyword">class</span> <span class="token class-name">extends</span> Component <span class="token punctuation">{</span>
     @<span class="token function">bind</span><span class="token punctuation">(</span><span class="token string">'mousein mouseout'</span><span class="token punctuation">)</span>
     <span class="token function">onMouseChange</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
         <span class="token comment">// ...</span>
     <span class="token punctuation">}</span>
 
-    @<span class="token function">bind</span><span class="token punctuation">(</span><span class="token string">'click'</span><span class="token punctuation">,</span> <span class="token string">'.base__submit'</span><span class="token punctuation">)</span>
+    @<span class="token function">bind</span><span class="token punctuation">(</span><span class="token string">'click'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> target<span class="token operator">:</span> <span class="token string">'.base__submit'</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
     <span class="token function">onSubmit</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
         <span class="token comment">// ...</span>
     <span class="token punctuation">}</span>
 
-    @<span class="token function">bind</span><span class="token punctuation">(</span><span class="token string">'resize'</span><span class="token punctuation">,</span> window<span class="token punctuation">)</span>
+    @<span class="token function">bind</span><span class="token punctuation">(</span><span class="token string">'resize'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> target<span class="token operator">:</span> window <span class="token punctuation">}</span><span class="token punctuation">)</span>
     <span class="token function">onResize</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
         <span class="token comment">// ...</span>
     <span class="token punctuation">}</span>
 
-    @<span class="token function">bind</span><span class="token punctuation">(</span><span class="token string">'click'</span><span class="token punctuation">,</span> <span class="token string">'.dialog--upper'</span><span class="token punctuation">,</span> <span class="token string">'.close-button'</span><span class="token punctuation">)</span>
+    @<span class="token function">bind</span><span class="token punctuation">(</span><span class="token string">'click'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> target<span class="token operator">:</span> <span class="token string">'.close-button'</span><span class="token punctuation">,</span> root<span class="token operator">:</span> <span class="token boolean">true</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
     <span class="token function">onCloseDialog</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// ...</span>
+    <span class="token punctuation">}</span>
+
+    @<span class="token function">bind</span><span class="token punctuation">(</span><span class="token string">'scroll'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> target<span class="token operator">:</span> window<span class="token punctuation">,</span> passive<span class="token operator">:</span> <span class="token boolean">true</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+    <span class="token function">onScroll</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
         <span class="token comment">// ...</span>
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
@@ -155,7 +160,7 @@ If you reference reactive value inside, <code>@watchEffect</code> will catch it 
         console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>multipliedCounter<span class="token punctuation">)</span> <span class="token comment">// 8</span>
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
-</code></pre></div><p>Computed properties can freely be used inside <code>TemplateComponent's</code> <code>template</code> method and will trigger rerender.</p></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">5/4/2022, 1:25:02 PM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+</code></pre></div><p>Computed properties can freely be used inside <code>TemplateComponent's</code> <code>template</code> method and will trigger rerender.</p></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">5/25/2022, 3:59:21 PM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
       ←
       <a href="/ovee/components.html" class="prev">
         Components
@@ -164,6 +169,6 @@ If you reference reactive value inside, <code>@watchEffect</code> will catch it 
       </a>
       →
     </span></p></div> </main></div><div class="global-ui"></div></div>
-    <script src="/ovee/assets/js/app.d7fc607b.js" defer></script><script src="/ovee/assets/js/2.9220a685.js" defer></script><script src="/ovee/assets/js/8.bc41a916.js" defer></script>
+    <script src="/ovee/assets/js/app.eefd44f3.js" defer></script><script src="/ovee/assets/js/2.9220a685.js" defer></script><script src="/ovee/assets/js/8.9f7eb3b7.js" defer></script>
   </body>
 </html>
