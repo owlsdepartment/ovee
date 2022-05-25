@@ -19,7 +19,7 @@ export default class TemplateComponent extends Component {
 		return this.$element;
 	}
 
-	constructor(element: Element, app: App, options?: ComponentOptions) {
+	constructor(element: HTMLElement, app: App, options?: ComponentOptions) {
 		super(element, app, options);
 
 		Object.defineProperty(this, 'html', {

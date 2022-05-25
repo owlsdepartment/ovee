@@ -1,551 +1,249 @@
 import { AppEvent } from 'src/dom/AppEvent';
 import { EventDelegate } from 'src/dom/EventDelegate';
 
-jest.mock('src/dom/AppEvent');
-
-const createEventDelegate = (target: Element): EventDelegate<any> =>
-	new EventDelegate(target, {} as any);
+const createEventDelegate = (target: Element): EventDelegate<any> => new EventDelegate(target, {});
 
 describe('EventDelegate class', () => {
+	const callback = jest.fn();
+	let eventDelegate: EventDelegate;
+	let target: HTMLDivElement;
+
 	beforeEach(() => {
-		(AppEvent as jest.Mock).mockReset();
+		target = document.createElement('div');
+		eventDelegate = createEventDelegate(target);
+
+		callback.mockReset();
 	});
 
-	it('should register event listener on default target if no selector nor target passed', () => {
-		const target = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const listener = jest.fn();
+	afterEach(() => {
+		eventDelegate.destroy();
+		target.remove();
+	});
 
-		target.addEventListener = jest.fn();
-		eventDelegate.on('foo', listener);
+	it(`should increase listeners amount with proper values accordingly to amount of 'on' calls`, () => {
+		const elTarget = document.createElement('div');
+		const event1 = 'foo';
+		const events2 = 'bar baz';
 
-		const addListenerMock = target.addEventListener as jest.Mock;
+		target.appendChild(document.createElement('div'));
 
-		expect(addListenerMock).toBeCalledTimes(1);
-		expect(addListenerMock.mock.calls[0][0]).toBe('foo');
-		expect(addListenerMock.mock.calls[0][1]).toBeInstanceOf(Function);
-		expect(addListenerMock.mock.calls[0][2]).toEqual({ capture: false });
-		expect(eventDelegate.listeners.length).toBe(1);
-		expect(eventDelegate.listeners[0].event).toBe('foo');
+		eventDelegate.on(event1, callback);
+		eventDelegate.on(events2, callback, { target: elTarget });
+		eventDelegate.on(events2, callback, { target: 'div' });
+
+		expect(eventDelegate.listeners.length).toBe(3);
+		expect(eventDelegate.listeners[0].events).toBe(event1);
+		expect(eventDelegate.listeners[0].callback).toBe(callback);
 		expect(eventDelegate.listeners[0].target).toBe(target);
-		expect(eventDelegate.listeners[0].selector).toBeUndefined();
-		expect(eventDelegate.listeners[0].callback).toBe(listener);
+		expect(eventDelegate.listeners[1].events).toBe(events2);
+		expect(eventDelegate.listeners[1].callback).toBe(callback);
+		expect(eventDelegate.listeners[1].target).toBe(elTarget);
+		expect(eventDelegate.listeners[2].events).toBe(events2);
+		expect(eventDelegate.listeners[2].callback).toBe(callback);
+		expect(eventDelegate.listeners[2].target).toBe('div');
 	});
 
-	it('should register event listener on default target with selector if no target passed', () => {
-		const target = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const listener = jest.fn();
+	it('should register and unregister event listener on default target if no target is passed', () => {
+		const addEventSpy = jest.spyOn(target, 'addEventListener');
+		const removeEventSpy = jest.spyOn(target, 'removeEventListener');
 
-		target.addEventListener = jest.fn();
-		eventDelegate.on('foo', '.bar', listener);
+		eventDelegate.on('foo', callback);
+		eventDelegate.off('foo', callback);
 
-		const addListenerMock = target.addEventListener as jest.Mock;
-
-		expect(addListenerMock).toBeCalledTimes(1);
-		expect(addListenerMock.mock.calls[0][0]).toBe('foo');
-		expect(addListenerMock.mock.calls[0][1]).toBeInstanceOf(Function);
-		expect(addListenerMock.mock.calls[0][2]).toEqual({ capture: true });
-		expect(eventDelegate.listeners.length).toBe(1);
-		expect(eventDelegate.listeners[0].event).toBe('foo');
-		expect(eventDelegate.listeners[0].target).toBe(target);
-		expect(eventDelegate.listeners[0].selector).toBe('.bar');
-		expect(eventDelegate.listeners[0].callback).toBe(listener);
-	});
-
-	it('should register event listener on custom target with no selector if no selector passed', () => {
-		const target = document.createElement('div');
-		const customTarget = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const listener = jest.fn();
-
-		target.addEventListener = jest.fn();
-		customTarget.addEventListener = jest.fn();
-
-		eventDelegate.on('foo', customTarget, listener);
-
-		const addListenerMock = customTarget.addEventListener as jest.Mock;
-
-		expect(target.addEventListener).not.toBeCalled();
-		expect(addListenerMock).toBeCalledTimes(1);
-		expect(addListenerMock.mock.calls[0][0]).toBe('foo');
-		expect(addListenerMock.mock.calls[0][1]).toBeInstanceOf(Function);
-		expect(addListenerMock.mock.calls[0][2]).toEqual({ capture: false });
-		expect(eventDelegate.listeners.length).toBe(1);
-		expect(eventDelegate.listeners[0].event).toBe('foo');
-		expect(eventDelegate.listeners[0].target).toBe(customTarget);
-		expect(eventDelegate.listeners[0].selector).toBeUndefined();
-		expect(eventDelegate.listeners[0].callback).toBe(listener);
-	});
-
-	it('should register event listener on custom target with selector', () => {
-		const target = document.createElement('div');
-		const customTarget = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const listener = jest.fn();
-
-		target.addEventListener = jest.fn();
-		customTarget.addEventListener = jest.fn();
-
-		eventDelegate.on('foo', customTarget, '.bar', listener);
-
-		const addListenerMock = customTarget.addEventListener as jest.Mock;
-
-		expect(target.addEventListener).not.toBeCalled();
-		expect(addListenerMock).toBeCalledTimes(1);
-		expect(addListenerMock.mock.calls[0][0]).toBe('foo');
-		expect(addListenerMock.mock.calls[0][1]).toBeInstanceOf(Function);
-		expect(addListenerMock.mock.calls[0][2]).toEqual({ capture: true });
-		expect(eventDelegate.listeners.length).toBe(1);
-		expect(eventDelegate.listeners[0].event).toBe('foo');
-		expect(eventDelegate.listeners[0].target).toBe(customTarget);
-		expect(eventDelegate.listeners[0].selector).toBe('.bar');
-		expect(eventDelegate.listeners[0].callback).toBe(listener);
-	});
-
-	it('should register separate event listeners when multiple, space separated events passed', () => {
-		const target = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const listener = jest.fn();
-
-		target.addEventListener = jest.fn();
-
-		eventDelegate.on('foo bar', listener);
-
-		const addListenerMock = target.addEventListener as jest.Mock;
-
-		expect(addListenerMock).toBeCalledTimes(2);
-		expect(addListenerMock.mock.calls[0][0]).toBe('foo');
-		expect(addListenerMock.mock.calls[1][0]).toBe('bar');
-		expect(eventDelegate.listeners.length).toBe(2);
-		expect(eventDelegate.listeners[0].event).toBe('foo');
-		expect(eventDelegate.listeners[0].callback).toBe(listener);
-		expect(eventDelegate.listeners[1].event).toBe('bar');
-		expect(eventDelegate.listeners[1].callback).toBe(listener);
-	});
-
-	it('should unbind event listener registered without custom target nor selector', () => {
-		const target = document.createElement('div');
-		const target2 = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const listener = jest.fn();
-
-		const listeners = [
-			{
-				event: 'foo',
-				target,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'bar',
-				target,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'foo',
-				target: target2,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'baz',
-				target: target2,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'baz',
-				target: target2,
-				selector: '.roar',
-				callback: listener,
-				handler: jest.fn(),
-			},
-		];
-		eventDelegate.listeners = [...listeners];
-
-		target.removeEventListener = jest.fn();
-		target2.removeEventListener = jest.fn();
-
-		eventDelegate.off('foo', listener);
-
-		expect(target2.removeEventListener).not.toBeCalled();
-		expect(target.removeEventListener).toBeCalledTimes(1);
-		expect(target.removeEventListener).toBeCalledWith('foo', listeners[0].handler);
-		expect(eventDelegate.listeners.includes(listeners[0])).toBeFalsy();
-		expect(eventDelegate.listeners.length).toBe(listeners.length - 1);
-	});
-
-	it('should unbind event listener registered with custom target but without selector', () => {
-		const target = document.createElement('div');
-		const target2 = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const listener = jest.fn();
-
-		const listeners = [
-			{
-				event: 'foo',
-				target,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'bar',
-				target,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'foo',
-				target: target2,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'baz',
-				target: target2,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'baz',
-				target: target2,
-				selector: '.roar',
-				callback: listener,
-				handler: jest.fn(),
-			},
-		];
-		eventDelegate.listeners = [...listeners];
-
-		target.removeEventListener = jest.fn();
-		target2.removeEventListener = jest.fn();
-
-		eventDelegate.off('foo', target2, listener);
-
-		expect(target.removeEventListener).not.toBeCalled();
-		expect(target2.removeEventListener).toBeCalledTimes(1);
-		expect(target2.removeEventListener).toBeCalledWith('foo', listeners[2].handler);
-		expect(eventDelegate.listeners.includes(listeners[2])).toBeFalsy();
-		expect(eventDelegate.listeners.length).toBe(listeners.length - 1);
-	});
-
-	it('should unbind event listener registered with custom selector but without target', () => {
-		const target = document.createElement('div');
-		const target2 = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const listener = jest.fn();
-
-		const listeners = [
-			{
-				event: 'foo',
-				target,
-				selector: '.bar',
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'foo',
-				target,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'bar',
-				target,
-				selector: '.bar',
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'foo',
-				target: target2,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'baz',
-				target: target2,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'baz',
-				target: target2,
-				selector: '.roar',
-				callback: listener,
-				handler: jest.fn(),
-			},
-		];
-		eventDelegate.listeners = [...listeners];
-
-		target.removeEventListener = jest.fn();
-		target2.removeEventListener = jest.fn();
-
-		eventDelegate.off('foo', '.bar', listener);
-
-		expect(target2.removeEventListener).not.toBeCalled();
-		expect(target.removeEventListener).toBeCalledTimes(1);
-		expect(target.removeEventListener).toBeCalledWith('foo', listeners[0].handler);
-		expect(eventDelegate.listeners.includes(listeners[0])).toBeFalsy();
-		expect(eventDelegate.listeners.length).toBe(listeners.length - 1);
-	});
-
-	it('should unbind event listener registered with custom selector and target', () => {
-		const target = document.createElement('div');
-		const target2 = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const listener = jest.fn();
-
-		const listeners = [
-			{
-				event: 'foo',
-				target: target2,
-				selector: '.bar',
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'foo',
-				target,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'bar',
-				target,
-				selector: '.bar',
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'foo',
-				target: target2,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'baz',
-				target: target2,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'baz',
-				target: target2,
-				selector: '.roar',
-				callback: listener,
-				handler: jest.fn(),
-			},
-		];
-		eventDelegate.listeners = [...listeners];
-
-		target.removeEventListener = jest.fn();
-		target2.removeEventListener = jest.fn();
-
-		eventDelegate.off('foo', target2, '.bar', listener);
-
-		expect(target.removeEventListener).not.toBeCalled();
-		expect(target2.removeEventListener).toBeCalledTimes(1);
-		expect(target2.removeEventListener).toBeCalledWith('foo', listeners[0].handler);
-		expect(eventDelegate.listeners.includes(listeners[0])).toBeFalsy();
-		expect(eventDelegate.listeners.length).toBe(listeners.length - 1);
-	});
-
-	it('should unbind separate event listeners when multiple, space separated events passed', () => {
-		const target = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const listener = jest.fn();
-
-		const listeners = [
-			{
-				event: 'foo',
-				target,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-			{
-				event: 'bar',
-				target,
-				selector: undefined,
-				callback: listener,
-				handler: jest.fn(),
-			},
-		];
-		eventDelegate.listeners = [...listeners];
-
-		target.removeEventListener = jest.fn();
-
-		eventDelegate.off('bar foo', listener);
-
-		const removeListenerMock = target.removeEventListener as jest.Mock;
-
-		expect(removeListenerMock).toBeCalledTimes(2);
-		expect(removeListenerMock.mock.calls[0][0]).toBe('bar');
-		expect(removeListenerMock.mock.calls[1][0]).toBe('foo');
 		expect(eventDelegate.listeners.length).toBe(0);
+		expect(addEventSpy).toBeCalledTimes(1);
+		expect(addEventSpy.mock.calls[0][0]).toBe('foo');
+		expect(addEventSpy.mock.calls[0][1]).toBeInstanceOf(Function);
+		expect(removeEventSpy).toBeCalledTimes(1);
+		expect(removeEventSpy.mock.calls[0][0]).toBe('foo');
+		expect(removeEventSpy.mock.calls[0][1]).toBe(addEventSpy.mock.calls[0][1]);
+	});
+
+	it('should register and unregister event listener on proper target element if passed as target', () => {
+		const customTarget = document.createElement('div');
+		const addEventSpy = jest.spyOn(customTarget, 'addEventListener');
+		const removeEventSpy = jest.spyOn(customTarget, 'removeEventListener');
+		const addEventTargetSpy = jest.spyOn(target, 'addEventListener');
+
+		eventDelegate.on('foo', callback, { target: customTarget });
+		eventDelegate.off('foo', callback, { target: customTarget });
+
+		expect(eventDelegate.listeners.length).toBe(0);
+		expect(addEventTargetSpy).not.toBeCalled();
+		expect(addEventSpy).toBeCalledTimes(1);
+		expect(addEventSpy.mock.calls[0][0]).toBe('foo');
+		expect(addEventSpy.mock.calls[0][1]).toBeInstanceOf(Function);
+		expect(removeEventSpy).toBeCalledTimes(1);
+		expect(removeEventSpy.mock.calls[0][0]).toBe('foo');
+		expect(removeEventSpy.mock.calls[0][1]).toBe(addEventSpy.mock.calls[0][1]);
+	});
+
+	it('should register and unregister event listener on nested element if target is string', () => {
+		const testClass = 'nested';
+		const nested = document.createElement('div');
+		const fake = document.createElement('div');
+		const addEventSpy = jest.spyOn(nested, 'addEventListener');
+		const removeEventSpy = jest.spyOn(nested, 'removeEventListener');
+
+		nested.classList.add(testClass);
+		fake.classList.add(testClass);
+		target.appendChild(nested);
+		document.body.appendChild(fake);
+
+		eventDelegate.on('foo', callback, { target: `.${testClass}` });
+		eventDelegate.off('foo', callback, { target: `.${testClass}` });
+
+		expect(eventDelegate.listeners.length).toBe(0);
+		expect(addEventSpy).toBeCalledTimes(1);
+		expect(addEventSpy.mock.calls[0][0]).toBe('foo');
+		expect(addEventSpy.mock.calls[0][1]).toBeInstanceOf(Function);
+		expect(removeEventSpy).toBeCalledTimes(1);
+		expect(removeEventSpy.mock.calls[0][0]).toBe('foo');
+		expect(removeEventSpy.mock.calls[0][1]).toBe(addEventSpy.mock.calls[0][1]);
+	});
+
+	it(`should register event listener on proper global target if passed as string and with 'root: true'`, () => {
+		const newTarget = document.createElement('div');
+		const addEventSpy = jest.spyOn(newTarget, 'addEventListener');
+		const removeEventSpy = jest.spyOn(newTarget, 'removeEventListener');
+		const addEventTargetSpy = jest.spyOn(target, 'addEventListener');
+		const targetClass = 'custom';
+
+		document.body.appendChild(newTarget);
+		newTarget.classList.add(targetClass);
+
+		eventDelegate.on('foo', callback, { target: `.${targetClass}`, root: true });
+		eventDelegate.off('foo', callback, { target: `.${targetClass}`, root: true });
+
+		expect(eventDelegate.listeners.length).toBe(0);
+		expect(addEventTargetSpy).not.toBeCalled();
+		expect(addEventSpy).toBeCalledTimes(1);
+		expect(addEventSpy.mock.calls[0][0]).toBe('foo');
+		expect(addEventSpy.mock.calls[0][1]).toBeInstanceOf(Function);
+		expect(removeEventSpy).toBeCalledTimes(1);
+		expect(removeEventSpy.mock.calls[0][0]).toBe('foo');
+		expect(removeEventSpy.mock.calls[0][1]).toBe(addEventSpy.mock.calls[0][1]);
+	});
+
+	it('should register and unregister separate event listeners when multiple, space separated events passed', () => {
+		const addEventSpy = jest.spyOn(target, 'addEventListener');
+		const removeEventSpy = jest.spyOn(target, 'removeEventListener');
+
+		eventDelegate.on('foo bar', callback);
+		eventDelegate.off('foo bar', callback);
+
+		expect(eventDelegate.listeners.length).toBe(0);
+		expect(addEventSpy).toBeCalledTimes(2);
+		expect(addEventSpy.mock.calls[0][0]).toBe('foo');
+		expect(addEventSpy.mock.calls[1][0]).toBe('bar');
+		expect(removeEventSpy).toBeCalledTimes(2);
+		expect(removeEventSpy.mock.calls[0][0]).toBe('foo');
+		expect(removeEventSpy.mock.calls[0][1]).toBe(addEventSpy.mock.calls[0][1]);
+		expect(removeEventSpy.mock.calls[1][0]).toBe('bar');
+		expect(removeEventSpy.mock.calls[1][1]).toBe(addEventSpy.mock.calls[1][1]);
+	});
+
+	it('should unbind event listener, when returned callback is called', () => {
+		const addEventSpy = jest.spyOn(target, 'addEventListener');
+		const removeEventSpy = jest.spyOn(target, 'removeEventListener');
+		const event = 'foo';
+		const cb = eventDelegate.on(event, callback);
+
+		cb();
+
+		expect(eventDelegate.listeners.length).toBe(0);
+		expect(removeEventSpy).toBeCalledTimes(1);
+		expect(removeEventSpy.mock.calls[0][0]).toBe(event);
+		expect(removeEventSpy.mock.calls[0][1]).toBe(addEventSpy.mock.calls[0][1]);
+	});
+
+	it('should unbind event listeners for multiple events, when returned callback is called', () => {
+		const addEventSpy = jest.spyOn(target, 'addEventListener');
+		const removeEventSpy = jest.spyOn(target, 'removeEventListener');
+		const events = 'foo bar baz';
+		const cb = eventDelegate.on(events, callback);
+
+		cb();
+
+		expect(eventDelegate.listeners.length).toBe(0);
+		expect(removeEventSpy).toBeCalledTimes(3);
+		expect(removeEventSpy.mock.calls[0][0]).toBe('foo');
+		expect(removeEventSpy.mock.calls[0][1]).toBe(addEventSpy.mock.calls[0][1]);
+		expect(removeEventSpy.mock.calls[1][0]).toBe('bar');
+		expect(removeEventSpy.mock.calls[1][1]).toBe(addEventSpy.mock.calls[1][1]);
+		expect(removeEventSpy.mock.calls[2][0]).toBe('baz');
+		expect(removeEventSpy.mock.calls[2][1]).toBe(addEventSpy.mock.calls[2][1]);
 	});
 
 	it('should create an event handler that calls proper callback with proper params', () => {
-		const target = document.createElement('div');
-		const context = {};
-		const eventDelegate = new EventDelegate(target, context as any);
-		const listener = jest.fn();
+		const addEventSpy = jest.spyOn(target, 'addEventListener');
+		const context = eventDelegate.context;
 
-		target.addEventListener = jest.fn();
+		eventDelegate.on('foo', callback);
 
-		eventDelegate.on('foo', listener);
-
-		const handler = (target.addEventListener as jest.Mock).mock.calls[0][1];
-
-		const args = [{}];
+		const handler = addEventSpy.mock.calls[0][1] as Function;
+		const args = [{}, {}];
 
 		Reflect.apply(handler, eventDelegate, args);
 
 		expect(handler).toBeInstanceOf(Function);
-		expect(listener).toBeCalledTimes(1);
-		expect(listener).toBeCalledWith(...args);
-		expect(listener.mock.instances[0]).toBe(context);
+		expect(callback).toBeCalledTimes(1);
+		expect(callback).toBeCalledWith(...args);
+		expect(callback.mock.instances[0]).toBe(context);
 	});
 
-	it('should create an event handler that checks target selector to match before calling callback', () => {
-		const target = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const listener = jest.fn();
+	describe('emit', () => {
+		it('should dispatch an AppEvent instance when called', () => {
+			const dispatchSpy = jest.spyOn(target, 'dispatchEvent');
 
-		target.addEventListener = jest.fn();
-		target.matches = jest.fn();
+			eventDelegate.emit('foo', 'bar');
 
-		eventDelegate.on('foo', '.bar', listener);
+			const dispatched = dispatchSpy.mock.calls[0][0] as CustomEvent;
 
-		const handler = (target.addEventListener as jest.Mock).mock.calls[0][1];
+			expect(dispatchSpy).toBeCalledTimes(1);
+			expect(dispatched).toBeInstanceOf(AppEvent);
+			expect(dispatched.type).toBe('foo');
+			expect(dispatched.detail).toBe('bar');
+		});
 
-		Reflect.apply(handler, eventDelegate, [
-			{
-				target,
-			},
-		]);
+		it('should dispatch custom event instance if passed as argument', () => {
+			const customEvent = new Event('baz');
+			const dispatchSpy = jest.spyOn(target, 'dispatchEvent');
 
-		expect(target.matches).toBeCalledTimes(1);
-		expect(target.matches).toBeCalledWith('.bar');
-	});
+			eventDelegate.emit(customEvent);
 
-	it('should call callback by event handler if target selector matches', () => {
-		const target = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const listener = jest.fn();
-
-		target.addEventListener = jest.fn();
-		target.matches = jest.fn().mockImplementationOnce(() => true);
-
-		eventDelegate.on('foo', '.bar', listener);
-
-		const handler = (target.addEventListener as jest.Mock).mock.calls[0][1];
-
-		Reflect.apply(handler, eventDelegate, [
-			{
-				target,
-			},
-		]);
-
-		expect(listener).toBeCalledTimes(1);
-	});
-
-	it('should not call callback by event handler if target selector does not match', () => {
-		const target = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const listener = jest.fn();
-
-		target.addEventListener = jest.fn();
-		target.matches = jest.fn().mockImplementationOnce(() => false);
-
-		eventDelegate.on('foo', '.bar', listener);
-
-		const handler = (target.addEventListener as jest.Mock).mock.calls[0][1];
-
-		Reflect.apply(handler, eventDelegate, [
-			{
-				target,
-			},
-		]);
-
-		expect(listener).not.toBeCalled();
-	});
-
-	it('should dispatch an AppEvent instance when emit called', () => {
-		const target = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-
-		target.dispatchEvent = jest.fn();
-
-		eventDelegate.emit('foo', 'bar');
-
-		expect(target.dispatchEvent).toBeCalledTimes(1);
-		expect((target.dispatchEvent as jest.Mock).mock.calls[0][0]).toBeInstanceOf(AppEvent);
-		expect(AppEvent).toBeCalledTimes(1);
-		expect(AppEvent).toBeCalledWith('foo', { detail: 'bar' });
-	});
-
-	it('should dispatch custom event instance if passed to emit', () => {
-		const target = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
-		const customEvent = new Event('baz');
-
-		target.dispatchEvent = jest.fn();
-
-		eventDelegate.emit(customEvent);
-
-		expect(target.dispatchEvent).toBeCalledWith(customEvent);
-		expect(AppEvent).not.toBeCalled();
+			expect(dispatchSpy).toBeCalledWith(customEvent);
+		});
 	});
 
 	it('should unbind all listeners with destroy method', () => {
-		const target = document.createElement('div');
-		const target2 = document.createElement('div');
-		const eventDelegate = createEventDelegate(target);
+		const customTarget = document.createElement('div');
+		const addEventSpy = jest.spyOn(target, 'addEventListener');
+		const removeEventSpy = jest.spyOn(target, 'removeEventListener');
+		const addEventCustomSpy = jest.spyOn(customTarget, 'addEventListener');
+		const removeEventCustomSpy = jest.spyOn(customTarget, 'removeEventListener');
 
-		target.removeEventListener = jest.fn();
-		target2.removeEventListener = jest.fn();
-
-		const listeners = [
-			{
-				event: 'foo',
-				target,
-				selector: '.bar',
-				callback: jest.fn(),
-				handler: jest.fn(),
-			},
-			{
-				event: 'baz',
-				target: target2,
-				selector: '.yeez',
-				callback: jest.fn(),
-				handler: jest.fn(),
-			},
-		];
-		eventDelegate.listeners = [...listeners];
-
+		eventDelegate.on('foo', callback);
+		eventDelegate.on('foo', callback, { target: customTarget });
 		eventDelegate.destroy();
 
-		expect(target.removeEventListener).toBeCalledTimes(1);
-		expect(target.removeEventListener).toBeCalledWith(listeners[0].event, listeners[0].handler);
-		expect(target2.removeEventListener).toBeCalledTimes(1);
-		expect(target2.removeEventListener).toBeCalledWith(listeners[1].event, listeners[1].handler);
 		expect(eventDelegate.listeners.length).toBe(0);
+
+		expect(removeEventSpy).toBeCalledTimes(1);
+		expect(removeEventSpy.mock.calls[0][0]).toBe('foo');
+		expect(removeEventSpy.mock.calls[0][1]).toBe(addEventSpy.mock.calls[0][1]);
+
+		expect(removeEventCustomSpy).toBeCalledTimes(1);
+		expect(removeEventCustomSpy.mock.calls[0][0]).toBe('foo');
+		expect(removeEventCustomSpy.mock.calls[0][1]).toBe(addEventCustomSpy.mock.calls[0][1]);
+	});
+
+	it(`should throw error when element with string selector wasn't found`, () => {
+		expect(() => {
+			eventDelegate.on('foo', callback, { target: '.not' });
+		}).toThrowError();
+		expect(() => {
+			eventDelegate.on('foo', callback, { target: '.not', root: true });
+		}).toThrowError();
 	});
 });

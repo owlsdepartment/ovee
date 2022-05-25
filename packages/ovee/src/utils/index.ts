@@ -6,6 +6,7 @@ export * from './instanceDecoratorDestructor';
 export * from './instanceDecoratorFactory';
 export { isString } from './isString';
 export * from './isValidNode';
+export * from './omit';
 export * from './registerCustomElement';
 export * from './Task';
 export * from './toKebabCase';

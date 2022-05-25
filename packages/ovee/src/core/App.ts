@@ -1,6 +1,6 @@
 import { FRAMEWORK_NAME } from 'src/constants';
 import { OveeComponent } from 'src/core/types';
-import { Callback, EventDelegate, EventDesc } from 'src/dom';
+import { Callback, EventDelegate, EventDesc, ListenerOptions, TargetOptions } from 'src/dom';
 import { ComponentError } from 'src/errors';
 import {
 	AnyObject,
@@ -279,20 +279,12 @@ Make sure to turn on production mode when deploying for production.`
 		}
 	}
 
-	$on(events: string, callback: Callback<any>): this;
-	$on(events: string, target: Element, callback: Callback<any>): this;
-	$on(events: string, target: any, callback?: any): this {
-		this.$eventDelegate.on(events, target, callback);
-
-		return this;
+	$on(events: string, callback: Callback<any>, options?: ListenerOptions): () => void {
+		return this.$eventDelegate.on(events, callback, options);
 	}
 
-	$off(events: string, callback: Callback<any>): this;
-	$off(events: string, target: Element, callback: Callback<any>): this;
-	$off(events: string, target: any, callback?: any): this {
-		this.$eventDelegate.off(events, target, callback);
-
-		return this;
+	$off(events: string, callback: Callback<any>, options?: TargetOptions): void {
+		return this.$eventDelegate.off(events, callback, options);
 	}
 
 	$emit<D = any>(eventDesc: EventDesc, detail?: D): void {

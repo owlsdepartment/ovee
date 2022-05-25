@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { OveeElement, WithDataParam, WithElements, WithReactiveProxy } from 'src/core';
-import { Callback, EventDelegate, EventDesc } from 'src/dom/EventDelegate';
+import { Callback, EventDelegate, EventDesc, ListenerOptions, TargetOptions } from 'src/dom';
 import { ReactiveProxy } from 'src/reactive';
 import {
 	AnyObject,
@@ -150,27 +150,15 @@ export default class Component<
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	destroy(): void {}
 
-	$on(events: string, callback: Callback<this>): this;
-	$on(events: string, selector: string, callback: Callback<this>): this;
-	$on(events: string, target: Element, callback: Callback<this>): this;
-	$on(events: string, target: Element, selector: string, callback: Callback<this>): this;
-	$on(events: any, target: any, selector?: any, callback?: any): this {
-		this.$eventDelegate.on(events, target, selector, callback);
-
-		return this;
+	$on(events: string, callback: Callback<this>, options?: ListenerOptions): () => void {
+		return this.$eventDelegate.on(events, callback, options);
 	}
 
-	$off(events: string, callback: Callback<this>): this;
-	$off(events: string, selector: string, callback: Callback<this>): this;
-	$off(events: string, target: Element, callback: Callback<this>): this;
-	$off(events: string, target: Element, selector: string, callback: Callback<this>): this;
-	$off(events: any, target: any, selector?: any, callback?: any): this {
-		this.$eventDelegate.off(events, target, selector, callback);
-
-		return this;
+	$off(events: string, callback: Callback<this>, options?: TargetOptions): void {
+		return this.$eventDelegate.off(events, callback, options);
 	}
 
-	$emit<D = any>(eventDesc: EventDesc, detail: D): void {
+	$emit<D = any>(eventDesc: EventDesc, detail?: D): void {
 		this.$eventDelegate.emit(eventDesc, detail);
 	}
 
@@ -202,6 +190,6 @@ export default class Component<
 	}
 
 	static getName(): string {
-		throw new Error('Component class needs to implement static getName() method');
+		throw Error('Component class needs to implement static getName() method');
 	}
 }

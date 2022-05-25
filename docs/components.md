@@ -32,7 +32,7 @@ export default class extends Component {
     @el('.counter__value')
     valueElement;
 
-    @bind('click', '.counter__button')
+    @bind('click', { target: '.counter__button' })
     increment() {
         this.counter++;
     }
@@ -129,14 +129,16 @@ There are two ways to listen events on a component, using:
  - decorator `@bind()`
  - `this.$on()` and `this.$off()`
 
-In previous example, we enabled listening of a `click` event on a button using decorator `@bind`. It expects 2 arguments: first is an event or list of space seperated events to listen and second is an optional selector. If not passed, we will listen on root `this.$element`. This example shows us, how to listen on `focus` and `blur` on a parent and `click` on inner button:
+In previous example, we enabled listening of a `click` event on a button using decorator `@bind`. It expects 2 arguments: first is an event or list of space seperated events to listen and second is options object. If `target` isn't passed to option, we will listen on root `this.$element`. `target` can be a precise element or a query string, that searches for target relatively to `this.$element`. This behaviour can be changed, by adding `root: true`. Than we search for target relatively to current document.
+
+This example shows us, how to listen on `focus` and `blur` on a parent and `click` on inner button:
 
 ```js
 @register('base-example')
 export default class extends Component {
     // some code
 
-    @bind('click', '.counter__button')
+    @bind('click', { target: '.counter__button' })
     onButtonClick() {
         // handle click
     }
@@ -145,18 +147,24 @@ export default class extends Component {
     onFocusChange() {
         // handle focus
     }
+
+    @bind('scroll', { target: window })
+    onScroll() {
+        // handle scroll
+    }
 }
 ```
 
-We can do the same using `this.$on`, that we gain by extending `Component` class. `$on` method is chainable as it returns `this`.
+We can do the same using `this.$on`, that we gain by extending `Component` class.
 
 ```js
 @register('base-example')
 export default class extends Component {
     // some code
     init() {
-        this.$on('click', '.counter__button', this.onButtonClick)
-            .$on('focus blur', this.onFocusChange);
+        this.$on('click', this.onButtonClick, { target: '.counter__button' });
+        this.$on('focus blur', this.onFocusChange);
+        this.$on('scroll', this.onScroll, { target: window })
     }
 
     onButtonClick() {
@@ -166,23 +174,57 @@ export default class extends Component {
     onFocusChange() {
         // handle focus
     }
+
+    onScroll() {
+        // handle scroll
+    }
 }
 ```
 
-Notice, that we don't have to remove those listeners. When component is being destroyed, they are automatically removed. If you would like to remove listener earlier, for any reason, you can do it manually by using `$off`. Decorator `@bind` uses `$on` internally.
+Notice, that we don't have to remove those listeners. When component is being destroyed, they are automatically removed. If you would like to remove listener earlier, for any reason, you can do it manually by using `$off` and passing the same arguments, that `$on` received. It is possible, because decorator `@bind` uses `$on` internally.
+
+Method `$on` returns also a callback, that removes event listener. It can be called later at any point and it works for multiple events.
+
+```ts
+@register('base-example')
+export default class extends Component {
+    // some code
+    init() {
+        const removeScroll = this.$on('scroll', this.onScroll, { target: window });
+
+        this.$on('click', () => {
+            removeScroll();
+        }, { target: '.stop-scroll', root: true });
+    }
+}
+```
+
+In this example, we listen passively to scroll, until button with class `.stop-scroll` is clicked.
+
+Method `$on`, as well as `@bind`, accepts all `addEventListener` options as it's third argument, so we can explicitly use `passive: true` or `capture: false` modifiers. All `addEventListener` options can be found [here](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#parameters). `$off` method needs 
+
 
 Full signature for methods `$on` and `$off`:
 
 ```typescript
-function $on(events: string, callback: Callback<this>): this;
-function $on(events: string, selector: string, callback: Callback<this>): this;
-function $on(events: string, target: Element, callback: Callback<this>): this;
-function $on(events: string, target: Element, selector: string, callback: Callback<this>): this;
+function $on(events: string, callback: Callback<this>, options?: ListenerOptions): () => void;
 
-function $off(events: string, callback: Callback<this>): this;
-function $off(events: string, selector: string, callback: Callback<this>): this;
-function $off(events: string, target: Element, callback: Callback<this>): this;
-function $off(events: string, target: Element, selector: string, callback: Callback<this>): this;
+function $on(events: string, callback: Callback<this>, options?: TargetOptions): void;
+
+interface ListenerOptions {
+    target?: EventTarget | string;
+	root?: true;
+
+    capture?: boolean;
+    once?: boolean;
+    passive?: boolean;
+    signal?: AbortSignal;
+}
+
+interface TargetOptions {
+    target?: EventTarget | string;
+	root?: true;
+}
 ```
 
 ## Reactivity and Watching Properties

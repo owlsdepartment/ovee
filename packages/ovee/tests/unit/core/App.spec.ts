@@ -785,14 +785,14 @@ describe('App class', () => {
 		const onSpy = jest.spyOn(EventDelegate.prototype, 'on');
 
 		app.$on(event, callback);
-		app.$on(event, target, callback);
+		app.$on(event, callback, { target });
 
 		await flushPromises();
 
 		expect(onSpy).toHaveBeenCalledTimes(2);
 		expect(onSpy.mock.calls[0][0]).toEqual(event);
 		expect(onSpy.mock.calls[0][1]).toEqual(callback);
-		expect(onSpy.mock.calls[1]).toEqual([event, target, callback]);
+		expect(onSpy.mock.calls[1]).toEqual([event, callback, { target }]);
 	});
 
 	it('should unsubscribe to events using $off method and EventDelegate', async () => {
@@ -803,14 +803,14 @@ describe('App class', () => {
 		const offSpy = jest.spyOn(EventDelegate.prototype, 'off');
 
 		app.$off(event, callback);
-		app.$off(event, target, callback);
+		app.$off(event, callback, { target });
 
 		await flushPromises();
 
 		expect(offSpy).toHaveBeenCalledTimes(2);
 		expect(offSpy.mock.calls[0][0]).toEqual(event);
 		expect(offSpy.mock.calls[0][1]).toEqual(callback);
-		expect(offSpy.mock.calls[1]).toEqual([event, target, callback]);
+		expect(offSpy.mock.calls[1]).toEqual([event, callback, { target }]);
 	});
 
 	it('should unsubscribe to events using $emit method and EventDelegate', async () => {
