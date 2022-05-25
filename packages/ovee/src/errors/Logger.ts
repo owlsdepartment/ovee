@@ -32,18 +32,26 @@ export class Logger {
 			return;
 		}
 
+		const firstArg = logArgs[0];
+		const baseMessage = isString(firstArg) ? firstArg : '';
+		const message = this.getMessage(baseMessage, prefixParts);
+
+		if (isString(firstArg)) {
+			logArgs[0] = message;
+		} else {
+			logArgs.unshift(message);
+		}
+
+		logMethod(...logArgs);
+	}
+
+	getMessage(message: string, prefixParts: string[] = []) {
 		const prefix =
 			prefixParts.length === 0
 				? this.basePrefix
 				: this.createPrefix([this.namespace, this.subnamespace, ...prefixParts]);
 
-		if (isString(logArgs[0])) {
-			logArgs[0] = `${prefix} ${logArgs[0]}`;
-		} else {
-			logArgs.unshift(prefix);
-		}
-
-		logMethod(...logArgs);
+		return message ? `${prefix} ${message}` : prefix;
 	}
 
 	log(...args: any[]) {
