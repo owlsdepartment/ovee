@@ -4,6 +4,8 @@ import * as protectedFields from 'src/core/protectedFields';
 import { instanceDecoratorDestructor } from './instanceDecoratorDestructor';
 import { AnyObject } from './types';
 
+export type PropType = 'field' | 'getter' | 'setter' | 'method';
+
 export type ExtractDecorator<T, F extends DecoratorFactoryCallback<T>> = (
 	...args: ExtractRest<F>
 ) => (target: any, prop: string) => void;
@@ -25,6 +27,7 @@ export type DecoratorFactoryCallback<T> = (
 export interface DecoratorContext<T = AnyObject, P = AnyObject> {
 	instance: T & AnyObject;
 	proto: P;
+	type: PropType[];
 	addDestructor: AddDestructor;
 }
 
@@ -45,14 +48,32 @@ export function instanceDecoratorFactory<T, Cb extends DecoratorFactoryCallback<
 				ctor[protectedFields.INSTANCE_DECORATORS] = [];
 			}
 
+			const type = getPropType(target, prop);
+
 			ctor[protectedFields.INSTANCE_DECORATORS]!.push(instance => {
 				const addDestructor: AddDestructor = cb => instanceDecoratorDestructor(instance, cb);
 
 				callback(
-					{ instance, proto: Reflect.getPrototypeOf(instance)!, addDestructor },
+					{ instance, proto: Reflect.getPrototypeOf(instance)!, addDestructor, type },
 					prop,
 					...args
 				);
 			});
 		};
+}
+
+function getPropType(proto: any, key: string): PropType[] {
+	const descriptor = Reflect.getOwnPropertyDescriptor(proto, key);
+
+	if (!descriptor) return ['field'];
+
+	const { get, set } = descriptor;
+	const output: PropType[] = [];
+
+	if (get && typeof get === 'function') output.push('getter');
+	if (set && typeof set === 'function') output.push('setter');
+
+	if (output.length > 0) return output;
+
+	return ['method'];
 }

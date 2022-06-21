@@ -12,8 +12,8 @@ Parameters:
 
 Example:
 ```js
-@register('baseComponent')
-class extends Component {}
+@register('my-component')
+class MyComponent extends Component {}
 ```
 
 ## @el
@@ -25,8 +25,8 @@ Parameters:
 
 Example:
 ```js
-@register('baseComponent')
-class extends Component {
+@register('my-component')
+class MyComponent extends Component {
     @el('.counter__button')
     button;
 
@@ -44,8 +44,8 @@ Parameters:
 
 Example:
 ```js
-@register('baseComponent')
-class extends Component {
+@register('my-component')
+class MyComponent extends Component {
     @bind('mousein mouseout')
     onMouseChange() {
         // ...
@@ -78,8 +78,8 @@ Makes property reactive by using [`makeReactive`](/reactivity#makeReactive).
 
 Example:
 ```js
-@register('baseComponent')
-class extends Component {
+@register('my-component')
+class MyComponent extends Component {
     @reactive()
     counter;
 }
@@ -93,8 +93,8 @@ Parameters:
 
 Example:
 ```js
-@register('baseComponent')
-class extends Component {
+@register('my-component')
+class MyComponent extends Component {
     @prop()
     scrollHeight;
 
@@ -117,8 +117,8 @@ Parameters:
 
 Example:
 ```js
-@register('baseComponent')
-class extends Component {
+@register('my-component')
+class MyComponent extends Component {
     @dataParam()
     initial; // will bind to data-initial
 
@@ -136,8 +136,8 @@ Parameters:
 
 Example:
 ```js
-@register('baseComponent')
-class extends Component {
+@register('my-component')
+class MyComponent extends Component {
     @reactive()
     counter = 0
 
@@ -164,8 +164,8 @@ Also, in opposite to `@watch`, `@watchEffect` will run almost immediately after 
 
 Example:
 ```js
-@register('baseComponent')
-class extends Component {
+@register('my-component')
+class MyComponent extends Component {
     @reactive()
     counter = 0
 
@@ -202,8 +202,8 @@ import { ref } from 'ovee.js'
 // we can use external reactive variable
 const counter = ref(0)
 
-@register('baseComponent')
-class extends Component {
+@register('my-component')
+class MyComponent extends Component {
     multiplier = 2
 
     @computed()
@@ -233,3 +233,26 @@ class extends Component {
 ```
 
 Computed properties can freely be used inside `TemplateComponent's` `template` method and will trigger rerender.
+
+## @module
+
+This decorator is a simple tool for retrieving any registered module instance. It uses `$app.getModule` under the hood. Similarly to `@el`, it should be used on class field. It accepts either module's name, or module itself. Second way is suggested, as it's independent of possibility of changing module's name.
+
+Example:
+
+```ts
+import { module, Component, register } from 'ovee.js'
+
+@register('my-component')
+class MyComponent extends Component {
+    @module('MyModule')
+    myModule;
+
+    @module(OtherModule)
+    otherModule;
+
+    // in TypeScript with typing
+    @module(OtherModule)
+    otherModule: OtherModule;
+}
+```

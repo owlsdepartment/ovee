@@ -4,6 +4,12 @@ import { instanceDecoratorFactory } from 'src/utils/instanceDecoratorFactory';
 
 jest.mock('src/utils/instanceDecoratorDestructor');
 
+function callAllDecorators(instance: any, ctor: any) {
+	const decorators = ctor.prototype.constructor[protectedFields.INSTANCE_DECORATORS];
+
+	decorators.forEach((cb: (i: any) => void) => cb(instance));
+}
+
 describe('instanceDecoratorFactory function', () => {
 	it('should produce a proper decorator structure', () => {
 		const product = instanceDecoratorFactory(jest.fn());
@@ -73,14 +79,44 @@ describe('instanceDecoratorFactory function', () => {
 		const instance = new T();
 		const proto = Object.getPrototypeOf(instance);
 
-		(T.prototype.constructor as any)[protectedFields.INSTANCE_DECORATORS][0](instance);
+		callAllDecorators(instance, T);
 
 		expect(callback.mock.calls.length).toBe(1);
 		expect(callback.mock.calls[0][0].instance).toBe(instance);
 		expect(callback.mock.calls[0][0].proto).toBe(proto);
 		expect(callback.mock.calls[0][0].addDestructor).toBeInstanceOf(Function);
+		expect(callback.mock.calls[0][0].type).toEqual(['field']);
 		expect(callback.mock.calls[0][1]).toBe(prop);
 		expect(callback.mock.calls[0][2]).toBe(dummyArg);
+	});
+
+	it('should return proper type of decorated field', () => {
+		const callback = jest.fn();
+		const decorator = instanceDecoratorFactory(callback);
+		class T {
+			@decorator()
+			field?: string;
+
+			@decorator()
+			get getter() {
+				return 0;
+			}
+
+			@decorator()
+			set setter(val: any) {}
+
+			@decorator()
+			method() {}
+		}
+		const instance = new T();
+
+		callAllDecorators(instance, T);
+
+		expect(callback.mock.calls.length).toBe(4);
+		expect(callback.mock.calls[0][0].type).toEqual(['field']);
+		expect(callback.mock.calls[1][0].type).toEqual(['getter']);
+		expect(callback.mock.calls[2][0].type).toEqual(['setter']);
+		expect(callback.mock.calls[3][0].type).toEqual(['method']);
 	});
 
 	it(`should allow to add destructor via 'addDestructor' argument
@@ -95,7 +131,7 @@ describe('instanceDecoratorFactory function', () => {
 		}
 		const instance = new T();
 
-		(T.prototype.constructor as any)[protectedFields.INSTANCE_DECORATORS][0](instance);
+		callAllDecorators(instance, T);
 
 		expect(instanceDecoratorDestructor).toBeCalledTimes(1);
 		expect((instanceDecoratorDestructor as jest.Mock).mock.calls[0][1]).toBe(callback);
