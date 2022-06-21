@@ -7,6 +7,7 @@ import {
 	attachMutationObserver,
 	ClassConstructor,
 	Dictionary,
+	isString,
 	isValidNode,
 } from 'src/utils';
 
@@ -145,12 +146,25 @@ export default class App {
 		Object.values(this.modules).forEach(module => module.destroy());
 	}
 
-	getModule(name: string): Module {
-		if (!this.modules[name]) {
-			throw new Error(`Module "${name}" is not registered`);
+	getModule<M extends ModuleClass = ModuleClass>(module: M | string): InstanceType<M> {
+		let name: string;
+		console.log(Module);
+
+		if (isString(module)) {
+			name = module;
+		} else {
+			if (!('getName' in module) && typeof module.getName !== 'function') {
+				throw new Error(`Passed classed is not an instance of the 'Module' class`);
+			}
+
+			name = module.getName();
 		}
 
-		return this.modules[name];
+		if (!this.modules[name]) {
+			throw new Error(`Module '${name}' is not registered`);
+		}
+
+		return this.modules[name] as InstanceType<M>;
 	}
 
 	registerComponents(components: RegisterPayload<ComponentClass, ComponentOptions>): this {
