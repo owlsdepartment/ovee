@@ -236,7 +236,7 @@ Computed properties can freely be used inside `TemplateComponent's` `template` m
 
 ## @module
 
-This decorator is a simple tool for retrieving any registered module instance. It uses `$app.getModule` under the hood. Similarly to `@el`, it should be used on class field. It accepts either module's name, or module itself. Second way is suggested, as it's independent of possibility of changing module's name.
+This decorator is a simple tool for retrieving any registered module instance. It uses `$app.getModule` under the hood. Similar to `@el`, it should be used on a class field. It accepts either module's name, or the module itself. The second way is suggested, as it's independent of the possibility of changing the module's name.
 
 Example:
 
