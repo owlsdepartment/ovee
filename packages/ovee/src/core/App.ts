@@ -148,7 +148,6 @@ export default class App {
 
 	getModule<M extends ModuleClass = ModuleClass>(module: M | string): InstanceType<M> {
 		let name: string;
-		console.log(Module);
 
 		if (isString(module)) {
 			name = module;
