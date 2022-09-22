@@ -356,6 +356,27 @@ export default class extends TemplateComponent {
 }
 ```
 
-To render template, template components uses [`lit-html`](https://github.com/polymer/lit-html). Guide: <https://lit-html.polymer-project.org/guide>.
+To render template, template components uses [`lit-html`](https://github.com/lit/lit/tree/main/packages/lit-html), which is a part of [lit](https://lit.dev/) ecosystem. Guide for `lit` templating: <https://lit.dev/docs/templates/overview/>.
 
-We are also recomending some tools and helpers for `lit-html` to use with your IDE: <https://lit-html.polymer-project.org/guide/tools#ide-plugins> or for `VS Code`: <https://marketplace.visualstudio.com/items?itemName=bierner.lit-html>.
+We are also recomending some tools and helpers for `lit-html` to use with your IDE: <https://lit.dev/docs/tools/development/#ide-plugins> or for `VS Code`: <https://marketplace.visualstudio.com/items?itemName=runem.lit-plugin>.
+
+### `lit-html@1.x` backwards compatibility
+
+In `ovee` versions `2.1.x` and lower, `lit-html` was used in version `1.x`. Now version `2.x` is exepcted. To maintain older behaviour after migration, add field `__clearRenderTarget = true`.
+
+Example:
+
+```js
+import { TemplateComponent, register } from 'ovee.js';
+
+@register('counter')
+export class CounterComponent extends TemplateComponent {
+    __clearRenderTarget = true
+
+    template() {
+        return this.html`
+            <div class="some-wrapper"></div>
+        `
+    }
+}
+```
