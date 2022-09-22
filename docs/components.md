@@ -69,6 +69,49 @@ const app = new App({
 app.registerComponent(MyComponent, { option1: 'a', option2: true })
 ```
 
+To can then access those options in component under `this.$options`. You can also declare default values, by adding static method `defaultOptions`. Later on these options will be merged together.
+
+```js
+@register('my-component')
+export class MyComponent extends Component {
+    static defaultOptions() {
+        return {
+            myOption: 'custom option'
+        }
+    }
+    
+    init() {
+        // 'myOption' will be 'custom option' by default, if not changed during registration
+        console.log(this.$options.myOption)
+    }
+}
+```
+
+### TypeScript options support
+
+If you're using `TypeScript`, it is highly advised to add typings to your options. You can do this via a generic, like this:
+
+```ts
+export interface MyComponentOptions {
+    myOption: string;
+}
+
+@register('my-component')
+export class MyComponent extends Component<HTMLElement, MyComponentOptions> {
+    static defaultOptions() {
+        return {
+            // it is now fully typed
+            myOption: 'custom option'
+        }
+    }
+    
+    init() {
+        // here as well!
+        console.log(this.$options.myOption)
+    }
+}
+```
+
 ## Component Lifecycle
 A component's lifecycle is prerty straightforward. In most cases, you shuld not override its constructor. Instead, use lifecycle hooks.
 <mermaid>
