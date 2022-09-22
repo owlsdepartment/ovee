@@ -245,7 +245,7 @@ This decorator is a simple tool for retrieving any registered module instance. I
 
 Example:
 
-```ts
+```js
 import { module, Component, register } from 'ovee.js'
 
 @register('my-component')
@@ -255,9 +255,38 @@ class MyComponent extends Component {
 
     @module(OtherModule)
     otherModule;
+}
+```
 
-    // in TypeScript with typing
-    @module(OtherModule)
+If you're using `TypeScript`, you should also type the field with module you would receive. But you can omit it, if in your `tsconfig.json` you have flag `emitDecoratorMetadata` set to true.
+
+```json
+{
+    "compilerOptions": {
+        // ...
+        "emitDecoratorMetadata": true,
+        // ...
+    },
+    // ...
+}
+```
+
+Example:
+
+```ts
+import { module, Component, register } from 'ovee.js'
+
+import { MyModule } from '../modules/MyModule'
+import { OtherModule } from '../modules/OtherModule'
+
+@register('my-component')
+class MyComponent extends Component {
+    // with `emitDecoratorMetadata: false`
+    @module(MyModule)
+    myModule: MyModule;
+
+    // with `emitDecoratorMetadata: true`
+    @module()
     otherModule: OtherModule;
 }
 ```

@@ -52,4 +52,23 @@ describe('@module decorator', () => {
 		expect(instance.module).toBeInstanceOf(TestModule);
 		expect(instance.module2).toBeInstanceOf(TestModule);
 	});
+
+	it('retrieves module based on the field type', () => {
+		class TestModule extends Module {
+			init(): void {}
+
+			static getName(): string {
+				return 'Test';
+			}
+		}
+		class Test extends Component {
+			@module()
+			module!: TestModule;
+		}
+
+		const app = new App({ modules: [TestModule] });
+		const instance = createComponent(Test, { app });
+
+		expect(instance.module).toBeInstanceOf(TestModule);
+	});
 });
