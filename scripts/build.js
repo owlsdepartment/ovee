@@ -75,7 +75,8 @@ function getBundleConfig(packagePath) {
 	return {
 		input: path.resolve(packagePath, `src/index.ts`),
 		tsconfig: path.resolve(packagePath, `tsconfig.json`),
-		external: ['ovee.js', 'lit-html', 'reflect-metadata', /^@vue\//],
+		// it should be infered from package.json 'dependency' field
+		external: ['ovee.js', 'lit-html', 'reflect-metadata', /^@vue\//, '@barba/core'],
 	};
 }
 
