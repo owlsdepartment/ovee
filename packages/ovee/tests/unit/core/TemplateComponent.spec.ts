@@ -137,7 +137,7 @@ describe('TemplateComponent class', () => {
 
 	it('stopsRerenderWatch on destroy', () => {
 		const test = createComponent(TemplateComponent);
-		const stopWatchSpy = jest.spyOn(test, 'stopWatch' as any);
+		const stopWatchSpy = jest.spyOn(test, '$stopWatch' as any);
 
 		test.$destroy();
 

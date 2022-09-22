@@ -32,7 +32,7 @@ export default class extends Component {
     @el('.counter__value')
     valueElement;
 
-    @bind('click', '.counter__button')
+    @bind('click', { target: '.counter__button' })
     increment() {
         this.counter++;
     }
@@ -51,7 +51,23 @@ As we can see, within component class we can reference children elements that ar
 ## Declaring and Registering Components
 A component has to extend base `Component` class. For convenience, we provide `@register()` decorator, which defines the name that will be used to corelate it with a matching DOM element. Underneath, we define a custom element. Alternatively, you may define a `static getName()` method that would return a name.
 
-In normal circumstances, you would not instantiate a `Component` manually. Instead, you should use `registerComponent()` method of `App` or pass it as an `App` argument. The `App` instance is responsible of handling instantiating and destroying components. More info about registering components within the `App` [here](/guide#initialization).
+In normal circumstances, you would not instantiate a `Component` manually. Instead, you should use `registerComponent()` method of `App` or pass it as an `App` argument. The `App` instance is responsible of handling, instantiating, and destroying components. More info about registering components within the `App` [here](/guide#initialization).
+
+## Component options
+
+You can register component with default global options. Every new instance of that component will get these options as a default ones.
+
+```js
+// passing options via App constructor
+const app = new App({
+    components: [
+        [MyComponent, { option1: 'a', option2: true }]
+    ]
+})
+
+// or via dynamic registration 
+app.registerComponent(MyComponent, { option1: 'a', option2: true })
+```
 
 ## Component Lifecycle
 A component's lifecycle is prerty straightforward. In most cases, you shuld not override its constructor. Instead, use lifecycle hooks.
@@ -113,14 +129,16 @@ There are two ways to listen events on a component, using:
  - decorator `@bind()`
  - `this.$on()` and `this.$off()`
 
-In previous example, we enabled listening of a `click` event on a button using decorator `@bind`. It expects 2 arguments: first is an event or list of space seperated events to listen and second is an optional selector. If not passed, we will listen on root `this.$element`. This example shows us, how to listen on `focus` and `blur` on a parent and `click` on inner button:
+In previous example, we enabled listening of a `click` event on a button using decorator `@bind`. It expects 2 arguments: first is an event or list of space seperated events to listen and second is options object. If `target` isn't passed to option, we will listen on root `this.$element`. `target` can be a precise element, array of multiple elements, or a query string, that searches for target relatively to `this.$element`. This behaviour can be changed, by adding `root: true`. Than we search for target relatively to current document. It `target` is a query string, we can add an option `multiple: true` and find all matching elements using `querySelectorAll`.
+
+This example shows us, how to listen on `focus` and `blur` on a parent and `click` on inner button:
 
 ```js
 @register('base-example')
 export default class extends Component {
     // some code
 
-    @bind('click', '.counter__button')
+    @bind('click', { target: '.counter__button' })
     onButtonClick() {
         // handle click
     }
@@ -129,18 +147,30 @@ export default class extends Component {
     onFocusChange() {
         // handle focus
     }
+
+    @bind('scroll', { target: window })
+    onScroll() {
+        // handle scroll
+    }
+
+    @bind('mouseover', { target: '.counter__value', multiple: true })
+    onCounterValueHover(e) {
+        // handle mouse hover on all value displays
+    }
 }
 ```
 
-We can do the same using `this.$on`, that we gain by extending `Component` class. `$on` method is chainable as it returns `this`.
+We can do the same using `this.$on`, that we gain by extending `Component` class.
 
 ```js
 @register('base-example')
 export default class extends Component {
     // some code
     init() {
-        this.$on('click', '.counter__button', this.onButtonClick)
-            .$on('focus blur', this.onFocusChange);
+        this.$on('click', this.onButtonClick, { target: '.counter__button' });
+        this.$on('focus blur', this.onFocusChange);
+        this.$on('scroll', this.onScroll, { target: window })
+        this.$on('mouseover', this.onCounterValueHover. { target: '.counter__value', multiple: true })
     }
 
     onButtonClick() {
@@ -150,23 +180,63 @@ export default class extends Component {
     onFocusChange() {
         // handle focus
     }
+
+    onScroll() {
+        // handle scroll
+    }
+
+    onCounterValueHover(e) {
+        // handle mouse hover on all value displays
+    }
 }
 ```
 
-Notice, that we don't have to remove those listeners. When component is being destroyed, they are automatically removed. If you would like to remove listener earlier, for any reason, you can do it manually by using `$off`. Decorator `@bind` uses `$on` internally.
+Notice, that we don't have to remove those listeners. When component is being destroyed, they are automatically removed. If you would like to remove listener earlier, for any reason, you can do it manually by using `$off` and passing the same arguments, that `$on` received. It is possible, because decorator `@bind` uses `$on` internally.
+
+Method `$on` returns also a callback, that removes event listener. It can be called later at any point and it works for multiple events.
+
+```ts
+@register('base-example')
+export default class extends Component {
+    // some code
+    init() {
+        const removeScroll = this.$on('scroll', this.onScroll, { target: window, passive: true });
+
+        this.$on('click', () => {
+            removeScroll();
+        }, { target: '.stop-scroll', root: true });
+    }
+}
+```
+
+In this example, we listen passively to scroll, until button with class `.stop-scroll` is clicked.
+
+Method `$on`, as well as `@bind`, accepts all `addEventListener` options as it's third argument, so we can explicitly use `passive: true` or `capture: false` modifiers. All `addEventListener` options can be found [here](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#parameters). `$off` method needs 
+
 
 Full signature for methods `$on` and `$off`:
 
 ```typescript
-function $on(events: string, callback: Callback<this>): this;
-function $on(events: string, selector: string, callback: Callback<this>): this;
-function $on(events: string, target: Element, callback: Callback<this>): this;
-function $on(events: string, target: Element, selector: string, callback: Callback<this>): this;
+function $on(events: string, callback: Callback<this>, options?: ListenerOptions): () => void;
 
-function $off(events: string, callback: Callback<this>): this;
-function $off(events: string, selector: string, callback: Callback<this>): this;
-function $off(events: string, target: Element, callback: Callback<this>): this;
-function $off(events: string, target: Element, selector: string, callback: Callback<this>): this;
+function $on(events: string, callback: Callback<this>, options?: TargetOptions): void;
+
+interface ListenerOptions {
+    target?: string | EventTarget | EventTarget[];
+	root?: true;
+    multiple?: true;
+
+    capture?: boolean;
+    once?: boolean;
+    passive?: boolean;
+    signal?: AbortSignal;
+}
+
+interface TargetOptions {
+    target?: string | EventTarget | EventTarget[];
+	root?: true;
+    multiple?: true;
+}
 ```
 
 ## Reactivity and Watching Properties

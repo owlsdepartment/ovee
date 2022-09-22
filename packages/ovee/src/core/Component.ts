@@ -1,12 +1,14 @@
 // eslint-disable-next-line max-classes-per-file
 import { OveeElement, WithDataParam, WithElements, WithReactiveProxy } from 'src/core';
-import { Callback, EventDelegate, EventDesc } from 'src/dom/EventDelegate';
+import { Callback, EventDelegate, EventDesc, ListenerOptions, TargetOptions } from 'src/dom';
 import { ReactiveProxy } from 'src/reactive';
 import {
+	AnyObject,
 	attachMutationObserver,
 	Dictionary,
 	isValidNode,
 	MutationCallback,
+	OmitConstructor,
 	registerCustomElement,
 	toKebabCase,
 } from 'src/utils';
@@ -15,26 +17,32 @@ import App from './App';
 import { InstanceDecorators } from './InstanceDecorators';
 import * as protectedFields from './protectedFields';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ComponentOptions {}
+export type ComponentOptions = AnyObject;
 
-export default class Component
+export type ComponentClass = OmitConstructor<typeof Component> &
+	// we needed to use `any` as there was a problem with assingning types, that inherited from `Element`
+	(new (el: any, app: App, options?: ComponentOptions) => Component<any, any>);
+
+export default class Component<
+		RootElement extends Element = HTMLElement,
+		Options extends ComponentOptions = ComponentOptions
+	>
 	extends InstanceDecorators
 	implements WithReactiveProxy, WithDataParam, WithElements
 {
-	readonly $element!: Element;
+	readonly $element!: RootElement;
 	readonly $app!: App;
-	readonly $options!: ComponentOptions;
+	readonly $options!: Options;
 	readonly $eventDelegate!: EventDelegate<this>;
 	readonly $refs!: Dictionary<Element[]>;
 
 	[protectedFields.REFS]: Dictionary<Element[]> = {};
-	[protectedFields.REFS_OBSERVER]: MutationObserver;
+	[protectedFields.REFS_OBSERVER]?: MutationObserver;
 	[protectedFields.REACTIVE_PROXY]?: ReactiveProxy;
 	__dataParams?: Dictionary<() => void>;
 	__els?: Dictionary<() => void>;
 
-	constructor(element: Element, app: App, options: ComponentOptions = {}) {
+	constructor(element: RootElement, app: App, options: Partial<Options> = {}) {
 		super();
 
 		Object.defineProperty(this, '$element', {
@@ -52,7 +60,7 @@ export default class Component
 		Object.defineProperty(this, '$options', {
 			value: {
 				...(this.constructor as typeof Component).defaultOptions(),
-				...options,
+				...(options ?? {}),
 			},
 			writable: false,
 			configurable: false,
@@ -142,27 +150,15 @@ export default class Component
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	destroy(): void {}
 
-	$on(events: string, callback: Callback<this>): this;
-	$on(events: string, selector: string, callback: Callback<this>): this;
-	$on(events: string, target: Element, callback: Callback<this>): this;
-	$on(events: string, target: Element, selector: string, callback: Callback<this>): this;
-	$on(events: any, target: any, selector?: any, callback?: any): this {
-		this.$eventDelegate.on(events, target, selector, callback);
-
-		return this;
+	$on(events: string, callback: Callback<this>, options?: ListenerOptions): () => void {
+		return this.$eventDelegate.on(events, callback, options);
 	}
 
-	$off(events: string, callback: Callback<this>): this;
-	$off(events: string, selector: string, callback: Callback<this>): this;
-	$off(events: string, target: Element, callback: Callback<this>): this;
-	$off(events: string, target: Element, selector: string, callback: Callback<this>): this;
-	$off(events: any, target: any, selector?: any, callback?: any): this {
-		this.$eventDelegate.off(events, target, selector, callback);
-
-		return this;
+	$off(events: string, callback: Callback<this>, options?: TargetOptions): void {
+		return this.$eventDelegate.off(events, callback, options);
 	}
 
-	$emit<D = any>(eventDesc: EventDesc, detail: D): void {
+	$emit<D = any>(eventDesc: EventDesc, detail?: D): void {
 		this.$eventDelegate.emit(eventDesc, detail);
 	}
 
@@ -171,7 +167,7 @@ export default class Component
 
 		this.$eventDelegate.destroy();
 		this[protectedFields.DESTROY_DECORATORS]();
-		this[protectedFields.REFS_OBSERVER].disconnect();
+		this[protectedFields.REFS_OBSERVER]?.disconnect();
 
 		this.destroy();
 	}
@@ -194,6 +190,6 @@ export default class Component
 	}
 
 	static getName(): string {
-		throw new Error('Component class needs to implement static getName() method');
+		throw Error('Component class needs to implement static getName() method');
 	}
 }

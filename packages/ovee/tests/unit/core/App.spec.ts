@@ -240,41 +240,73 @@ describe('App class', () => {
 		});
 	});
 
-	it('should return a module instance when registered', () => {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const dummyInit = jest.fn();
-		const dummyModuleName = 'testModule';
-		const DummyModule = class extends Module {
-			init() {}
+	describe('getModule', () => {
+		it('should return a registered module instance when module name is passed', () => {
+			const dummyModuleName = 'testModule';
+			class DummyModule extends Module {
+				init() {}
 
-			static getName() {
-				return dummyModuleName;
+				static getName() {
+					return dummyModuleName;
+				}
 			}
-		};
-		const rootElement = document.createElement('div');
-		const app = new App({
-			modules: [DummyModule],
+			const rootElement = document.createElement('div');
+			const app = new App({
+				modules: [DummyModule],
+			});
+
+			app.run(rootElement);
+
+			const m: DummyModule = app.getModule<typeof DummyModule>(dummyModuleName);
+
+			expect(m).toBeInstanceOf(DummyModule);
 		});
 
-		app.run(rootElement);
+		it('should return a registered module instance when module class is passed', () => {
+			const dummyModuleName = 'testModule';
+			class DummyModule extends Module {
+				init() {}
 
-		expect(() => {
-			expect(app.getModule(dummyModuleName)).toBeInstanceOf(DummyModule);
-		}).not.toThrow();
-	});
+				static getName() {
+					return dummyModuleName;
+				}
+			}
+			const rootElement = document.createElement('div');
+			const app = new App({
+				modules: [DummyModule],
+			});
 
-	it('should throw an error when trying to get an instance of not registered module', () => {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const dummyInit = jest.fn();
-		const dummyModuleName = 'nonExistantModule';
-		const rootElement = document.createElement('div');
-		const app = new App();
+			app.run(rootElement);
 
-		app.run(rootElement);
+			console.log(Module);
+			const m: DummyModule = app.getModule(DummyModule);
 
-		expect(() => {
-			app.getModule(dummyModuleName);
-		}).toThrow(`Module "${dummyModuleName}" is not registered`);
+			expect(m).toBeInstanceOf(DummyModule);
+		});
+
+		it('should throw an error when trying to get a not registered module', () => {
+			const dummyModuleName = 'nonExistantModule';
+			const rootElement = document.createElement('div');
+			const app = new App();
+
+			app.run(rootElement);
+
+			expect(() => {
+				app.getModule(dummyModuleName);
+			}).toThrowError();
+		});
+
+		it('should throw an error when using class that is not a module instance', () => {
+			const dummyModuleName = 'nonExistantModule';
+			const rootElement = document.createElement('div');
+			const app = new App();
+
+			app.run(rootElement);
+
+			expect(() => {
+				app.getModule(dummyModuleName);
+			}).toThrowError();
+		});
 	});
 
 	it('should register a component without options if none passed', () => {
@@ -311,7 +343,7 @@ describe('App class', () => {
 		const rootElement = document.createElement('div');
 		const dummyRegister = jest.fn();
 		const componentOptions = { option1: true };
-		const DummyComponent = class extends Component {
+		const DummyComponent = class extends Component<HTMLElement, { option1: boolean }> {
 			static register(...args: any[]) {
 				dummyRegister(...args);
 			}
@@ -785,14 +817,14 @@ describe('App class', () => {
 		const onSpy = jest.spyOn(EventDelegate.prototype, 'on');
 
 		app.$on(event, callback);
-		app.$on(event, target, callback);
+		app.$on(event, callback, { target });
 
 		await flushPromises();
 
 		expect(onSpy).toHaveBeenCalledTimes(2);
 		expect(onSpy.mock.calls[0][0]).toEqual(event);
 		expect(onSpy.mock.calls[0][1]).toEqual(callback);
-		expect(onSpy.mock.calls[1]).toEqual([event, target, callback]);
+		expect(onSpy.mock.calls[1]).toEqual([event, callback, { target }]);
 	});
 
 	it('should unsubscribe to events using $off method and EventDelegate', async () => {
@@ -803,14 +835,14 @@ describe('App class', () => {
 		const offSpy = jest.spyOn(EventDelegate.prototype, 'off');
 
 		app.$off(event, callback);
-		app.$off(event, target, callback);
+		app.$off(event, callback, { target });
 
 		await flushPromises();
 
 		expect(offSpy).toHaveBeenCalledTimes(2);
 		expect(offSpy.mock.calls[0][0]).toEqual(event);
 		expect(offSpy.mock.calls[0][1]).toEqual(callback);
-		expect(offSpy.mock.calls[1]).toEqual([event, target, callback]);
+		expect(offSpy.mock.calls[1]).toEqual([event, callback, { target }]);
 	});
 
 	it('should unsubscribe to events using $emit method and EventDelegate', async () => {
@@ -830,4 +862,4 @@ describe('App class', () => {
 	});
 });
 
-type ComponentArgs = [Element, App];
+type ComponentArgs = [HTMLElement, App];

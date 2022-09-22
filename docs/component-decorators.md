@@ -39,9 +39,8 @@ class extends Component {
 Bind method as a callback for specified event listeners. Automaticlly removes them on `destroy`.
 
 Parameters:
- - `events: string` - string of space separated events to listen to.
- - `target?: string | Element` - optional selector or specific element for which child element bind listeners. If not specified, root element will be used.
- - `selector?: string` - optional selector. If target was specified, selector will be used relatively to passed target and listener will be bound to found element
+ - `events: string` - string of space separated events to listen to
+ - `options?: ListenerOptions` - optional config object with the same parameters as `$on`. We can change target for event listener or pass `addEventListener` config options
 
 Example:
 ```js
@@ -52,18 +51,28 @@ class extends Component {
         // ...
     }
 
-    @bind('click', '.base__submit')
+    @bind('click', { target: '.base__submit' })
     onSubmit() {
         // ...
     }
 
-    @bind('resize', window)
+    @bind('resize', { target: window })
     onResize() {
         // ...
     }
 
-    @bind('click', '.dialog--upper', '.close-button')
+    @bind('click', { target: '.close-button', root: true })
     onCloseDialog() {
+        // ...
+    }
+
+    @bind('scroll', { target: window, passive: true })
+    onScroll() {
+        // ...
+    }
+
+    @bind('click', { target: '.list__item', multiple: true })
+    onLickItemClicked() {
         // ...
     }
 }

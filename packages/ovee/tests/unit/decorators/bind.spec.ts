@@ -45,15 +45,16 @@ describe('@bind decorator', () => {
 		const handler = createDecoratorsHandler({
 			method() {},
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			$on(event: string, selector: string, callback: any) {},
+			$on(event: string, callback: any, options?: any) {},
 		});
 		const onSpy = jest.spyOn(handler, '$on');
+		const options = { target: 'test', once: true };
 
-		bind('event', 'selector')(handler, 'method');
+		bind('event', options)(handler, 'method');
 		handler.init();
 
 		expect(onSpy).toHaveBeenCalledTimes(1);
 		expect(onSpy.mock.calls[0][0]).toBe('event');
-		expect(onSpy.mock.calls[0][1]).toBe('selector');
+		expect(onSpy.mock.calls[0][2]).toBe(options);
 	});
 });

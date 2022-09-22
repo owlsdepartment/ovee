@@ -1,3 +1,23 @@
+# [](https://github.com/owlsdepartment/ovee/compare/v2.1.13...v) (2022-05-25)
+
+<!-- TODO: fix changelog -->
+### Features
+
+* **ovee:** added Logger 'getMessage' method ([47e0359](https://github.com/owlsdepartment/ovee/commit/47e03594ace241cb7c21f64fbe09968347a82385))
+* **ovee:** added new $on/$off/[@bind](https://github.com/bind) API for simpler usage and passing listener options ([dccd116](https://github.com/owlsdepartment/ovee/commit/dccd116fc0140dcbe27ccc072486f05f0b4a5a5f)), closes [#18](https://github.com/owlsdepartment/ovee/issues/18) [#22](https://github.com/owlsdepartment/ovee/issues/22) [#28](https://github.com/owlsdepartment/ovee/issues/28)
+* **ovee:** make components class a generic ([25b0fc8](https://github.com/owlsdepartment/ovee/commit/25b0fc86c81ed26062cd7e0b26ceeae8d662a9ef))
+
+
+### BREAKING CHANGES
+
+* **ovee:** Refactored $on/$off/@bind API
+
+
+
+## [2.1.13](https://github.com/owlsdepartment/ovee/compare/v2.1.12...v2.1.13) (2022-05-04)
+
+
+
 # Change Log
 
 ## [2.1.13](https://github.com/owlsdepartment/ovee/compare/v2.1.11...v2.1.12) (2022-05-04)

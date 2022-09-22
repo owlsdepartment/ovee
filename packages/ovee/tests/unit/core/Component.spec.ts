@@ -192,36 +192,36 @@ describe('Component class', () => {
 		expect(instance.$refs.ref1[0]).toBe(ref1);
 	});
 
-	it('should register event listeners with $on', () => {
+	it('should pass all arguments to event delegate with $on', () => {
 		const element = document.createElement('div');
 		const app = new App();
 
 		const events = 'click';
-		const target = document.createElement('div');
-		const selector = '.meh';
 		const callback = jest.fn();
+		const target = document.createElement('div');
+		const options = { target, once: true };
 
 		const instance = new Component(element, app);
-		instance.$on(events, target, selector, callback);
+		instance.$on(events, callback, options);
 
 		expect(instance.$eventDelegate.on).toHaveBeenCalledTimes(1);
-		expect(instance.$eventDelegate.on).toHaveBeenCalledWith(events, target, selector, callback);
+		expect(instance.$eventDelegate.on).toHaveBeenCalledWith(events, callback, options);
 	});
 
-	it('should unregister event listeners with $off', () => {
+	it('should pass all arguments to event delegate with $off', () => {
 		const element = document.createElement('div');
 		const app = new App();
 
 		const events = 'click';
-		const target = document.createElement('div');
-		const selector = '.meh';
 		const callback = jest.fn();
+		const target = document.createElement('div');
+		const options = { target, once: true };
 
 		const instance = new Component(element, app);
-		instance.$off(events, target, selector, callback);
+		instance.$off(events, callback, options);
 
 		expect(instance.$eventDelegate.off).toHaveBeenCalledTimes(1);
-		expect(instance.$eventDelegate.off).toHaveBeenCalledWith(events, target, selector, callback);
+		expect(instance.$eventDelegate.off).toHaveBeenCalledWith(events, callback, options);
 	});
 
 	it('should register custom element after call register()', () => {
