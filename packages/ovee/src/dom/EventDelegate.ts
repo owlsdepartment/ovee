@@ -7,9 +7,12 @@ export interface Callback<T> extends Function {
 	(this: T, ...args: any[]): void;
 }
 
+type Target = string | EventTarget | EventTarget[];
+
 export interface TargetOptions {
-	target?: EventTarget | string;
+	target?: Target;
 	root?: true;
+	multiple?: boolean;
 }
 
 export interface ListenerOptions extends AddEventListenerOptions, TargetOptions {}
@@ -19,7 +22,7 @@ export type EventDesc = string | Event;
 interface Listener {
 	cleared: boolean;
 	events: string;
-	target: EventTarget | string;
+	target: Target;
 	callback: Callback<any>;
 	removeListeners: Array<() => void>;
 }
@@ -33,17 +36,22 @@ export class EventDelegate<Context = any> {
 
 	on(events: string, callback: Callback<Context>, options?: ListenerOptions): () => void {
 		const listenerOptions = options
-			? (omit(options ?? {}, ['root', 'target']) as AddEventListenerOptions)
+			? (omit(options ?? {}, ['root', 'target', 'multiple']) as AddEventListenerOptions)
 			: undefined;
-		const { baseTarget, target } = this.getTarget(options);
+		const { targetOption, target } = this.getTarget(options);
 		const removeListeners: Array<() => void> = [];
 
 		events.split(' ').forEach(event => {
 			const handler = (...args: any[]) => callback.apply(this.context, args);
+			const targets = Array.isArray(target) ? target : [target];
 
-			target.addEventListener(event, handler, listenerOptions);
+			targets.forEach(t => {
+				t.addEventListener(event, handler, listenerOptions);
+			});
 
-			removeListeners.push(() => target.removeEventListener(event, handler));
+			removeListeners.push(() => {
+				targets.forEach(t => t.removeEventListener(event, handler));
+			});
 		});
 
 		const listener: Listener = {
@@ -51,7 +59,7 @@ export class EventDelegate<Context = any> {
 			events,
 			callback,
 			removeListeners,
-			target: baseTarget,
+			target: targetOption,
 		};
 
 		this.listeners.push(listener);
@@ -60,26 +68,46 @@ export class EventDelegate<Context = any> {
 	}
 
 	off(events: string, callback: Callback<Context>, options?: TargetOptions): void {
-		const { baseTarget } = this.getTarget(options);
+		const { targetOption } = this.getTarget(options);
 		const listener = this.listeners.find(
-			l => l.events === events && l.callback === callback && l.target === baseTarget
+			l =>
+				l.events === events &&
+				l.callback === callback &&
+				this.areTargetsTheSame(l.target, targetOption)
 		);
 
 		if (listener) this.clearListener(listener);
 	}
 
-	private getTarget(options?: TargetOptions) {
-		const baseTarget = options?.target ?? this.targetElement;
-		let target: EventTarget;
+	private areTargetsTheSame(targetA: Target, targetB: Target): boolean {
+		if (Array.isArray(targetA)) {
+			if (!Array.isArray(targetB)) return false;
 
-		if (isString(baseTarget)) {
+			return targetA.every((v, i) => targetB[i] === v);
+		}
+
+		return targetA === targetB;
+	}
+
+	private getTarget(options?: TargetOptions): {
+		target: EventTarget | EventTarget[];
+		targetOption: Target;
+	} {
+		const targetOption = options?.target ?? this.targetElement;
+		let target: EventTarget | EventTarget[];
+
+		if (isString(targetOption)) {
 			const isAbsolute = options?.root;
-			const newTarget = isAbsolute
-				? document.querySelector(baseTarget)
-				: this.targetElement.querySelector(baseTarget);
+			const multipleTargets = options?.multiple;
+			const selectorBase = isAbsolute ? document : this.targetElement;
+			const newTarget = multipleTargets
+				? Array.from(selectorBase.querySelectorAll(targetOption))
+				: selectorBase.querySelector(targetOption);
 
-			if (!newTarget) {
-				const errorMessage = `Could not find element with selector '${baseTarget}' ${
+			if (!newTarget || (Array.isArray(newTarget) && !newTarget.length)) {
+				const errorMessage = `Could not find element${
+					multipleTargets ? 's' : ''
+				} with selector '${targetOption}' ${
 					isAbsolute ? 'in document' : 'relatively to current element'
 				}`;
 
@@ -88,10 +116,10 @@ export class EventDelegate<Context = any> {
 
 			target = newTarget;
 		} else {
-			target = baseTarget;
+			target = targetOption;
 		}
 
-		return { target, baseTarget };
+		return { target, targetOption };
 	}
 
 	private clearListener(listener: Listener) {

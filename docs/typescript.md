@@ -8,7 +8,7 @@ When creating a module, you may end up extending `$app` with your custom propert
 
 ```typescript
 declare module 'ovee.js' {
-    class App {
+    interface App {
         myCustomProp: string;
 
         myCustomAppMethod(name: string): void;

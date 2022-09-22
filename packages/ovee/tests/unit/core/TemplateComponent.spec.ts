@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { html, render } from 'lit-html';
 import { protectedFields } from 'src/core';
 import App from 'src/core/App';
@@ -16,7 +15,7 @@ describe('TemplateComponent class', () => {
 	beforeEach(async () => {
 		await waitForFrame();
 		(html as jest.Mock).mockClear();
-		(render as jest.Mock).mockClear();
+		(render as any as jest.Mock).mockClear();
 	});
 
 	it('should extend Component', () => {
@@ -90,7 +89,7 @@ describe('TemplateComponent class', () => {
 		await component.$requestUpdate();
 
 		expect(render).toBeCalledTimes(2);
-		expect((render as jest.Mock).mock.calls[1][0]).toBe(templateString);
+		expect((render as any as jest.Mock).mock.calls[1][0]).toBe(templateString);
 	});
 
 	it('should try to rerender only if no rerender is pending', async () => {
@@ -132,7 +131,7 @@ describe('TemplateComponent class', () => {
 		createComponent(CustomComponent, { element });
 
 		expect(render).toBeCalledTimes(1);
-		expect((render as jest.Mock).mock.calls[0][1]).toBe(newTarget);
+		expect((render as any as jest.Mock).mock.calls[0][1]).toBe(newTarget);
 	});
 
 	it('stopsRerenderWatch on destroy', () => {
@@ -142,5 +141,19 @@ describe('TemplateComponent class', () => {
 		test.$destroy();
 
 		expect(stopWatchSpy).toBeCalledTimes(1);
+	});
+
+	it('works with backwards compatibility to lit-html@1.x', () => {
+		const element = document.createElement('div');
+
+		element.innerHTML = `<p>Some data</p>`;
+
+		class CustomComponent extends TemplateComponent {
+			__clearRenderTarget = true;
+		}
+
+		createComponent(CustomComponent, { element });
+
+		expect(element.innerHTML).toBe('');
 	});
 });

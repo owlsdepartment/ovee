@@ -3,8 +3,7 @@ import barba, { IBarbaOptions, IBarbaPlugin, LinkEvent, Trigger } from '@barba/c
 import { Module } from 'ovee.js';
 
 declare module 'ovee.js' {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	class App {
+	interface App {
 		$go(href: string, trigger?: Trigger, e?: LinkEvent | PopStateEvent): Promise<void>;
 		$prefetch(href: string): void;
 	}
