@@ -1,6 +1,6 @@
 {
   "name": "ovee.js",
-  "version": "2.1.13",
+  "version": "2.2.0",
   "description": "A modern, optionally reactive framework for markup you already have",
   "author": "Jakub Przyborowski",
   "license": "MIT",
@@ -19,10 +19,9 @@
     "/dist"
   ],
   "dependencies": {
-    "@babel/runtime": "^7.16.3",
     "@vue/reactivity": "^3.2.6",
     "@vue/runtime-core": "^3.2.6",
-    "lit-html": "^1.1.2"
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@types/jsdom": "^16.2.3",
@@ -31,9 +30,13 @@
     "cross-env": "^5.2.0",
     "jest": "^27.1.0",
     "jsdom": "^16.4.0",
+    "lit-html": "^2.3.1",
     "resolve-url-loader": "3.1.0",
     "ts-jest": "^27.0.5",
     "typescript": "^4.2.0"
+  },
+  "peerDependencies": {
+    "lit-html": "^2.3.1"
   },
   "scripts": {
     "test": "node -v && npm run test:unit",

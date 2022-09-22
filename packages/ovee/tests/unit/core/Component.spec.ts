@@ -301,7 +301,7 @@ describe('Component class', () => {
 
 	describe('lifecycle hooks', () => {
 		it(`should call 'init' hook after component initialization`, () => {
-			const initFn = jest.fn(() => console.log('init'));
+			const initFn = jest.fn(() => {});
 			class Test extends Component {
 				init() {
 					initFn();

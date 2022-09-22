@@ -1,14 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const fs = require('fs');
-const ttypescript = require('ttypescript');
 
 const { rollup } = require('rollup');
-const commonjs = require('@rollup/plugin-commonjs');
-const { nodeResolve } = require('@rollup/plugin-node-resolve');
-const tsPlugin = require('@rollup/plugin-typescript');
-const { getBabelOutputPlugin } = require('@rollup/plugin-babel');
 const { default: dts } = require('rollup-plugin-dts');
+const { typescriptPaths } = require('rollup-plugin-typescript-paths');
+const { default: esbuild } = require('rollup-plugin-esbuild');
 
 const packageNames = ['ovee', 'ovee-barba', 'ovee-content-loader'];
 
@@ -20,19 +17,22 @@ async function build() {
 		throw Error(`Wrong package name! Passed: ${packageName}`);
 	}
 
-	fs.rmdirSync(path.resolve(packagePath, `dist`), { recursive: true, force: true });
+	fs.rmSync(path.resolve(packagePath, `dist`), { recursive: true, force: true });
 
 	for (const format of ['es', 'cjs']) {
+		const { input, tsconfig, external } = getBundleConfig(packagePath);
+
 		const bundle = await rollup({
-			external: ['ovee.js'],
-			input: path.resolve(packagePath, `src/index.ts`),
+			external,
+			input,
+
 			plugins: [
-				commonjs(),
-				nodeResolve(),
-				tsPlugin({
-					typescript: ttypescript,
-					tsconfig: path.resolve(packagePath, `tsconfig.json`),
+				typescriptPaths({
+					tsConfigPath: tsconfig,
+					preserveExtensions: true,
 				}),
+				// nodeResolve({}),
+				esbuild({ target: 'es2020', tsconfig }),
 			],
 		});
 
@@ -40,25 +40,27 @@ async function build() {
 		await bundle.write({
 			format,
 
-			plugins: [
-				getBabelOutputPlugin({
-					// A hacky way to force ES6
-					presets: [['@babel/preset-env', { targets: { node: '6.10' } }]],
-					plugins: [['@babel/plugin-transform-runtime', { useESModules: format === 'es' }]],
-				}),
-			],
-			file: path.resolve(packagePath, 'dist', format === 'es' ? 'index.esm.js' : 'index.js'),
+			file: path.resolve(packagePath, 'dist', format === 'es' ? 'index.mjs' : 'index.cjs'),
 		});
 		await bundle.close();
 	}
 
-	await generateDeclarationFile(packageName, packagePath);
+	await generateDeclarationFile(packagePath);
 }
 
-async function generateDeclarationFile(packageName, packagePath) {
+async function generateDeclarationFile(packagePath) {
+	const { input, external, tsconfig } = getBundleConfig(packagePath);
 	const bundle = await rollup({
-		input: path.resolve(packagePath, `dist/types/index.d.ts`),
-		plugins: [dts()],
+		input,
+		external,
+
+		plugins: [
+			typescriptPaths({
+				tsConfigPath: tsconfig,
+				preserveExtensions: true,
+			}),
+			dts(),
+		],
 	});
 
 	await bundle.generate({});
@@ -67,10 +69,15 @@ async function generateDeclarationFile(packageName, packagePath) {
 		format: 'es',
 	});
 	await bundle.close();
+}
 
-	fs.rmdirSync(path.resolve(packagePath, `dist/types`), {
-		recursive: true,
-	});
+function getBundleConfig(packagePath) {
+	return {
+		input: path.resolve(packagePath, `src/index.ts`),
+		tsconfig: path.resolve(packagePath, `tsconfig.json`),
+		// it should be infered from package.json 'dependency' field
+		external: ['ovee.js', 'lit-html', 'reflect-metadata', /^@vue\//, '@barba/core'],
+	};
 }
 
 build();

@@ -15,6 +15,16 @@ yarn add ovee.js
 npm install --save ovee.js
 ```
 
+Additionally, `lit-html` is a required peer dependency, that needs to be installed as well, so if you don't have it in your project yet, install it, using:
+
+```shell
+yarn add lit-html
+
+# or
+
+npm install --save lit-html
+```
+
 ## Browser Support
 Ovee.js used with babel supports all modern browsers. Currently it's meant to be used with a bundler to provide support for novel features like MutationObserver and decorators.
 

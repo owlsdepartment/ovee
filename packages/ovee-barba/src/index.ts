@@ -33,7 +33,7 @@ const defaultOptions: OveeBarbaOptions = {
 	hooks: {},
 };
 
-export default class extends Module<OveeBarbaOptions> {
+export class OveeBarba extends Module<OveeBarbaOptions> {
 	get hooks(): BarbaHooks {
 		return this.options.hooks ?? {};
 	}

@@ -58,7 +58,7 @@ app.use(ThirdModule, {
 A new instance of the module is made when you run `app.run()`, before initializing components. Only a single instance of a module exists during the runtime. Modules get destroyed, if you explicitly call `app.destroy()` method. Otherwise, they live as long as the app session exists.
 
 ## Accessing from Components
-To access a module's instance, you can use `getModule()` method of `App` instance by passing module name as a parameter. If you want to do that from within a component, you can call `this.$app.getModule('ModuleName')`. 
+To access a module's instance, you can use `getModule()` method of `App` instance by passing module name as a parameter or a module class itself. If you want to do that from within a component, you can call `this.$app.getModule('ModuleName')` or `this.$app.getModule(CustomModule)`. We suggest the second way, as it's independent of changing a module's name and it's fully typed.
 
 ## Extending App instance
 

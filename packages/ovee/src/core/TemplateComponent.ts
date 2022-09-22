@@ -10,12 +10,14 @@ export default class TemplateComponent extends Component {
 	readonly html!: typeof html;
 
 	[protectedFields.UPDATE_TASK]: Task<void> | null = null;
+	protected __clearRenderTarget = false;
 
 	private $stopWatch = () => {};
 	private $updateMarker = ref(false);
 	private $compiledTemplate: TemplateResult | string = '';
+	private $firstRender = true;
 
-	protected get renderTarget(): Element {
+	protected get renderTarget(): HTMLElement {
 		return this.$element;
 	}
 
@@ -75,8 +77,14 @@ export default class TemplateComponent extends Component {
 	}
 
 	[protectedFields.RENDER](): void {
+		if (this.$firstRender) {
+			this.$firstRender = false;
+
+			if (this.__clearRenderTarget) this.renderTarget.innerHTML = '';
+		}
+
 		render(this.$compiledTemplate, this.renderTarget, {
-			eventContext: this as any,
+			host: this,
 		});
 	}
 
