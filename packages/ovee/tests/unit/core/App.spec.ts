@@ -278,7 +278,6 @@ describe('App class', () => {
 
 			app.run(rootElement);
 
-			console.log(Module);
 			const m: DummyModule = app.getModule(DummyModule);
 
 			expect(m).toBeInstanceOf(DummyModule);

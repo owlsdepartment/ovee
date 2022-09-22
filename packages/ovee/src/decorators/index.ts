@@ -2,6 +2,7 @@ export * from './bind';
 export * from './computed';
 export * from './dataParam';
 export * from './el';
+export * from './module';
 export * from './prop';
 export * from './reactive';
 export * from './register';

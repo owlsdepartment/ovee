@@ -26,7 +26,6 @@ describe('getPropertyDescriptor', () => {
 			'method'
 		);
 
-		console.log(Reflect.getOwnPropertyDescriptor(e, 'method'));
 		expect(getPropertyDescriptor(e, 'field')).toEqual(Reflect.getOwnPropertyDescriptor(e, 'field'));
 		expect(getPropertyDescriptor(e, 'method')).toEqual(methodDescriptor);
 		expect(getPropertyDescriptor(e, 'non-existing')).toEqual(undefined);
