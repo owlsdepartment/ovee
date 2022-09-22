@@ -1,8 +1,25 @@
-# [](https://github.com/owlsdepartment/ovee/compare/v2.1.13...v) (2022-05-25)
+# Change Log
 
-<!-- TODO: fix changelog -->
+# [](https://github.com/owlsdepartment/ovee/compare/v2.2.0...v) (2022-09-22)
+
+
+
+# [2.2.0](https://github.com/owlsdepartment/ovee/compare/v2.1.13...v2.2.0) (2022-09-22)
+
+
+### Bug Fixes
+
+* **ovee:** increase TemplateComponent safe usage ([b766b20](https://github.com/owlsdepartment/ovee/commit/b766b20ea66e5537c5b00ed8491efb6629363362))
+
+
 ### Features
 
+* **ovee:** refactor getModule method to accept class as an argument ([acb9f3e](https://github.com/owlsdepartment/ovee/commit/acb9f3ed2b31aa0852886d55b9a40ae0bfbe45e2)), closes [#24](https://github.com/owlsdepartment/ovee/issues/24)
+* **ovee:** add [@module](https://github.com/module) decorator with docs and tests cleanup ([a4b2fef](https://github.com/owlsdepartment/ovee/commit/a4b2fef0d2a3f1fd6c147e923c9b0a46b5be67b2)), closes [#27](https://github.com/owlsdepartment/ovee/issues/27)
+* **ovee:** support [@module](https://github.com/module) with only type annotation ([fcb3056](https://github.com/owlsdepartment/ovee/commit/fcb3056d891187e21d945be2574983ebb541c78e)), closes [#27](https://github.com/owlsdepartment/ovee/issues/27)
+* **@ovee.js/barba** move '@ovee/barba' default export to named export ([56021a0](https://github.com/owlsdepartment/ovee/commit/56021a03f6b7c64c61c6d83bfa06112c11ec3d31))
+* **ovee:** [#25](https://github.com/owlsdepartment/ovee/issues/25) allow for multiple elements in '$on' method and '[@bind](https://github.com/bind)' decorator ([a561a2c](https://github.com/owlsdepartment/ovee/commit/a561a2c627b29d7e7d7304168ae1db59374dbc90))
+* **ovee:** [#36](https://github.com/owlsdepartment/ovee/issues/36) update 'lit-html' to v2 and move it to 'peerDependencies' ([1e80ce0](https://github.com/owlsdepartment/ovee/commit/1e80ce0d593ca408a0c863b2b30872de6b1713da))
 * **ovee:** added Logger 'getMessage' method ([47e0359](https://github.com/owlsdepartment/ovee/commit/47e03594ace241cb7c21f64fbe09968347a82385))
 * **ovee:** added new $on/$off/[@bind](https://github.com/bind) API for simpler usage and passing listener options ([dccd116](https://github.com/owlsdepartment/ovee/commit/dccd116fc0140dcbe27ccc072486f05f0b4a5a5f)), closes [#18](https://github.com/owlsdepartment/ovee/issues/18) [#22](https://github.com/owlsdepartment/ovee/issues/22) [#28](https://github.com/owlsdepartment/ovee/issues/28)
 * **ovee:** make components class a generic ([25b0fc8](https://github.com/owlsdepartment/ovee/commit/25b0fc86c81ed26062cd7e0b26ceeae8d662a9ef))
@@ -10,17 +27,12 @@
 
 ### BREAKING CHANGES
 
+* **ovee:** `lit-html` version was bumped from `1.x` to `2.x`
 * **ovee:** Refactored $on/$off/@bind API
 
 
 
-## [2.1.13](https://github.com/owlsdepartment/ovee/compare/v2.1.12...v2.1.13) (2022-05-04)
-
-
-
-# Change Log
-
-## [2.1.13](https://github.com/owlsdepartment/ovee/compare/v2.1.11...v2.1.12) (2022-05-04)
+## [2.1.12](https://github.com/owlsdepartment/ovee/compare/v2.1.11...v2.1.12) (2022-05-04)
 
 
 ### Bug Fixes
