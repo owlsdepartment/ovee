@@ -240,41 +240,73 @@ describe('App class', () => {
 		});
 	});
 
-	it('should return a module instance when registered', () => {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const dummyInit = jest.fn();
-		const dummyModuleName = 'testModule';
-		const DummyModule = class extends Module {
-			init() {}
+	describe('getModule', () => {
+		it('should return a registered module instance when module name is passed', () => {
+			const dummyModuleName = 'testModule';
+			class DummyModule extends Module {
+				init() {}
 
-			static getName() {
-				return dummyModuleName;
+				static getName() {
+					return dummyModuleName;
+				}
 			}
-		};
-		const rootElement = document.createElement('div');
-		const app = new App({
-			modules: [DummyModule],
+			const rootElement = document.createElement('div');
+			const app = new App({
+				modules: [DummyModule],
+			});
+
+			app.run(rootElement);
+
+			const m: DummyModule = app.getModule<typeof DummyModule>(dummyModuleName);
+
+			expect(m).toBeInstanceOf(DummyModule);
 		});
 
-		app.run(rootElement);
+		it('should return a registered module instance when module class is passed', () => {
+			const dummyModuleName = 'testModule';
+			class DummyModule extends Module {
+				init() {}
 
-		expect(() => {
-			expect(app.getModule(dummyModuleName)).toBeInstanceOf(DummyModule);
-		}).not.toThrow();
-	});
+				static getName() {
+					return dummyModuleName;
+				}
+			}
+			const rootElement = document.createElement('div');
+			const app = new App({
+				modules: [DummyModule],
+			});
 
-	it('should throw an error when trying to get an instance of not registered module', () => {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const dummyInit = jest.fn();
-		const dummyModuleName = 'nonExistantModule';
-		const rootElement = document.createElement('div');
-		const app = new App();
+			app.run(rootElement);
 
-		app.run(rootElement);
+			console.log(Module);
+			const m: DummyModule = app.getModule(DummyModule);
 
-		expect(() => {
-			app.getModule(dummyModuleName);
-		}).toThrow(`Module "${dummyModuleName}" is not registered`);
+			expect(m).toBeInstanceOf(DummyModule);
+		});
+
+		it('should throw an error when trying to get a not registered module', () => {
+			const dummyModuleName = 'nonExistantModule';
+			const rootElement = document.createElement('div');
+			const app = new App();
+
+			app.run(rootElement);
+
+			expect(() => {
+				app.getModule(dummyModuleName);
+			}).toThrowError();
+		});
+
+		it('should throw an error when using class that is not a module instance', () => {
+			const dummyModuleName = 'nonExistantModule';
+			const rootElement = document.createElement('div');
+			const app = new App();
+
+			app.run(rootElement);
+
+			expect(() => {
+				app.getModule(dummyModuleName);
+			}).toThrowError();
+		});
 	});
 
 	it('should register a component without options if none passed', () => {

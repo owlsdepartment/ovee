@@ -70,6 +70,11 @@ class extends Component {
     onScroll() {
         // ...
     }
+
+    @bind('click', { target: '.list__item', multiple: true })
+    onLickItemClicked() {
+        // ...
+    }
 }
 ```
 
