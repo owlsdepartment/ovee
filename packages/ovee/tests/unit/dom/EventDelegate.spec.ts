@@ -59,23 +59,40 @@ describe('EventDelegate class', () => {
 		expect(removeEventSpy.mock.calls[0][1]).toBe(addEventSpy.mock.calls[0][1]);
 	});
 
-	it('should register and unregister event listener on proper target element if passed as target', () => {
-		const customTarget = document.createElement('div');
-		const addEventSpy = jest.spyOn(customTarget, 'addEventListener');
-		const removeEventSpy = jest.spyOn(customTarget, 'removeEventListener');
+	it('should register and unregister event listener on proper target element if passed as target or target array', () => {
+		const customTarget1 = document.createElement('div');
+		const addEventSpy1 = jest.spyOn(customTarget1, 'addEventListener');
+		const removeEventSpy1 = jest.spyOn(customTarget1, 'removeEventListener');
+		const customTarget2 = document.createElement('div');
+		const addEventSpy2 = jest.spyOn(customTarget2, 'addEventListener');
+		const removeEventSpy2 = jest.spyOn(customTarget2, 'removeEventListener');
 		const addEventTargetSpy = jest.spyOn(target, 'addEventListener');
 
-		eventDelegate.on('foo', callback, { target: customTarget });
-		eventDelegate.off('foo', callback, { target: customTarget });
+		eventDelegate.on('foo', callback, { target: customTarget1 });
+		eventDelegate.off('foo', callback, { target: customTarget1 });
+
+		eventDelegate.on('bar', callback, { target: [customTarget1, customTarget2] });
+		eventDelegate.off('bar', callback, { target: [customTarget1, customTarget2] });
 
 		expect(eventDelegate.listeners.length).toBe(0);
 		expect(addEventTargetSpy).not.toBeCalled();
-		expect(addEventSpy).toBeCalledTimes(1);
-		expect(addEventSpy.mock.calls[0][0]).toBe('foo');
-		expect(addEventSpy.mock.calls[0][1]).toBeInstanceOf(Function);
-		expect(removeEventSpy).toBeCalledTimes(1);
-		expect(removeEventSpy.mock.calls[0][0]).toBe('foo');
-		expect(removeEventSpy.mock.calls[0][1]).toBe(addEventSpy.mock.calls[0][1]);
+		expect(addEventSpy1).toBeCalledTimes(2);
+		expect(addEventSpy1.mock.calls[0][0]).toBe('foo');
+		expect(addEventSpy1.mock.calls[0][1]).toBeInstanceOf(Function);
+		expect(addEventSpy1.mock.calls[1][0]).toBe('bar');
+		expect(addEventSpy1.mock.calls[1][1]).toBeInstanceOf(Function);
+		expect(removeEventSpy1).toBeCalledTimes(2);
+		expect(removeEventSpy1.mock.calls[0][0]).toBe('foo');
+		expect(removeEventSpy1.mock.calls[0][1]).toBe(addEventSpy1.mock.calls[0][1]);
+		expect(removeEventSpy1.mock.calls[1][0]).toBe('bar');
+		expect(removeEventSpy1.mock.calls[1][1]).toBe(addEventSpy1.mock.calls[1][1]);
+
+		expect(addEventSpy2).toBeCalledTimes(1);
+		expect(addEventSpy2.mock.calls[0][0]).toBe('bar');
+		expect(addEventSpy2.mock.calls[0][1]).toBeInstanceOf(Function);
+		expect(removeEventSpy2).toBeCalledTimes(1);
+		expect(removeEventSpy2.mock.calls[0][0]).toBe('bar');
+		expect(removeEventSpy2.mock.calls[0][1]).toBe(addEventSpy2.mock.calls[0][1]);
 	});
 
 	it('should register and unregister event listener on nested element if target is string', () => {
@@ -100,6 +117,40 @@ describe('EventDelegate class', () => {
 		expect(removeEventSpy).toBeCalledTimes(1);
 		expect(removeEventSpy.mock.calls[0][0]).toBe('foo');
 		expect(removeEventSpy.mock.calls[0][1]).toBe(addEventSpy.mock.calls[0][1]);
+	});
+
+	it(`should register and unregister event listener on nested element if target is string and with 'multiple: true'`, () => {
+		const testClass = 'test';
+		const test1 = document.createElement('div');
+		const test2 = document.createElement('div');
+		const addEventSpy1 = jest.spyOn(test1, 'addEventListener');
+		const removeEventSpy1 = jest.spyOn(test1, 'removeEventListener');
+		const addEventSpy2 = jest.spyOn(test2, 'addEventListener');
+		const removeEventSpy2 = jest.spyOn(test2, 'removeEventListener');
+
+		test1.classList.add(testClass);
+		test2.classList.add(testClass);
+		target.appendChild(test1);
+		target.appendChild(test2);
+
+		eventDelegate.on('foo', callback, { target: `.${testClass}`, multiple: true });
+		eventDelegate.off('foo', callback, { target: `.${testClass}`, multiple: true });
+
+		expect(eventDelegate.listeners.length).toBe(0);
+
+		expect(addEventSpy1).toBeCalledTimes(1);
+		expect(addEventSpy1.mock.calls[0][0]).toBe('foo');
+		expect(addEventSpy1.mock.calls[0][1]).toBeInstanceOf(Function);
+		expect(removeEventSpy1).toBeCalledTimes(1);
+		expect(removeEventSpy1.mock.calls[0][0]).toBe('foo');
+		expect(removeEventSpy1.mock.calls[0][1]).toBe(addEventSpy1.mock.calls[0][1]);
+
+		expect(addEventSpy2).toBeCalledTimes(1);
+		expect(addEventSpy2.mock.calls[0][0]).toBe('foo');
+		expect(addEventSpy2.mock.calls[0][1]).toBeInstanceOf(Function);
+		expect(removeEventSpy2).toBeCalledTimes(1);
+		expect(removeEventSpy2.mock.calls[0][0]).toBe('foo');
+		expect(removeEventSpy2.mock.calls[0][1]).toBe(addEventSpy2.mock.calls[0][1]);
 	});
 
 	it(`should register event listener on proper global target if passed as string and with 'root: true'`, () => {

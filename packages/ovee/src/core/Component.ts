@@ -37,7 +37,7 @@ export default class Component<
 	readonly $refs!: Dictionary<Element[]>;
 
 	[protectedFields.REFS]: Dictionary<Element[]> = {};
-	[protectedFields.REFS_OBSERVER]: MutationObserver;
+	[protectedFields.REFS_OBSERVER]?: MutationObserver;
 	[protectedFields.REACTIVE_PROXY]?: ReactiveProxy;
 	__dataParams?: Dictionary<() => void>;
 	__els?: Dictionary<() => void>;
@@ -167,7 +167,7 @@ export default class Component<
 
 		this.$eventDelegate.destroy();
 		this[protectedFields.DESTROY_DECORATORS]();
-		this[protectedFields.REFS_OBSERVER].disconnect();
+		this[protectedFields.REFS_OBSERVER]?.disconnect();
 
 		this.destroy();
 	}

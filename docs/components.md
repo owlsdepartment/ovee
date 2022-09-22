@@ -129,7 +129,7 @@ There are two ways to listen events on a component, using:
  - decorator `@bind()`
  - `this.$on()` and `this.$off()`
 
-In previous example, we enabled listening of a `click` event on a button using decorator `@bind`. It expects 2 arguments: first is an event or list of space seperated events to listen and second is options object. If `target` isn't passed to option, we will listen on root `this.$element`. `target` can be a precise element or a query string, that searches for target relatively to `this.$element`. This behaviour can be changed, by adding `root: true`. Than we search for target relatively to current document.
+In previous example, we enabled listening of a `click` event on a button using decorator `@bind`. It expects 2 arguments: first is an event or list of space seperated events to listen and second is options object. If `target` isn't passed to option, we will listen on root `this.$element`. `target` can be a precise element, array of multiple elements, or a query string, that searches for target relatively to `this.$element`. This behaviour can be changed, by adding `root: true`. Than we search for target relatively to current document. It `target` is a query string, we can add an option `multiple: true` and find all matching elements using `querySelectorAll`.
 
 This example shows us, how to listen on `focus` and `blur` on a parent and `click` on inner button:
 
@@ -152,6 +152,11 @@ export default class extends Component {
     onScroll() {
         // handle scroll
     }
+
+    @bind('mouseover', { target: '.counter__value', multiple: true })
+    onCounterValueHover(e) {
+        // handle mouse hover on all value displays
+    }
 }
 ```
 
@@ -165,6 +170,7 @@ export default class extends Component {
         this.$on('click', this.onButtonClick, { target: '.counter__button' });
         this.$on('focus blur', this.onFocusChange);
         this.$on('scroll', this.onScroll, { target: window })
+        this.$on('mouseover', this.onCounterValueHover. { target: '.counter__value', multiple: true })
     }
 
     onButtonClick() {
@@ -178,6 +184,10 @@ export default class extends Component {
     onScroll() {
         // handle scroll
     }
+
+    onCounterValueHover(e) {
+        // handle mouse hover on all value displays
+    }
 }
 ```
 
@@ -190,7 +200,7 @@ Method `$on` returns also a callback, that removes event listener. It can be cal
 export default class extends Component {
     // some code
     init() {
-        const removeScroll = this.$on('scroll', this.onScroll, { target: window });
+        const removeScroll = this.$on('scroll', this.onScroll, { target: window, passive: true });
 
         this.$on('click', () => {
             removeScroll();
@@ -212,8 +222,9 @@ function $on(events: string, callback: Callback<this>, options?: ListenerOptions
 function $on(events: string, callback: Callback<this>, options?: TargetOptions): void;
 
 interface ListenerOptions {
-    target?: EventTarget | string;
+    target?: string | EventTarget | EventTarget[];
 	root?: true;
+    multiple?: true;
 
     capture?: boolean;
     once?: boolean;
@@ -222,8 +233,9 @@ interface ListenerOptions {
 }
 
 interface TargetOptions {
-    target?: EventTarget | string;
+    target?: string | EventTarget | EventTarget[];
 	root?: true;
+    multiple?: true;
 }
 ```
 
