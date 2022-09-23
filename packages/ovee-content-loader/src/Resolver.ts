@@ -15,9 +15,8 @@ export class Resolver {
 
 	async contentOut(): Promise<void> {}
 
-	async updateContent(content: HTMLDocument): Promise<HTMLDocument> {
-		return content;
-	}
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	async updateContent(content: HTMLDocument): Promise<void> {}
 }
 
 export type ResolverClass = typeof Resolver;
