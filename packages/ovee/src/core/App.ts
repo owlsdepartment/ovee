@@ -3,7 +3,6 @@ import { OveeComponent } from 'src/core/types';
 import { Callback, EventDelegate, EventDesc, ListenerOptions, TargetOptions } from 'src/dom';
 import { ComponentError } from 'src/errors';
 import {
-	AnyObject,
 	attachMutationObserver,
 	ClassConstructor,
 	Dictionary,
@@ -110,24 +109,24 @@ export default class App {
 	registerModules(modules: RegisterPayload<ModuleClass, ModuleOptions>): this {
 		modules.forEach(module => {
 			if (Array.isArray(module)) {
-				this.use(module[0], module[1]);
+				this.use(module[0] as typeof Module, module[1]);
 			} else {
-				this.use(module);
+				this.use(module as typeof Module);
 			}
 		});
 
 		return this;
 	}
 
-	use<M extends Module, Opt = M extends Module<infer O> ? O : AnyObject>(
-		ModuleClass: ClassConstructor<M>,
-		options?: Opt
+	use<M extends Module, Opt = M extends Module<infer O> ? O : ModuleOptions>(
+		ModuleClass: ClassConstructor<M> & typeof Module,
+		options?: Partial<Opt>
 	): M {
 		if (!(ModuleClass.prototype instanceof Module)) {
 			throw new TypeError('A module passed to use() method must be an instance of Module');
 		}
 
-		const name = (ModuleClass as any as typeof Module).getName();
+		const name = ModuleClass.getName();
 
 		if (this.modules[name]) {
 			throw new Error(`Module "${name}" is already used`);
@@ -178,10 +177,10 @@ export default class App {
 		return this;
 	}
 
-	registerComponent<C extends ComponentClass>(
-		ComponentClass: C,
-		options: ComponentOptions = {}
-	): this {
+	registerComponent<
+		C extends Component,
+		Opt = C extends Component<any, infer O> ? O : ComponentOptions
+	>(ComponentClass: ClassConstructor<C> & typeof Component, options?: Partial<Opt>): this {
 		if (!(ComponentClass.prototype instanceof Component)) {
 			throw new TypeError(
 				'A component passed to registerComponent() method must be an instance of Component'
@@ -194,7 +193,7 @@ export default class App {
 			throw new Error(`Component "${name}" is already registered`);
 		}
 
-		this.components[name] = { ComponentClass, options };
+		this.components[name] = { ComponentClass, options: options ?? {} };
 
 		return this;
 	}

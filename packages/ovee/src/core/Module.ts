@@ -4,9 +4,9 @@ import App from './App';
 export type ModuleOptions = AnyObject;
 
 export type ModuleClass = OmitConstructor<typeof Module> &
-	(new (app: App, options?: ModuleOptions) => Module);
+	(new (app: App, options?: ModuleOptions) => Module<ModuleOptions>);
 
-abstract class Module<Options = ModuleOptions> {
+class Module<Options = ModuleOptions> {
 	$app!: App;
 	options!: Options;
 
@@ -25,7 +25,7 @@ abstract class Module<Options = ModuleOptions> {
 		});
 	}
 
-	abstract init(): void;
+	init(): void {}
 
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	destroy(): void {}

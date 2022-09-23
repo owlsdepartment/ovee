@@ -6,7 +6,9 @@ import App from './App';
 import Component, { ComponentOptions } from './Component';
 import * as protectedFields from './protectedFields';
 
-export default class TemplateComponent extends Component {
+export default class TemplateComponent<
+	Options extends ComponentOptions = ComponentOptions
+> extends Component<HTMLElement, Options> {
 	readonly html!: typeof html;
 
 	[protectedFields.UPDATE_TASK]: Task<void> | null = null;
@@ -21,7 +23,7 @@ export default class TemplateComponent extends Component {
 		return this.$element;
 	}
 
-	constructor(element: HTMLElement, app: App, options?: ComponentOptions) {
+	constructor(element: HTMLElement, app: App, options?: Options) {
 		super(element, app, options);
 
 		Object.defineProperty(this, 'html', {
