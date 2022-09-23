@@ -4,7 +4,7 @@
   "description": "A modern, optionally reactive framework for markup you already have",
   "author": "Jakub Przyborowski",
   "license": "MIT",
-  "homepage": "https://github.com/owlsdepartment/ovee",
+  "homepage": "https://owlsdepartment.github.io/ovee",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/owlsdepartment/ovee.git"
@@ -12,8 +12,8 @@
   "bugs": {
     "url": "https://github.com/owlsdepartment/ovee/issues"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "/dist"

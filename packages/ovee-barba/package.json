@@ -5,8 +5,16 @@
   "description": "Barba integration for ovee.js",
   "author": "Jakub Przyborowski",
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "homepage": "https://owlsdepartment.github.io/ovee/addons.html#barba-js-plugin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owlsdepartment/ovee.git"
+  },
+  "bugs": {
+    "url": "https://github.com/owlsdepartment/ovee/issues"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "/dist"

@@ -5,8 +5,16 @@
   "description": "Content loader module for for ovee.js",
   "author": "Owls Department",
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "homepage": "https://github.com/owlsdepartment/ovee/tree/master/packages/ovee-content-loader",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/owlsdepartment/ovee.git"
+  },
+  "bugs": {
+    "url": "https://github.com/owlsdepartment/ovee/issues"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "/dist"

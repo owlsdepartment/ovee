@@ -1,4 +1,4 @@
-# @ovee.js/content-loadr
+# @ovee.js/content-loader
 
 Ovee.js module for dynamic content loading.
 
