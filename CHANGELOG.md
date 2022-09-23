@@ -1,6 +1,16 @@
 # Change Log
 
-# [](https://github.com/owlsdepartment/ovee/compare/v2.2.0...v) (2022-09-22)
+# [](https://github.com/owlsdepartment/ovee/compare/v2.2.1...v) (2022-09-23)
+
+
+
+## [2.2.1](https://github.com/owlsdepartment/ovee/compare/v2.2.0...v2.2.1) (2022-09-23)
+
+
+### Bug Fixes
+
+* **content-loader:** fix `updateContent` return type [#39](https://github.com/owlsdepartment/ovee/issues/39) ([8c04855](https://github.com/owlsdepartment/ovee/commit/8c048554e57dab29f570e30c5069eb7f9390c948))
+* update package.json main and module fields to reflect changed dist ([470ba00](https://github.com/owlsdepartment/ovee/commit/470ba00743476584f2d34d109a5c7779d88fe9b2))
 
 
 
