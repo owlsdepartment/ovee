@@ -1,6 +1,6 @@
 {
   "name": "@ovee.js/content-loader",
-  "version": "2.2.1",
+  "version": "2.2.3",
   "private": false,
   "description": "Content loader module for for ovee.js",
   "author": "Owls Department",
