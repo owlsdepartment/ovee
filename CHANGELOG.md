@@ -1,6 +1,9 @@
-# Change Log
+## [2.2.3](https://github.com/owlsdepartment/ovee/compare/v2.2.2...v2.2.3) (2022-12-19)
 
-# [](https://github.com/owlsdepartment/ovee/compare/v2.2.1...v) (2022-09-23)
+
+### Bug Fixes
+
+* add "isolatedModules" and add explicity `type` keyword to fix build ([0290334](https://github.com/owlsdepartment/ovee/commit/0290334a12c6425a5607b7d084091f63aeb73f12))
 
 
 
