@@ -14,9 +14,7 @@ export type MapSources<T, Immediate> = {
 		: never;
 };
 
-export {
-	watch as doWatch,
-	watchEffect as doWatchEffect,
+export type {
 	WatchCallback,
 	WatchEffect,
 	WatchOptions,
@@ -24,3 +22,4 @@ export {
 	WatchSource,
 	WatchStopHandle,
 } from '@vue/runtime-core';
+export { watch as doWatch, watchEffect as doWatchEffect } from '@vue/runtime-core';

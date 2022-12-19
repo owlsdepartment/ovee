@@ -6,7 +6,7 @@
     "docs:build": "yarn workspace docs run docs:build",
     "docs:install": "cd docs && yarn install --focus",
     "docs:deploy": "yarn run docs:install && yarn run docs:build",
-    "build": "lerna run build",
+    "build": "lerna run build --scope=ovee.js && lerna run build --scope=\"@ovee.js/*\"",
     "bootstrap": "lerna bootstrap",
     "lerna:publish": "lerna publish from-package",
     "test": "node -v && npm run test:unit",

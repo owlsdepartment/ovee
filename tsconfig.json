@@ -3,6 +3,7 @@
         "declaration": true,
         "module": "ESNext",
         "moduleResolution": "node",
+        "isolatedModules": true,
         "noImplicitAny": true,
         "lib": ["ES2017", "ES7", "ES6", "DOM"],
         "target": "ESNext",
