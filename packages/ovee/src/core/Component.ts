@@ -19,7 +19,8 @@ import * as protectedFields from './protectedFields';
 
 export type ComponentOptions = AnyObject;
 
-export type ComponentClass = OmitConstructor<typeof Component> &
+export type ComponentStatic = OmitConstructor<typeof Component>;
+export type ComponentClass = ComponentStatic &
 	// we needed to use `any` as there was a problem with assingning types, that inherited from `Element`
 	(new (el: any, app: App, options?: ComponentOptions) => Component<any, any>);
 

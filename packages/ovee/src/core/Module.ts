@@ -3,7 +3,8 @@ import App from './App';
 
 export type ModuleOptions = AnyObject;
 
-export type ModuleClass = OmitConstructor<typeof Module> &
+export type ModuleStatic = OmitConstructor<typeof Module>;
+export type ModuleClass = ModuleStatic &
 	(new (app: App, options?: ModuleOptions) => Module<ModuleOptions>);
 
 class Module<Options = ModuleOptions> {

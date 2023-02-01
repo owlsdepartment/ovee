@@ -10,8 +10,8 @@ import {
 	isValidNode,
 } from 'src/utils';
 
-import Component, { ComponentClass, ComponentOptions } from './Component';
-import Module, { ModuleClass, ModuleOptions } from './Module';
+import Component, { ComponentClass, ComponentOptions, ComponentStatic } from './Component';
+import Module, { ModuleClass, ModuleOptions, ModuleStatic } from './Module';
 
 export interface AppConstructorParams {
 	config?: Partial<AppConfig>;
@@ -119,7 +119,7 @@ export default class App {
 	}
 
 	use<M extends Module, Opt = M extends Module<infer O> ? O : ModuleOptions>(
-		ModuleClass: ClassConstructor<M> & typeof Module,
+		ModuleClass: ClassConstructor<M> & ModuleStatic,
 		options?: Partial<Opt>
 	): M {
 		if (!(ModuleClass.prototype instanceof Module)) {
@@ -151,7 +151,7 @@ export default class App {
 		if (isString(module)) {
 			name = module;
 		} else {
-			if (!('getName' in module) && typeof module.getName !== 'function') {
+			if (!('getName' in module) || typeof module.getName !== 'function') {
 				throw new Error(`Passed classed is not an instance of the 'Module' class`);
 			}
 
@@ -180,7 +180,7 @@ export default class App {
 	registerComponent<
 		C extends Component,
 		Opt = C extends Component<any, infer O> ? O : ComponentOptions
-	>(ComponentClass: ClassConstructor<C> & typeof Component, options?: Partial<Opt>): this {
+	>(ComponentClass: ClassConstructor<C> & ComponentStatic, options?: Partial<Opt>): this {
 		if (!(ComponentClass.prototype instanceof Component)) {
 			throw new TypeError(
 				'A component passed to registerComponent() method must be an instance of Component'
