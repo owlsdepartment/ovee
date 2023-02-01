@@ -1,3 +1,12 @@
+## [2.2.4](https://github.com/owlsdepartment/ovee/compare/v2.2.3...v2.2.4) (2023-02-01)
+
+
+### Bug Fixes
+
+* **ovee:** adjust typings for app register and use ([c3da875](https://github.com/owlsdepartment/ovee/commit/c3da875d69c7f57e90f09fc1bea15d4ba7a828a4))
+
+
+
 ## [2.2.3](https://github.com/owlsdepartment/ovee/compare/v2.2.2...v2.2.3) (2022-12-19)
 
 
