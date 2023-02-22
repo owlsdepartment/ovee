@@ -1,3 +1,12 @@
+## [2.2.5](https://github.com/owlsdepartment/ovee/compare/v2.2.4...v2.2.5) (2023-02-22)
+
+
+### Bug Fixes
+
+* **ovee:** update typings for `emitEvent` helper ([ba51840](https://github.com/owlsdepartment/ovee/commit/ba51840818f853d179d78ce7551dce51dc4c760e))
+
+
+
 ## [2.2.4](https://github.com/owlsdepartment/ovee/compare/v2.2.3...v2.2.4) (2023-02-01)
 
 
