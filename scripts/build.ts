@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const path = require('path');
-const fs = require('fs');
-
-const { rollup } = require('rollup');
-const { default: dts } = require('rollup-plugin-dts');
-const { typescriptPaths } = require('rollup-plugin-typescript-paths');
-const { default: esbuild } = require('rollup-plugin-esbuild');
+import fs from 'fs';
+import path from 'path';
+import { rollup } from 'rollup';
+import dts from 'rollup-plugin-dts';
+import esbuild from 'rollup-plugin-esbuild';
+import { typescriptPaths } from 'rollup-plugin-typescript-paths';
 
 const packageNames = ['ovee', 'ovee-barba', 'ovee-content-loader'];
 
@@ -17,9 +15,13 @@ async function build() {
 		throw Error(`Wrong package name! Passed: ${packageName}`);
 	}
 
+	// if cwd is wrong, imports resolutions are wrong
+	process.chdir(packagePath);
 	fs.rmSync(path.resolve(packagePath, `dist`), { recursive: true, force: true });
 
-	for (const format of ['es', 'cjs']) {
+	console.log(`[BUILD] Building package '${packageName}'...`);
+
+	for (const format of ['es', 'cjs'] as const) {
 		const { input, tsconfig, external } = getBundleConfig(packagePath);
 
 		const bundle = await rollup({
@@ -31,7 +33,6 @@ async function build() {
 					tsConfigPath: tsconfig,
 					preserveExtensions: true,
 				}),
-				// nodeResolve({}),
 				esbuild({ target: 'es2020', tsconfig }),
 			],
 		});
@@ -45,10 +46,14 @@ async function build() {
 		await bundle.close();
 	}
 
+	console.log(`[BUILD] Generating typings...`);
+
 	await generateDeclarationFile(packagePath);
+
+	console.log(`[BUILD] Package '${packageName}' build!`);
 }
 
-async function generateDeclarationFile(packagePath) {
+async function generateDeclarationFile(packagePath: string) {
 	const { input, external, tsconfig } = getBundleConfig(packagePath);
 	const bundle = await rollup({
 		input,
@@ -71,7 +76,7 @@ async function generateDeclarationFile(packagePath) {
 	await bundle.close();
 }
 
-function getBundleConfig(packagePath) {
+function getBundleConfig(packagePath: string) {
 	return {
 		input: path.resolve(packagePath, `src/index.ts`),
 		tsconfig: path.resolve(packagePath, `tsconfig.json`),

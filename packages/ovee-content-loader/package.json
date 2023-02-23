@@ -29,7 +29,7 @@
   "scripts": {
     "lint": "eslint . --fix",
     "lint:no-fix": "eslint .",
-    "build": "node ../../scripts/build.js ovee-content-loader",
+    "build": "cd ../.. && npx esr scripts/build.ts ovee-content-loader",
     "clean": "rm -rf ./dist",
     "prepublishOnly": "npm run lint:no-fix && npm run build"
   },

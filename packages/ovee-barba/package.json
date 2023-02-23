@@ -30,7 +30,7 @@
   "scripts": {
     "lint": "eslint . --fix",
     "lint:no-fix": "eslint .",
-    "build": "node ../../scripts/build.js ovee-barba",
+    "build": "cd ../.. && npx esr scripts/build.ts ovee-barba",
     "clean": "rm -rf ./dist",
     "prepublishOnly": "npm run lint:no-fix && npm run build"
   },

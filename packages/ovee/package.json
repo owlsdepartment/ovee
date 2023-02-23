@@ -31,8 +31,7 @@
     "jest": "^27.1.0",
     "jsdom": "^16.4.0",
     "lit-html": "^2.3.1",
-    "resolve-url-loader": "3.1.0",
-    "ts-jest": "^27.0.5"
+    "resolve-url-loader": "3.1.5"
   },
   "peerDependencies": {
     "lit-html": "^2.3.1"
@@ -43,7 +42,7 @@
     "test:unit:watch": "NODE_ENV=test jest --watch --coverage --coverage-reporters=lcov",
     "lint": "eslint ./src --fix",
     "lint:no-fix": "eslint ./src",
-    "build": "node ../../scripts/build.js ovee",
+    "build": "cd ../.. && npx esr scripts/build.ts ovee",
     "clean": "rm -rf ./dist",
     "prepublishOnly": "npm run lint:no-fix && npm run build"
   },
