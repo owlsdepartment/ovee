@@ -16,7 +16,7 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-#Yarn@Berry
+# Yarn@Berry
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -24,3 +24,6 @@ lerna-debug.log*
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Turbo
+.turbo

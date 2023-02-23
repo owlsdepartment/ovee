@@ -4061,7 +4061,7 @@ __metadata:
   resolution: "@ovee.js/barba@workspace:packages/ovee-barba"
   dependencies:
     "@barba/core": ^2.9.7
-    typescript: ^4.2.0
+    ovee.js: "workspace:*"
   peerDependencies:
     ovee.js: 2.0.0 - 2.2.x
   languageName: unknown
@@ -4071,7 +4071,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@ovee.js/content-loader@workspace:packages/ovee-content-loader"
   dependencies:
-    typescript: ^4.2.0
+    "@barba/core": ^2.9.7
+    ovee.js: "workspace:*"
   peerDependencies:
     "@barba/core": ^2.9.7
     ovee.js: 2.0.0 - 2.2.x
@@ -15400,7 +15401,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ovee.js@workspace:packages/ovee":
+"ovee.js@workspace:*, ovee.js@workspace:packages/ovee":
   version: 0.0.0-use.local
   resolution: "ovee.js@workspace:packages/ovee"
   dependencies:
@@ -15416,7 +15417,6 @@ __metadata:
     reflect-metadata: ^0.1.13
     resolve-url-loader: 3.1.0
     ts-jest: ^27.0.5
-    typescript: ^4.2.0
   peerDependencies:
     lit-html: ^2.3.1
   languageName: unknown
