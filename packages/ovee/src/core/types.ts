@@ -1,16 +1,33 @@
-import Component from 'src/core/Component';
 import * as protectedFields from 'src/core/protectedFields';
 import { ReactiveProxy } from 'src/reactive/ReactiveProxy';
 import { Dictionary } from 'src/utils';
 
-export interface OveeElement {
-	_isOveeCustomElement: boolean;
-	_OveeComponent: Component;
+import { Component, ComponentOptions, ComponentReturn } from './defineComponent';
+
+export interface ComponentInternalInstance {
+	component: Component;
+	instance: Exclude<ComponentReturn, void>;
+	options: ComponentOptions;
+
+	mount(): void;
+	unmount(): void;
 }
 
-export interface OveeComponent {
-	_oveeComponentInstance?: Component;
+export abstract class OveeCustomElement extends HTMLElement {
+	abstract _OveeInternalInstance: ComponentInternalInstance;
 }
+
+export interface HTMLOveeElement extends HTMLElement, WithOveeInstances {}
+
+export interface WithOveeInstances {
+	_OveeComponentInstances?: ComponentInternalInstance[];
+}
+
+/**
+ *
+ * ______OLD_______
+ *
+ * */
 
 export interface WithReactiveProxy {
 	[protectedFields.REACTIVE_PROXY]?: ReactiveProxy;

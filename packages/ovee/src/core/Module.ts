@@ -1,7 +1,5 @@
 import { AnyObject, OmitConstructor } from '../utils';
-import App from './App';
-
-export type ModuleOptions = AnyObject;
+import App from './app/App';
 
 export type ModuleStatic = OmitConstructor<typeof Module>;
 export type ModuleClass = ModuleStatic &

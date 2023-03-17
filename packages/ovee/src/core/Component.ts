@@ -1,5 +1,10 @@
-// eslint-disable-next-line max-classes-per-file
-import { OveeElement, WithDataParam, WithElements, WithReactiveProxy } from 'src/core';
+import {
+	ComponentOptions,
+	OveeElement,
+	WithDataParam,
+	WithElements,
+	WithReactiveProxy,
+} from 'src/core';
 import { Callback, EventDelegate, EventDesc, ListenerOptions, TargetOptions } from 'src/dom';
 import { ReactiveProxy } from 'src/reactive';
 import {
@@ -13,11 +18,9 @@ import {
 	toKebabCase,
 } from 'src/utils';
 
-import App from './App';
+import { App } from './app';
 import { InstanceDecorators } from './InstanceDecorators';
 import * as protectedFields from './protectedFields';
-
-export type ComponentOptions = AnyObject;
 
 export type ComponentStatic = OmitConstructor<typeof Component>;
 export type ComponentClass = ComponentStatic &

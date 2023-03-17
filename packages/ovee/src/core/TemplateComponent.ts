@@ -2,8 +2,8 @@ import { html, render, TemplateResult } from 'lit-html';
 import { doWatchEffect, ref } from 'src/reactive';
 import { Task } from 'src/utils';
 
-import App from './App';
-import Component, { ComponentOptions } from './Component';
+import App from './app/App';
+import Component from './Component';
 import * as protectedFields from './protectedFields';
 
 export default class TemplateComponent<
