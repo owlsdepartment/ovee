@@ -8,7 +8,7 @@ import { AppConfig } from './createApp';
 
 export interface ComponentRegistration<O extends ComponentOptions = ComponentOptions> {
 	name: string;
-	component: Component<O>;
+	component: Component<HTMLElement, O>;
 	options?: O;
 }
 
@@ -96,7 +96,7 @@ export class AppConfigurator {
 
 	component<Options extends ComponentOptions>(
 		name: string,
-		component: Component<Options>,
+		component: Component<HTMLElement, Options>,
 		options?: Options
 	): this {
 		if (!this.validateComponent(name, component)) return this;

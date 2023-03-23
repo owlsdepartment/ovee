@@ -1,17 +1,9 @@
-import * as protectedFields from 'src/core/protectedFields';
-import { ReactiveProxy } from 'src/reactive/ReactiveProxy';
-import { Dictionary } from 'src/utils';
+import { EventDesc, ListenerOptions, TargetOptions } from '@/dom';
+import { AnyFunction } from '@/utils';
 
-import { Component, ComponentOptions, ComponentReturn } from './defineComponent';
-
-export interface ComponentInternalInstance {
-	component: Component;
-	instance: Exclude<ComponentReturn, void>;
-	options: ComponentOptions;
-
-	mount(): void;
-	unmount(): void;
-}
+import { App } from './app';
+import { ComponentInternalInstance } from './Component';
+import { ComponentOptions } from './defineComponent';
 
 export abstract class OveeCustomElement extends HTMLElement {
 	abstract _OveeInternalInstance: ComponentInternalInstance;
@@ -23,24 +15,15 @@ export interface WithOveeInstances {
 	_OveeComponentInstances?: ComponentInternalInstance[];
 }
 
-/**
- *
- * ______OLD_______
- *
- * */
+export interface ComponentInstance<
+	Root extends HTMLElement = HTMLElement,
+	Options extends ComponentOptions = ComponentOptions
+> {
+	element: Root;
+	app: App;
+	options: Options;
 
-export interface WithReactiveProxy {
-	[protectedFields.REACTIVE_PROXY]?: ReactiveProxy;
-}
-
-export interface WithDataParam {
-	__dataParams?: Dictionary<() => void>;
-}
-
-export interface WithElements {
-	__els?: Dictionary<() => void>;
-}
-
-export interface WithElement {
-	readonly $element: Element;
+	on(events: string, callback: AnyFunction, options?: ListenerOptions): void;
+	off(events: string, callback: AnyFunction, options?: TargetOptions): void;
+	emit<D = any>(eventDesc: EventDesc, detail?: D): void;
 }

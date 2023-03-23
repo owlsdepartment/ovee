@@ -1,7 +1,7 @@
 import { attachMutationObserver, isValidNode } from '@/utils';
 
-import { setupComponent, StoredComponent } from '../setupComponent';
-import { ComponentInternalInstance, HTMLOveeElement } from '../types';
+import { ComponentInternalInstance, setupComponent, StoredComponent } from '../component';
+import { HTMLOveeElement } from '../types';
 import { App, AppManager } from './App';
 import { AppConfigurator } from './AppConfigurator';
 
@@ -27,6 +27,7 @@ export class ComponentsManager implements AppManager {
 
 	run() {
 		this.attachMutationObserver(this.root);
+		this.registerCustomElements();
 		this.harvestComponents(this.root);
 	}
 
@@ -40,6 +41,10 @@ export class ComponentsManager implements AppManager {
 		this.configurator.registeredComponents.forEach(({ name, component, options }) => {
 			this.storedComponents.set(name, setupComponent(this.app, name, component, options));
 		});
+	}
+
+	private registerCustomElements(): void {
+		this.storedComponents.forEach(s => s.register());
 	}
 
 	private attachMutationObserver(root: HTMLElement): void {
@@ -96,7 +101,7 @@ export class ComponentsManager implements AppManager {
 			el._OveeComponentInstances = [];
 		}
 
-		const internalInstance = factory();
+		const internalInstance = factory(el);
 
 		el.classList.add(this.componentCssClass);
 		el._OveeComponentInstances.push(internalInstance);
