@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { ElementRef, useElementRef } from '@/composables';
 import { defineComponent } from '@/core';
@@ -106,9 +106,44 @@ describe('useElementRefs', () => {
 		expect(elRef!.value).toBe(paragraph);
 	});
 
-	it.todo('disconnects observer, when component is unmounted');
+	it('disconnects observer, when component is unmounted', () => {
+		const disconnectSpy = vi.spyOn(MutationObserver.prototype, 'disconnect');
+		const component = defineComponent(() => {
+			useElementRef('ref');
+		});
+		const instance = createComponent(component);
 
-	it.todo('reconnects observer, when component is mounted');
+		instance.unmount();
 
-	it.todo('reuses mutation observers for the same component');
+		expect(disconnectSpy).toBeCalledTimes(1);
+	});
+
+	it('reconnects observer, when component is mounted', () => {
+		const observeSpy = vi.spyOn(MutationObserver.prototype, 'observe');
+		const component = defineComponent(() => {
+			useElementRef('ref');
+		});
+		const instance = createComponent(component);
+
+		instance.unmount();
+		instance.mount();
+
+		expect(observeSpy).toBeCalledTimes(2);
+	});
+
+	it('reuses mutation observers for the same component', () => {
+		const _org = window.MutationObserver;
+		const MutationMock = vi.fn().mockImplementation(callback => new _org(callback));
+		window.MutationObserver = MutationMock;
+
+		const component = defineComponent(() => {
+			useElementRef('ref1');
+			useElementRef('ref2');
+		});
+
+		createComponent(component);
+
+		expect(MutationMock).toBeCalledTimes(1);
+		window.MutationObserver = _org;
+	});
 });

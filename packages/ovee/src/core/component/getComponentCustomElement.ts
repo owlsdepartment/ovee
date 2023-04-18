@@ -1,8 +1,11 @@
 import { registerCustomElement } from '@/utils';
 
-import { OveeCustomElement } from '../types';
 import { ComponentInternalInstance } from './ComponentInternalInstance';
 import { ComponentFactory } from './setupComponent';
+
+export abstract class OveeCustomElement extends HTMLElement {
+	abstract _OveeInternalInstance: ComponentInternalInstance;
+}
 
 export function getComponentCustomElement(name: string, factory: ComponentFactory) {
 	let registered = false;

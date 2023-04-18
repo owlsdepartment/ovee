@@ -21,7 +21,7 @@ describe('defineComponent', () => {
 		expect(component).toBe(base);
 	});
 
-	it('should make it possible to extract back options and instance type', () => {
+	it('should make it possible to extract options and instance type', () => {
 		const c1 = defineComponent(() => {});
 		const c2 = defineComponent<HTMLElement, { a: string }>(() => {});
 		const c3 = defineComponent(() => ({ b: 2 }));

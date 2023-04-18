@@ -12,11 +12,16 @@ describe('ComponentInternalInstance', () => {
 		it('calls setup function with element and options', () => {
 			const setupFn = vi.fn();
 			const component = defineComponent(setupFn);
-
-			createComponent(component, { element: el, options });
+			const instance = createComponent(component, { element: el, options });
 
 			expect(setupFn).toBeCalledTimes(1);
-			expect(setupFn).toHaveBeenNthCalledWith(1, el, options);
+			expect(setupFn.mock.calls[0][0]).toBe(el);
+			expect(setupFn.mock.calls[0][1]).toBeTypeOf('object');
+			expect(setupFn.mock.calls[0][1].options).toBe(options);
+			expect(setupFn.mock.calls[0][1].app).toBe(instance.app);
+			expect(setupFn.mock.calls[0][1].emit).toBeTypeOf('function');
+			expect(setupFn.mock.calls[0][1].on).toBeTypeOf('function');
+			expect(setupFn.mock.calls[0][1].off).toBeTypeOf('function');
 		});
 
 		it('saves returned object as component instance', () => {
@@ -28,7 +33,7 @@ describe('ComponentInternalInstance', () => {
 			expect(instance.instance).toBe(setupInstance);
 		});
 
-		it.only('provides itself as a component context in setup function', () => {
+		it('provides itself as a component context in setup function', () => {
 			const testFn = vi.fn();
 			const component = defineComponent(() => {
 				const ctx = injectComponentContext();

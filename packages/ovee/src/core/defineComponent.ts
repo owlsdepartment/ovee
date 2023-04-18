@@ -1,5 +1,7 @@
 import { AnyObject, OmitNil } from '@/utils';
 
+import { ComponentContext } from './types';
+
 export type ComponentOptions = AnyObject;
 export type ComponentReturn = AnyObject | void;
 export type AnyComponent = Component<any, any, any>;
@@ -9,12 +11,12 @@ export interface ComponentDefineFunction<
 	Options extends ComponentOptions = ComponentOptions,
 	Return extends ComponentReturn = ComponentReturn
 > {
-	(element: Root, options: Partial<Options>): Return;
+	(element: Root, context: ComponentContext<Options>): Return;
 }
 
 export type GetComponentInstance<C extends AnyComponent, Return = ReturnType<C>> = OmitNil<Return>;
 
-export type GetComponentOptions<C extends AnyComponent> = Parameters<C>[1];
+export type GetComponentOptions<C extends AnyComponent> = Parameters<C>[1]['options'];
 
 export type GetComponentRoot<C extends AnyComponent> = Parameters<C>[0];
 

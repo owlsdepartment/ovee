@@ -3,7 +3,7 @@ import { AnyFunction, EventBus, OmitNil } from '@/utils';
 
 import { App } from '../app';
 import { Component, ComponentOptions, ComponentReturn } from '../defineComponent';
-import { ComponentInstance } from '../types';
+import { ComponentContext, ComponentInstance } from '../types';
 import { provideComponentContext } from './componentContext';
 
 export class ComponentInternalInstance<
@@ -19,6 +19,17 @@ export class ComponentInternalInstance<
 	readonly instance: OmitNil<Return>;
 	readonly eventDelegate: EventDelegate<this>;
 
+	private get componentContext(): ComponentContext<Options> {
+		return {
+			app: this.app,
+			options: this.options as Options,
+
+			emit: (...args) => this.emit(...args),
+			on: (...args) => this.on(...args),
+			off: (...args) => this.off(...args),
+		};
+	}
+
 	constructor(
 		public element: Root,
 		public app: App,
@@ -29,7 +40,7 @@ export class ComponentInternalInstance<
 
 		const cleanUp = provideComponentContext(this);
 
-		this.instance = component(element, options) ?? ({} as any);
+		this.instance = component(element, this.componentContext) ?? ({} as any);
 		cleanUp();
 	}
 

@@ -3,7 +3,7 @@ import { AnyObject, EventBus } from '@/utils';
 
 import { ComponentInstance } from '../types';
 
-export interface ComponentContext extends ComponentInstance {
+export interface ComponentInternalContext extends ComponentInstance {
 	instance?: AnyObject;
 	mountBus: EventBus;
 	unmountBus: EventBus;
@@ -11,7 +11,7 @@ export interface ComponentContext extends ComponentInstance {
 
 const logger = new Logger('componentContext');
 
-let currentContext: null | ComponentContext = null;
+let currentContext: null | ComponentInternalContext = null;
 
 /**
  * For testing purposes only
@@ -20,7 +20,7 @@ export function resetComponentContext() {
 	currentContext = null;
 }
 
-export function provideComponentContext(internalInstance: ComponentContext) {
+export function provideComponentContext(internalInstance: ComponentInternalContext) {
 	currentContext = internalInstance;
 
 	return () => {
