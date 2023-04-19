@@ -13,6 +13,12 @@ export type AnyFunction = (...args: any[]) => any;
 
 export type AnyObject = Record<string, any>;
 
+export type EmptyObject = Record<string, never>;
+
+export type OmitNil<Base, Fallback = AnyObject> = Base extends void | undefined | null
+	? Fallback
+	: Base;
+
 export type OmitConstructorKeys<T> = {
 	[P in keyof T]: T[P] extends new () => any ? never : P;
 }[keyof T];

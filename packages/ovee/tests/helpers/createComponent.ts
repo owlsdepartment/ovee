@@ -1,38 +1,27 @@
-import App from 'src/core/App';
-import Component from 'src/core/Component';
-import { ClassConstructor } from 'src/utils';
+import { App, Component, ComponentOptions, createApp } from '@/core';
+import { ComponentInternalInstance } from '@/core/component';
 
-/**
- * NOTE: there is a problem with decorators init 'cause asyncHelper changes setTimeout into synchronous function
- */
-export async function createComponentAsync<C extends Component>(
-	ctor: ClassConstructor<C>
-): Promise<C> {
-	let ret: any;
-
-	await asyncHelper(async calls => {
-		const element = document.createElement('div');
-		const app = new App();
-		ret = new ctor(element, app);
-
-		await calls();
-	});
-
-	return ret;
+interface Config {
+	element?: HTMLElement;
+	app?: App;
+	options?: ComponentOptions;
 }
 
-export function createComponent<C extends Component>(
-	ctor: ClassConstructor<C>,
-	optional: { element?: Element; app?: App } = {}
-): C {
-	jest.useFakeTimers();
+export function createComponent(
+	component: Component,
+	{ element, app, options = {} }: Config = {},
+	mountInitially = true
+) {
+	if (!app) {
+		const appConfig = createApp();
 
-	const element = optional.element ?? document.createElement('div');
-	const app = optional.app ?? new App();
-	const component = new ctor(element, app);
+		app = new App(appConfig, document.body);
+	}
+	element ??= document.createElement('div');
 
-	jest.runAllTimers();
-	jest.useRealTimers();
+	const instance = new ComponentInternalInstance(element, app, component, options);
 
-	return component;
+	if (mountInitially) instance.mount();
+
+	return instance;
 }

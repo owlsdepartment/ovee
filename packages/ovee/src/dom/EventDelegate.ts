@@ -1,5 +1,5 @@
-import { Logger } from 'src/errors';
-import { isString, omit } from 'src/utils';
+import { Logger } from '@/errors';
+import { isString, omit } from '@/utils';
 
 import { emitEvent } from './emitEvent';
 
@@ -32,7 +32,7 @@ const logger = new Logger('EventDelegate');
 export class EventDelegate<Context = any> {
 	listeners: Listener[] = [];
 
-	constructor(public targetElement: Element, public context: Context) {}
+	constructor(public targetElement: EventTarget & ParentNode, public context: Context) {}
 
 	on(events: string, callback: Callback<Context>, options?: ListenerOptions): () => void {
 		const listenerOptions = options

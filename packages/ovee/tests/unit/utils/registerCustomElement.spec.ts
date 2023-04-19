@@ -1,24 +1,23 @@
-import { registerCustomElement } from 'src/utils/registerCustomElement';
+import { beforeEach, describe, expect, it, SpyInstance, vi } from 'vitest';
 
-describe('registerCustomElement function', () => {
-	beforeAll(() => {
-		// Fix because of jsdom and the way, that he reapplies `customElements`
+import { registerCustomElement } from '@/utils';
+
+describe('registerCustomElement', () => {
+	let defineSpy: SpyInstance;
+
+	beforeEach(() => {
 		window.close = () => {};
+		defineSpy = vi.spyOn(customElements, 'define');
 	});
 
 	it('should register customElement if api is available', () => {
-		const mockDefine = jest.fn();
 		const htmlElement = class extends HTMLElement {};
 		const tagName = 'test-element';
 
-		Object.defineProperty(window, 'customElements', {
-			value: { define: mockDefine },
-		});
 		registerCustomElement(htmlElement, tagName);
 
-		expect(mockDefine.mock.calls.length).toBe(1);
-		expect(mockDefine.mock.calls[0][0]).toBe(tagName);
-		expect(mockDefine.mock.calls[0][1]).toBe(htmlElement);
+		expect(defineSpy).toBeCalledTimes(1);
+		expect(defineSpy).toHaveBeenNthCalledWith(1, tagName, htmlElement);
 	});
 
 	it('should not throw any error if customElement api is not available', () => {

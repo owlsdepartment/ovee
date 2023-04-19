@@ -1,4 +1,6 @@
-import { toKebabCase } from 'src/utils/toKebabCase';
+import { describe, expect, it } from 'vitest';
+
+import { toKebabCase } from '@/utils';
 
 describe('toKebabCase function', () => {
 	it('should replace whitespace with dash', () => {

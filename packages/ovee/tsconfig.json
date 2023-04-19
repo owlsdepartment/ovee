@@ -6,8 +6,9 @@
         "rootDir": "./src",
         "outDir": "./dist/src",
         "paths": {
-            "src/*": ["./src/*"],
-            "tests/*": ["./tests/*"]
+            "@/*": ["./src/*"],
+            "#/*": ["./tests/*"],
+            "~/*": ["./*"],
         }
     },
 
