@@ -1,8 +1,8 @@
 import { Logger } from '@/errors';
 import { isComponentDefinition, isModuleDefinition, isNil } from '@/utils';
 
-import { Component, ComponentOptions } from '../defineComponent';
-import { Module, ModuleOptions } from '../defineModule';
+import { AnyComponent, Component, ComponentOptions } from '../component';
+import { AnyModule, Module, ModuleOptions } from '../module';
 import { App } from './App';
 import { AppConfig } from './createApp';
 
@@ -72,7 +72,7 @@ export class AppConfigurator {
 		return this;
 	}
 
-	useMany(modules: Record<string, Module | [Module] | [Module, ModuleOptions | undefined]>): this {
+	useMany(modules: Record<string, AnyModule | [AnyModule, ModuleOptions | undefined]>): this {
 		for (const [name, value] of Object.entries(modules)) {
 			const [module, options] = Array.isArray(value) ? value : [value];
 
@@ -111,7 +111,7 @@ export class AppConfigurator {
 	}
 
 	components(
-		components: Record<string, Component | [Component, ComponentOptions | undefined]>
+		components: Record<string, AnyComponent | [AnyComponent, ComponentOptions | undefined]>
 	): this {
 		for (const [name, value] of Object.entries(components)) {
 			const [component, options] = Array.isArray(value) ? value : [value];

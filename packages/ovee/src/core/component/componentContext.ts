@@ -1,7 +1,7 @@
 import { Logger } from '@/errors';
 import { AnyObject, EventBus } from '@/utils';
 
-import { ComponentInstance } from '../types';
+import { ComponentInstance } from './types';
 
 export interface ComponentInternalContext extends ComponentInstance {
 	instance?: AnyObject;

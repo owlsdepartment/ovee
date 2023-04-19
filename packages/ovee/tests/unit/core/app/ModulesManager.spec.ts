@@ -1,7 +1,7 @@
 import { assertType, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { App, AppConfigurator, createApp, defineModule, Module, ModulesManager } from '@/core';
-import { createModule } from '@/core/createModule';
+import { App, AppConfigurator, createApp, defineModule, ModulesManager } from '@/core';
+import { ModuleInternalInstance } from '@/core/module';
 import { createLoggerRegExp } from '#/helpers';
 
 vi.mock('@/core/app/App', () => {
@@ -12,24 +12,7 @@ vi.mock('@/core/app/App', () => {
 	};
 });
 
-vi.mock('@/core/createModule', () => {
-	const createModule = vi.fn((module: Module, _options?: any) => {
-		const options = _options || {};
-		const instance = module(options) ?? {};
-
-		return {
-			instance,
-			options,
-
-			init: () => {},
-			destroy: () => {},
-		};
-	});
-
-	return {
-		createModule,
-	};
-});
+vi.mock('@/core/module/ModuleInternalInstance');
 
 const loggerRegExp = createLoggerRegExp('App');
 
@@ -38,7 +21,7 @@ describe('ModulesManager', () => {
 	let app: App;
 	let manager: ModulesManager;
 	const _createApp = () => new App(appConfig, document.body);
-	const _createModule = vi.mocked(createModule);
+	const _ModuleInternalInstance = vi.mocked(ModuleInternalInstance);
 	const m2Options = { a: 'test' };
 	const m1 = defineModule(() => {});
 	const m2 = defineModule<{ a: string }, { return: boolean }>(() => ({ return: true }));
@@ -48,7 +31,7 @@ describe('ModulesManager', () => {
 		appConfig.useMany({ m1, m2: [m2, m2Options] });
 		app = _createApp();
 		manager = new ModulesManager(app);
-		_createModule.mockClear();
+		_ModuleInternalInstance.mockClear();
 
 		return () => {
 			manager.destroy();
@@ -60,10 +43,10 @@ describe('ModulesManager', () => {
 			const manager = new ModulesManager(app);
 
 			expect(manager.modules.size).toBe(2);
-			expect(_createModule).toBeCalledTimes(2);
+			expect(_ModuleInternalInstance).toBeCalledTimes(2);
 
-			expect(_createModule).toHaveBeenNthCalledWith(1, m1, undefined);
-			expect(_createModule).toHaveBeenNthCalledWith(2, m2, m2Options);
+			expect(_ModuleInternalInstance).toHaveBeenNthCalledWith(1, app, m1, {});
+			expect(_ModuleInternalInstance).toHaveBeenNthCalledWith(2, app, m2, m2Options);
 		});
 	});
 
@@ -94,8 +77,8 @@ describe('ModulesManager', () => {
 	describe('method:getModule', () => {
 		it('returns proper module instance and options via name or module itself', () => {
 			const manager = new ModulesManager(app);
-			const m1Instance = _createModule.mock.results[0].value;
-			const m2Instance = _createModule.mock.results[1].value;
+			const m1Instance = _ModuleInternalInstance.mock.instances[0];
+			const m2Instance = _ModuleInternalInstance.mock.instances[1];
 
 			const m1Result = manager.getModule('m1');
 			const m2Result = manager.getModule(m2);

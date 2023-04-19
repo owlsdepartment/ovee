@@ -1,8 +1,8 @@
 import { Logger } from '@/errors';
 
-import { ComponentOptions } from '../defineComponent';
-import { ComponentInstance } from '../types';
 import { injectComponentContext } from './componentContext';
+import { ComponentOptions } from './defineComponent';
+import { ComponentInstance } from './types';
 
 const logger = new Logger('useComponent');
 
@@ -25,7 +25,7 @@ export function useComponent<
 	if (!instance && !allowMissingContext) {
 		throw Error(
 			logger.getMessage(
-				`Missing component context. Did you used 'useComponent' inside setup function?`
+				`Missing component context. Did you used 'useComponent' inside components setup function?`
 			)
 		);
 	}

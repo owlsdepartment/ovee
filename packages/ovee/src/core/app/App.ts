@@ -8,7 +8,7 @@ import {
 	TargetOptions,
 } from '@/dom';
 
-import { Module } from '../defineModule';
+import { AnyModule } from '../module';
 import { AppConfigurator } from './AppConfigurator';
 import { ComponentsManager } from './ComponentsManager';
 import { defaultConfig } from './createApp';
@@ -80,7 +80,7 @@ export class App {
 		}
 	}
 
-	getModule<M extends Module>(module: M | string) {
+	getModule<M extends AnyModule>(module: M | string) {
 		return this.modulesManager.getModule<M>(module);
 	}
 

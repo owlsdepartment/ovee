@@ -9,7 +9,7 @@ describe('ComponentInternalInstance', () => {
 	const options = {};
 
 	describe('constructor', () => {
-		it('calls setup function with element and options', () => {
+		it('calls setup function with element and context', () => {
 			const setupFn = vi.fn();
 			const component = defineComponent(setupFn);
 			const instance = createComponent(component, { element: el, options });

@@ -1,8 +1,7 @@
 import { Logger } from '@/errors';
 import { isString } from '@/utils';
 
-import { CreatedModule, createModule } from '../createModule';
-import { GetModuleInstance, GetModuleOptions, Module } from '../defineModule';
+import { AnyModule, GetModuleInstance, GetModuleOptions, ModuleInternalInstance } from '../module';
 import { App, AppManager } from './App';
 import { AppConfigurator } from './AppConfigurator';
 
@@ -10,7 +9,7 @@ const logger = new Logger('App');
 
 export class ModulesManager implements AppManager {
 	configurator: AppConfigurator;
-	modules = new Map<string, CreatedModule>();
+	modules = new Map<string, ModuleInternalInstance>();
 
 	constructor(public app: App) {
 		this.configurator = app.configurator;
@@ -27,8 +26,8 @@ export class ModulesManager implements AppManager {
 	}
 
 	private createModules(): void {
-		this.configurator.registeredModules.forEach(({ module, name, options }) => {
-			this.modules.set(name, createModule(module, options));
+		this.configurator.registeredModules.forEach(({ module, name, options = {} }) => {
+			this.modules.set(name, new ModuleInternalInstance(this.app, module, options));
 		});
 	}
 
@@ -40,9 +39,9 @@ export class ModulesManager implements AppManager {
 		this.modules.forEach(m => m.destroy());
 	}
 
-	getModule<M extends Module, Instance = GetModuleInstance<M>, Options = GetModuleOptions<M>>(
+	getModule<M extends AnyModule>(
 		module: M | string
-	): { instance: Instance; options: Options } {
+	): { instance: GetModuleInstance<M>; options: GetModuleOptions<M> } {
 		let name = '';
 
 		if (isString(module)) {
@@ -66,8 +65,8 @@ export class ModulesManager implements AppManager {
 		}
 
 		return {
-			instance: foundModule.instance as Instance,
-			options: foundModule.options as Options,
+			instance: foundModule.instance as GetModuleInstance<M>,
+			options: foundModule.options as GetModuleOptions<M>,
 		};
 	}
 }

@@ -2,9 +2,9 @@ import { EventDelegate, EventDesc, ListenerOptions, TargetOptions } from '@/dom'
 import { AnyFunction, EventBus, OmitNil } from '@/utils';
 
 import { App } from '../app';
-import { Component, ComponentOptions, ComponentReturn } from '../defineComponent';
-import { ComponentContext, ComponentInstance } from '../types';
 import { provideComponentContext } from './componentContext';
+import { Component, ComponentOptions, ComponentReturn } from './defineComponent';
+import { ComponentContext, ComponentInstance } from './types';
 
 export class ComponentInternalInstance<
 	Root extends HTMLElement = HTMLElement,

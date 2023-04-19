@@ -1,7 +1,11 @@
 import { attachMutationObserver, isValidNode } from '@/utils';
 
-import { ComponentInternalInstance, setupComponent, StoredComponent } from '../component';
-import { HTMLOveeElement } from '../types';
+import {
+	ComponentInternalInstance,
+	HTMLOveeElement,
+	setupComponent,
+	StoredComponent,
+} from '../component';
 import { App, AppManager } from './App';
 import { AppConfigurator } from './AppConfigurator';
 

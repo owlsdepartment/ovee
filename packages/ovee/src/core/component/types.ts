@@ -1,8 +1,8 @@
 import { EventDesc, ListenerOptions, TargetOptions } from '@/dom';
 import { AnyFunction } from '@/utils';
 
-import { App } from './app';
-import { ComponentInternalInstance } from './component';
+import { App } from '../app';
+import { ComponentInternalInstance } from './ComponentInternalInstance';
 import { ComponentOptions } from './defineComponent';
 
 export interface HTMLOveeElement extends HTMLElement, WithOveeInstances {}

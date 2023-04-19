@@ -1,6 +1,6 @@
 import { App } from '../app/App';
-import { Component, ComponentOptions } from '../defineComponent';
 import { ComponentInternalInstance } from './ComponentInternalInstance';
+import { Component, ComponentOptions } from './defineComponent';
 import { getComponentCustomElement } from './getComponentCustomElement';
 
 export type ComponentFactory = (element: HTMLElement) => ComponentInternalInstance;
