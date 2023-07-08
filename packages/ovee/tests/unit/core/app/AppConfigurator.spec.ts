@@ -24,6 +24,8 @@ const loggerRegExp = createLoggerRegExp('createApp');
 vi.mock('@/core/app/App');
 
 describe('AppConfigurator', () => {
+	const consoleWarn = spyConsole('warn');
+
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
@@ -49,7 +51,6 @@ describe('AppConfigurator', () => {
 
 	describe('method:use', () => {
 		let appConfig: AppConfigurator;
-		const consoleWarn = spyConsole('warn');
 
 		beforeEach(() => {
 			appConfig = new AppConfigurator({});
@@ -117,7 +118,6 @@ describe('AppConfigurator', () => {
 
 	describe('method:component', () => {
 		let appConfig: AppConfigurator;
-		const consoleWarn = spyConsole('warn');
 
 		beforeEach(() => {
 			appConfig = new AppConfigurator({});

@@ -1,7 +1,9 @@
 import { App, Component, ComponentOptions, createApp } from '@/core';
 import { ComponentInternalInstance } from '@/core/component';
+import { toKebabCase } from '@/utils';
 
 interface Config {
+	name?: string;
 	element?: HTMLElement;
 	app?: App;
 	options?: ComponentOptions;
@@ -9,7 +11,7 @@ interface Config {
 
 export function createComponent(
 	component: Component,
-	{ element, app, options = {} }: Config = {},
+	{ name, element, app, options = {} }: Config = {},
 	mountInitially = true
 ) {
 	if (!app) {
@@ -19,7 +21,13 @@ export function createComponent(
 	}
 	element ??= document.createElement('div');
 
-	const instance = new ComponentInternalInstance(element, app, component, options);
+	const instance = new ComponentInternalInstance(
+		toKebabCase(name ?? ''),
+		element,
+		app,
+		component,
+		options
+	);
 
 	if (mountInitially) instance.mount();
 

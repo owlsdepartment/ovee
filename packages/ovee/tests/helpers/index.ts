@@ -6,3 +6,4 @@ export * from './loggerRegExp';
 export * from './moduleContext';
 export * from './spyConsole';
 export * from './spyDomEvent';
+export * from './useDOMCleanup';

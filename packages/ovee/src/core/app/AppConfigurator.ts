@@ -72,7 +72,9 @@ export class AppConfigurator {
 		return this;
 	}
 
-	useMany(modules: Record<string, AnyModule | [AnyModule, ModuleOptions | undefined]>): this {
+	useMany(
+		modules: Record<string, AnyModule | [AnyModule] | [AnyModule, ModuleOptions | undefined]>
+	): this {
 		for (const [name, value] of Object.entries(modules)) {
 			const [module, options] = Array.isArray(value) ? value : [value];
 

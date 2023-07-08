@@ -26,7 +26,7 @@
   "devDependencies": {
     "lit-html": "^2.3.1",
     "typescript": "^4.9.5",
-    "vitest": "^0.29.3"
+    "vitest": "^0.32.4"
   },
   "peerDependencies": {
     "lit-html": "^2.3.1"

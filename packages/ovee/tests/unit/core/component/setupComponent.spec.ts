@@ -14,7 +14,7 @@ vi.mock('@/core/app/App', () => {
 vi.mock('@/core/component/ComponentInternalInstance');
 
 describe('setupComponent', () => {
-	const _app = createTestApp();
+	const _app = createTestApp(undefined, false);
 	const name = 'test-name';
 	const component = defineComponent(() => {});
 	const options = {};
@@ -47,6 +47,7 @@ describe('setupComponent', () => {
 			expect(instance).toBeInstanceOf(ComponentInternalInstance);
 			expect(ComponentInternalInstance).toHaveBeenNthCalledWith(
 				1,
+				name,
 				el,
 				_app.app,
 				component,

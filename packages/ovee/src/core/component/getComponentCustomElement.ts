@@ -2,9 +2,11 @@ import { registerCustomElement } from '@/utils';
 
 import { ComponentInternalInstance } from './ComponentInternalInstance';
 import { ComponentFactory } from './setupComponent';
+import { WithOveeInstances } from './types';
 
-export abstract class OveeCustomElement extends HTMLElement {
+export abstract class OveeCustomElement extends HTMLElement implements WithOveeInstances {
 	abstract _OveeInternalInstance: ComponentInternalInstance;
+	abstract _OveeComponentInstances: ComponentInternalInstance[];
 }
 
 export function getComponentCustomElement(name: string, factory: ComponentFactory) {
@@ -12,11 +14,13 @@ export function getComponentCustomElement(name: string, factory: ComponentFactor
 
 	class ComponentElement extends OveeCustomElement {
 		_OveeInternalInstance: ComponentInternalInstance;
+		_OveeComponentInstances: ComponentInternalInstance[];
 
 		constructor() {
 			super();
 
 			this._OveeInternalInstance = factory(this);
+			this._OveeComponentInstances = [this._OveeInternalInstance];
 		}
 
 		connectedCallback() {

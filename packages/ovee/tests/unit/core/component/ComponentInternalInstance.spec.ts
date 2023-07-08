@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { defineComponent } from '@/core';
+import { defineComponent, HTMLOveeElement } from '@/core';
 import { createComponent, injectComponentContext } from '#/helpers';
 
 describe('ComponentInternalInstance', () => {
@@ -51,6 +51,26 @@ describe('ComponentInternalInstance', () => {
 			createComponent(component);
 
 			expect(injectComponentContext(true)).toBeNull();
+		});
+
+		it("saves it's instance on the connected element", () => {
+			const instance = createComponent(component);
+			const element = instance.element as HTMLOveeElement;
+
+			expect(element._OveeComponentInstances).toBeInstanceOf(Array);
+			expect(element._OveeComponentInstances![0]).toBe(instance);
+		});
+
+		it('preserves other components instances', () => {
+			const i1 = {} as any;
+			const i2 = {} as any;
+			const element = document.createElement('div') as HTMLOveeElement;
+			element._OveeComponentInstances = [i1, i2];
+
+			const instance = createComponent(component, { element });
+
+			expect(element._OveeComponentInstances?.length).toBe(3);
+			expect(element._OveeComponentInstances).toStrictEqual([i1, i2, instance]);
 		});
 	});
 

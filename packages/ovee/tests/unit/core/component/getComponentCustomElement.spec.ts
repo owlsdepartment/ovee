@@ -12,7 +12,7 @@ describe('getComponentCustomElement', () => {
 	const component = defineComponent(() => {});
 	const options = {};
 	const factory = vi.fn(
-		(el: HTMLElement) => new ComponentInternalInstance(el, app, component, options)
+		(el: HTMLElement) => new ComponentInternalInstance(name, el, app, component, options)
 	);
 
 	beforeEach(() => {
@@ -69,6 +69,13 @@ describe('getComponentCustomElement', () => {
 			expect(factory).toBeCalledTimes(1);
 			expect(factory).toHaveBeenNthCalledWith(1, element);
 			expect(element._OveeInternalInstance).toBeInstanceOf(ComponentInternalInstance);
+		});
+
+		it('creates array of internal instances and saves instance as a first entry', () => {
+			const { ComponentElement } = getComponentCustomElement(name, factory);
+			const element = new ComponentElement();
+
+			expect(element._OveeComponentInstances).toStrictEqual([element._OveeInternalInstance]);
 		});
 
 		it('runs mount and unmount, when inserted into DOM or removed from DOM', () => {
