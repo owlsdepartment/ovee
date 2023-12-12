@@ -1,6 +1,6 @@
 {
   "name": "ovee.js",
-  "version": "2.2.5",
+  "version": "3.0.0-alpha.0",
   "description": "A modern, optionally reactive framework for markup you already have",
   "author": "Jakub Przyborowski",
   "license": "MIT",
@@ -15,6 +15,17 @@
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./jsx-runtime": "./dist/jsx-runtime.js"
+  },
+  "typesVersions": {
+    "*": {
+      "jsx-runtime": [
+        "dist/jsx-runtime.d.ts"
+      ]
+    }
+  },
   "files": [
     "/dist"
   ],
@@ -24,12 +35,9 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "lit-html": "^2.3.1",
+    "html-jsx": "^1.0.0",
     "typescript": "^4.9.5",
-    "vitest": "^0.29.3"
-  },
-  "peerDependencies": {
-    "lit-html": "^2.3.1"
+    "vitest": "^0.32.4"
   },
   "scripts": {
     "test": "npm run test:unit:run && npm run test:typecheck:run",

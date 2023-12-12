@@ -1,5 +1,6 @@
 import { AnyObject, OmitNil } from '@/utils';
 
+import { ComponentInternalInstance } from './ComponentInternalInstance';
 import { ComponentContext } from './types';
 
 export type ComponentOptions = AnyObject;
@@ -19,6 +20,12 @@ export type GetComponentInstance<C extends AnyComponent, Return = ReturnType<C>>
 export type GetComponentOptions<C extends AnyComponent> = Parameters<C>[1]['options'];
 
 export type GetComponentRoot<C extends AnyComponent> = Parameters<C>[0];
+
+export type GetComponentInternalInstance<C extends AnyComponent> = ComponentInternalInstance<
+	GetComponentRoot<C>,
+	GetComponentOptions<C>,
+	GetComponentInstance<C>
+>;
 
 export interface Component<
 	Root extends HTMLElement = HTMLElement,

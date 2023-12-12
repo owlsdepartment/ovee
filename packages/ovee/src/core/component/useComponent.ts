@@ -33,6 +33,7 @@ export function useComponent<
 	if (!instance) return null;
 
 	return {
+		name: instance.name,
 		app: instance.app,
 		options: instance.options as Options,
 		element: instance.element as Root,

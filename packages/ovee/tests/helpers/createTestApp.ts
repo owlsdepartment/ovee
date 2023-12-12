@@ -2,7 +2,10 @@ import { beforeEach } from 'vitest';
 
 import { App, AppConfigurator, createApp } from '@/core';
 
-export function createTestApp(updateConfig?: (config: AppConfigurator) => void) {
+export function createTestApp(
+	updateConfig?: (config: AppConfigurator) => void,
+	runInitially = true
+) {
 	const stub = {
 		app: null,
 		appConfig: null,
@@ -13,6 +16,8 @@ export function createTestApp(updateConfig?: (config: AppConfigurator) => void) 
 		stub.appConfig = createApp();
 		updateConfig?.(stub.appConfig);
 		stub.app = _createApp();
+
+		if (runInitially) stub.app.run();
 	});
 
 	return stub;

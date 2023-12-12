@@ -12,6 +12,7 @@ export interface WithOveeInstances {
 }
 
 export interface ComponentContext<Options extends ComponentOptions = ComponentOptions> {
+	name: string;
 	app: App;
 	options: Options;
 

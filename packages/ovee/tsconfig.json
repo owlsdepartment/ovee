@@ -5,6 +5,8 @@
         "baseUrl": ".",
         "rootDir": "./src",
         "outDir": "./dist/src",
+        "jsx": "react-jsx",
+        "jsxImportSource": "@/jsx",
         "paths": {
             "@/*": ["./src/*"],
             "#/*": ["./tests/*"],

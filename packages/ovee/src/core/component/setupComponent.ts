@@ -21,7 +21,7 @@ export function setupComponent(
 ): StoredComponent {
 	const options = _options || {};
 	const factory: ComponentFactory = (el: HTMLElement) =>
-		new ComponentInternalInstance(el, app, component, options);
+		new ComponentInternalInstance(name, el, app, component, options);
 	const { register } = getComponentCustomElement(name, factory);
 
 	return {

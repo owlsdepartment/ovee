@@ -1,18 +1,18 @@
-type Callback = () => void;
+type Callback<Data> = Data extends undefined ? (d?: Data) => void : (d: Data) => void;
 
-interface Registered {
+interface Registered<Data> {
 	once: boolean;
-	cb: Callback;
+	cb: Callback<Data>;
 }
 
-export class EventBus {
-	private registered = new Array<Registered>();
+export class EventBus<Data = undefined> {
+	private registered = new Array<Registered<Data>>();
 
-	emit() {
-		const toClean = new Array<Registered>();
+	emit(...d: Data extends undefined ? [d?: Data] : [d: Data]) {
+		const toClean = new Array<Registered<Data>>();
 
 		this.registered.forEach(r => {
-			r.cb();
+			r.cb(...(d as [d: Data]));
 
 			if (r.once) toClean.push(r);
 		});
@@ -24,11 +24,11 @@ export class EventBus {
 		});
 	}
 
-	on(cb: Callback, once = false) {
+	on(cb: Callback<Data>, once = false) {
 		this.registered.push({ cb, once });
 	}
 
-	off(cb: Callback) {
+	off(cb: Callback<Data>) {
 		const idx = this.registered.findIndex(r => r.cb === cb);
 
 		this.remove(idx);

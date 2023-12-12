@@ -1,5 +1,5 @@
-import { FRAMEWORK_NAME } from 'src/constants';
-import { isString } from 'src/utils/isString';
+import { FRAMEWORK_NAME } from '@/constants';
+import { isString } from '@/utils';
 
 type LogLevel = 'log' | 'warn' | 'info' | 'error';
 

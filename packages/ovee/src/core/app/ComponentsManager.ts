@@ -1,4 +1,4 @@
-import { attachMutationObserver, isValidNode } from '@/utils';
+import { attachMutationObserver, isValidNode, toKebabCase } from '@/utils';
 
 import {
 	ComponentInternalInstance,
@@ -43,7 +43,12 @@ export class ComponentsManager implements AppManager {
 
 	private setupComponents(): void {
 		this.configurator.registeredComponents.forEach(({ name, component, options }) => {
-			this.storedComponents.set(name, setupComponent(this.app, name, component, options));
+			const kebabCasedName = toKebabCase(name);
+
+			this.storedComponents.set(
+				kebabCasedName,
+				setupComponent(this.app, kebabCasedName, component, options)
+			);
 		});
 	}
 
@@ -60,7 +65,8 @@ export class ComponentsManager implements AppManager {
 			removedNodes => {
 				removedNodes
 					.filter(isValidNode)
-					// when node is moved, both callbacks are called. To avoid instant destruction, we filter those that were moved and not destroyed
+					// when node is moved, both callbacks are called. To avoid instant destruction,
+					// we filter those that were moved and not destroyed
 					.filter(node => !node.parentNode)
 					.forEach(el => this.destroyComponents(el));
 			}
@@ -101,14 +107,9 @@ export class ComponentsManager implements AppManager {
 	private makeComponent(el: HTMLOveeElement, { component, factory }: StoredComponent) {
 		if (el._OveeComponentInstances?.find(i => i.component === component)) return;
 
-		if (!el._OveeComponentInstances) {
-			el._OveeComponentInstances = [];
-		}
-
 		const internalInstance = factory(el);
 
 		el.classList.add(this.componentCssClass);
-		el._OveeComponentInstances.push(internalInstance);
 		this.addComponentsToMount(internalInstance);
 	}
 
