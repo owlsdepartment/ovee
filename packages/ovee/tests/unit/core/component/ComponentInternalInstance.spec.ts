@@ -1,7 +1,12 @@
+import { getCurrentScope, onScopeDispose } from '@vue/reactivity';
 import { describe, expect, it, vi } from 'vitest';
 
 import { defineComponent, HTMLOveeElement } from '@/core';
+import { Task } from '@/utils';
 import { createComponent, injectComponentContext } from '#/helpers';
+import { flushPromises } from '#/helpers/global';
+
+// TODO: test effect scope usage
 
 describe('ComponentInternalInstance', () => {
 	const el = document.createElement('div');
@@ -72,6 +77,19 @@ describe('ComponentInternalInstance', () => {
 			expect(element._OveeComponentInstances?.length).toBe(3);
 			expect(element._OveeComponentInstances).toStrictEqual([i1, i2, instance]);
 		});
+
+		it(`emits 'beforeMountBus' constructor executed`, () => {
+			const onBeforeMount = vi.fn();
+			const component = defineComponent(() => {
+				const instance = injectComponentContext(true);
+
+				instance?.beforeMountBus.on(onBeforeMount);
+			});
+
+			createComponent(component, {}, false);
+
+			expect(onBeforeMount).toBeCalledTimes(1);
+		});
 	});
 
 	describe('mount:method', () => {
@@ -99,6 +117,27 @@ describe('ComponentInternalInstance', () => {
 			instance.mount();
 
 			expect(emitSpy).toBeCalledTimes(2);
+		});
+
+		it('delays mount, if there is a pending renderPromise', async () => {
+			const onMount = vi.fn();
+			const component = defineComponent(() => {
+				const instance = injectComponentContext(true);
+
+				instance?.mountBus.on(onMount);
+			});
+			const instance = createComponent(component, {}, false);
+			const renderTask = new Task();
+
+			instance.renderPromise = renderTask;
+			instance.mount();
+
+			expect(onMount).not.toBeCalled();
+
+			renderTask.resolve();
+			await flushPromises();
+
+			expect(onMount).toBeCalledTimes(1);
 		});
 	});
 
@@ -172,5 +211,22 @@ describe('ComponentInternalInstance', () => {
 			expect(emitSpy).toBeCalledTimes(1);
 			expect(emitSpy).toHaveBeenNthCalledWith(1, ev, opt);
 		});
+	});
+
+	it(`integrates Vue's effectScope in components lifecycle`, () => {
+		let scope: any = undefined;
+		const onScopeDisposeCb = vi.fn();
+		const component = defineComponent(() => {
+			scope = getCurrentScope();
+
+			onScopeDispose(onScopeDisposeCb);
+		});
+
+		const instance = createComponent(component);
+
+		instance.unmount();
+
+		expect(scope).not.toBeUndefined();
+		expect(onScopeDisposeCb).toBeCalledTimes(1);
 	});
 });

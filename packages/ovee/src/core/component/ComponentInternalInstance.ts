@@ -1,3 +1,5 @@
+import { EffectScope, effectScope } from '@vue/reactivity';
+
 import { EventDelegate, EventDesc, ListenerOptions, TargetOptions } from '@/dom';
 import { AnyFunction, EventBus, OmitNil } from '@/utils';
 
@@ -13,11 +15,14 @@ export class ComponentInternalInstance<
 > implements ComponentInstance<Root, Options>
 {
 	mounted = false;
+	beforeMountBus = new EventBus();
 	mountBus = new EventBus();
 	unmountBus = new EventBus();
+	renderPromise?: Promise<void>;
 
 	readonly instance: OmitNil<Return>;
 	readonly eventDelegate: EventDelegate<this>;
+	readonly scope: EffectScope;
 
 	get unmounted() {
 		return !this.mounted;
@@ -50,14 +55,25 @@ export class ComponentInternalInstance<
 
 		const cleanUp = provideComponentContext(this);
 
-		this.instance = component(element, this.componentContext) ?? ({} as any);
+		this.scope = effectScope();
+		this.instance = this.scope.run(() => component(element, this.componentContext) ?? ({} as any));
+
 		cleanUp();
 
 		this.saveInstanceOnElement();
+		this.beforeMountBus.emit();
 	}
 
 	mount() {
 		if (this.mounted) return;
+		if (this.renderPromise) {
+			this.renderPromise.then(() => {
+				this.renderPromise = undefined;
+				this.mount();
+			});
+
+			return;
+		}
 
 		this.mounted = true;
 		this.mountBus.emit();
@@ -67,6 +83,7 @@ export class ComponentInternalInstance<
 		if (!this.mounted) return;
 
 		this.mounted = false;
+		this.scope.stop();
 		this.unmountBus.emit();
 	}
 

@@ -15,6 +15,17 @@
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./jsx-runtime": "./dist/jsx-runtime.js"
+  },
+  "typesVersions": {
+    "*": {
+      "jsx-runtime": [
+        "dist/jsx-runtime.d.ts"
+      ]
+    }
+  },
   "files": [
     "/dist"
   ],
@@ -24,12 +35,9 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "lit-html": "^2.3.1",
+    "html-jsx": "^1.0.0",
     "typescript": "^4.9.5",
     "vitest": "^0.32.4"
-  },
-  "peerDependencies": {
-    "lit-html": "^2.3.1"
   },
   "scripts": {
     "test": "npm run test:unit:run && npm run test:typecheck:run",

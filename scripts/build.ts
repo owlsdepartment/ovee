@@ -1,10 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import { rollup } from 'rollup';
-import dts from 'rollup-plugin-dts';
-import esbuild from 'rollup-plugin-esbuild';
-import { typescriptPaths } from 'rollup-plugin-typescript-paths';
 
+import { generateDtsFile, generateJsFile } from './helpers';
+
+// maybe it should be infered from package.json 'dependency' field
+const external = ['ovee.js', 'lit-html', 'reflect-metadata', /^@vue\//, '@barba/core'];
 const packageNames = ['ovee', 'ovee-barba', 'ovee-content-loader'];
 
 async function build() {
@@ -21,68 +21,35 @@ async function build() {
 
 	console.log(`[BUILD] Building package '${packageName}'...`);
 
+	const input = path.resolve(packagePath, `src/index.ts`);
+
 	for (const format of ['es', 'cjs'] as const) {
-		const { input, tsconfig, external } = getBundleConfig(packagePath);
+		const outputName = format === 'es' ? 'index.mjs' : 'index.cjs';
 
-		const bundle = await rollup({
-			external,
-			input,
-
-			plugins: [
-				typescriptPaths({
-					tsConfigPath: tsconfig,
-					preserveExtensions: true,
-				}),
-				esbuild({ target: 'es2020', tsconfig }),
-			],
-		});
-
-		await bundle.generate({});
-		await bundle.write({
-			format,
-
-			file: path.resolve(packagePath, 'dist', format === 'es' ? 'index.mjs' : 'index.cjs'),
-		});
-		await bundle.close();
+		await generateJsFile(packagePath, { input, external }, format, outputName);
 	}
 
 	console.log(`[BUILD] Generating typings...`);
 
-	await generateDeclarationFile(packagePath);
+	await generateDtsFile(packagePath, { input, external }, 'index');
 
 	console.log(`[BUILD] Package '${packageName}' build!`);
+
+	if (packageName === 'ovee') buildJSXRuntime(packagePath);
 }
 
-async function generateDeclarationFile(packagePath: string) {
-	const { input, external, tsconfig } = getBundleConfig(packagePath);
-	const bundle = await rollup({
-		input,
-		external,
+async function buildJSXRuntime(packagePath: string) {
+	console.log(`[BUILD] Building JSX runtime...`);
 
-		plugins: [
-			typescriptPaths({
-				tsConfigPath: tsconfig,
-				preserveExtensions: true,
-			}),
-			dts(),
-		],
-	});
+	const input = path.resolve(packagePath, `src/jsx-runtime.ts`);
 
-	await bundle.generate({});
-	await bundle.write({
-		file: path.resolve(packagePath, `dist/index.d.ts`),
-		format: 'es',
-	});
-	await bundle.close();
-}
+	await generateJsFile(packagePath, { input }, 'es', 'jsx-runtime.js');
 
-function getBundleConfig(packagePath: string) {
-	return {
-		input: path.resolve(packagePath, `src/index.ts`),
-		tsconfig: path.resolve(packagePath, `tsconfig.json`),
-		// it should be infered from package.json 'dependency' field
-		external: ['ovee.js', 'lit-html', 'reflect-metadata', /^@vue\//, '@barba/core'],
-	};
+	console.log(`[BUILD] Generating JSX typings...`);
+
+	await generateDtsFile(packagePath, { input }, 'jsx-runtime');
+
+	console.log(`[BUILD] Jsx runtime package build!`);
 }
 
 build();

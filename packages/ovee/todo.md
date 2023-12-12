@@ -1,0 +1,6 @@
+ - slots usage
+ - anonymous components inside template
+ - handling initialized components on rerender (salvage? recreate?)
+ - handling existing inner HTML... maybe slots system should be responsible for that
+ - different render target? teleport?
+ - ?

@@ -76,13 +76,13 @@ export function useQueryComponent<C extends Component = AnyComponent>(
 	watch(
 		internalInstance,
 		(curr, prev) => {
-			prev?.mountBus.off(onComponentUnmount);
-			curr?.mountBus.on(onComponentUnmount);
+			prev?.mountBus.off(onComponentMount);
+			curr?.mountBus.on(onComponentMount);
 		},
 		{ immediate: true, flush: 'sync' }
 	);
 
-	function onComponentUnmount() {
+	function onComponentMount() {
 		internalInstance.effect.scheduler?.();
 	}
 
@@ -154,13 +154,13 @@ export function useQueryComponentAll<C extends Component = AnyComponent>(
 	watch(
 		internalInstances,
 		(curr, prev) => {
-			prev?.forEach(i => i.mountBus.off(onComponentUnmount));
-			curr.forEach(i => i.mountBus.on(onComponentUnmount));
+			prev?.forEach(i => i.mountBus.off(onComponentMount));
+			curr.forEach(i => i.mountBus.on(onComponentMount));
 		},
 		{ immediate: true, flush: 'sync' }
 	);
 
-	function onComponentUnmount() {
+	function onComponentMount() {
 		internalInstances.effect.scheduler?.();
 	}
 

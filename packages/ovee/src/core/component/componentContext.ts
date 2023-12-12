@@ -5,6 +5,8 @@ import { ComponentInstance } from './types';
 
 export interface ComponentInternalContext extends ComponentInstance {
 	instance?: AnyObject;
+	renderPromise?: Promise<void>;
+	beforeMountBus: EventBus;
 	mountBus: EventBus;
 	unmountBus: EventBus;
 }
