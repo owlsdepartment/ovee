@@ -9,7 +9,7 @@ import {
 } from '@/dom';
 
 import { AnyModule } from '../module';
-import { AppConfigurator } from './AppConfigurator';
+import type { AppConfigurator } from './AppConfigurator';
 import { ComponentsManager } from './ComponentsManager';
 import { defaultConfig } from './createApp';
 import { ModulesManager } from './ModulesManager';
@@ -39,10 +39,11 @@ export class App {
 	}
 
 	constructor(public configurator: AppConfigurator, public rootElement: HTMLElement) {
-		this.modulesManager = new ModulesManager(this);
-		this.componentsManager = new ComponentsManager(this);
-
 		this.$eventDelegate = new EventDelegate(this.document, this);
+
+		this.componentsManager = new ComponentsManager(this);
+		// modules need to run as last, cause they're created instantly
+		this.modulesManager = new ModulesManager(this);
 	}
 
 	run(): void {

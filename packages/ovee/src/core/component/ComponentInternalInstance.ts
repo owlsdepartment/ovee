@@ -1,6 +1,7 @@
-import { EffectScope, effectScope } from '@vue/reactivity';
+import { EffectScope, effectScope, ShallowRef, shallowRef } from '@vue/reactivity';
 
 import { EventDelegate, EventDesc, ListenerOptions, TargetOptions } from '@/dom';
+import { SlotChildren } from '@/jsx';
 import { AnyFunction, EventBus, OmitNil } from '@/utils';
 
 import { App } from '../app';
@@ -19,6 +20,7 @@ export class ComponentInternalInstance<
 	mountBus = new EventBus();
 	unmountBus = new EventBus();
 	renderPromise?: Promise<void>;
+	jsxSlot?: ShallowRef<SlotChildren>;
 
 	readonly instance: OmitNil<Return>;
 	readonly eventDelegate: EventDelegate<this>;
@@ -49,25 +51,30 @@ export class ComponentInternalInstance<
 		public element: Root,
 		public app: App,
 		public component: Component<Root, Options, Return>,
-		public options: Options
+		public options: Options,
+		jsxSlot?: SlotChildren
 	) {
 		this.eventDelegate = new EventDelegate(element, this);
 
+		if (jsxSlot) this.jsxSlot = shallowRef(jsxSlot);
+
 		const cleanUp = provideComponentContext(this);
 
-		this.scope = effectScope();
+		this.scope = effectScope(true);
 		this.instance = this.scope.run(() => component(element, this.componentContext) ?? ({} as any));
 
 		cleanUp();
 
 		this.saveInstanceOnElement();
-		this.beforeMountBus.emit();
+		this.scope.run(() => this.beforeMountBus.emit());
 	}
 
 	mount() {
 		if (this.mounted) return;
 		if (this.renderPromise) {
 			this.renderPromise.then(() => {
+				if (!this.renderPromise) return;
+
 				this.renderPromise = undefined;
 				this.mount();
 			});
@@ -76,7 +83,7 @@ export class ComponentInternalInstance<
 		}
 
 		this.mounted = true;
-		this.mountBus.emit();
+		this.scope.run(() => this.mountBus.emit());
 	}
 
 	unmount() {

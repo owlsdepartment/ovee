@@ -2,24 +2,31 @@ import { Logger } from '@/errors';
 
 import { injectComponentContext } from './componentContext';
 import { ComponentOptions } from './defineComponent';
-import { ComponentInstance } from './types';
+import { ComponentContext } from './types';
 
 const logger = new Logger('useComponent');
 
-export function useComponent<
+export interface ComponentPublicInstance<
 	Root extends HTMLElement = HTMLElement,
 	Options extends ComponentOptions = ComponentOptions
->(allowMissingContext?: boolean): ComponentInstance<Root, Options>;
+> extends ComponentContext<Options> {
+	element: Root;
+}
 
 export function useComponent<
 	Root extends HTMLElement = HTMLElement,
 	Options extends ComponentOptions = ComponentOptions
->(allowMissingContext: true): ComponentInstance<Root, Options> | null;
+>(allowMissingContext?: boolean): ComponentPublicInstance<Root, Options>;
 
 export function useComponent<
 	Root extends HTMLElement = HTMLElement,
 	Options extends ComponentOptions = ComponentOptions
->(allowMissingContext = false): ComponentInstance<Root, Options> | null {
+>(allowMissingContext: true): ComponentPublicInstance<Root, Options> | null;
+
+export function useComponent<
+	Root extends HTMLElement = HTMLElement,
+	Options extends ComponentOptions = ComponentOptions
+>(allowMissingContext = false): ComponentPublicInstance<Root, Options> | null {
 	const instance = injectComponentContext();
 
 	if (!instance && !allowMissingContext) {

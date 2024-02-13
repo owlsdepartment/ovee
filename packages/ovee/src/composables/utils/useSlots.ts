@@ -1,62 +1,126 @@
+import { NOOP } from '@/constants';
+import { ComponentInstance, injectComponentContext } from '@/core';
 import { Logger } from '@/errors';
+import { Children, Fiber, JSX_FRAGMENT } from '@/jsx';
+import { getNoContextWarning } from '@/utils';
 
-const logger = new Logger('useTemplate');
+type StoredSlot = HTMLTemplateElement | Node[];
+
+const logger = new Logger('useSlots');
+const DEFAULT_SLOT_NAME = 'default';
 
 // NOTE: may be built in useTemplate, for now it's seperate
+export type SlotFunction = (name: string) => Children;
 
-// class WithSlots extends Ctor {
-// 	slots = {} as Record<string, Node[]>;
+const slotsMap = new Map<ComponentInstance, SlotFunction>();
 
-// 	[protectedFields.BEFORE_INIT]() {
-// 		this.initSlots();
-// 		super[protectedFields.BEFORE_INIT]();
-// 	}
+export function useSlots(): SlotFunction {
+	const instance = injectComponentContext(true);
 
-// 	initSlots() {
-// 		for (const node of Array.from(this.$element.childNodes)) {
-// 			// fallback to `slot-name` for template elements
-// 			const slotName =
-// 				(node instanceof Element &&
-// 					(node.getAttribute('slot') || node.getAttribute('slot-name'))) ||
-// 				DEFAULT_SLOT_NAME;
+	if (!instance) {
+		logger.warn(getNoContextWarning('useSlots'));
 
-// 			if (node instanceof HTMLTemplateElement) {
-// 				node.content.childNodes.forEach(node => this.addToSlot(slotName, node));
-// 			} else {
-// 				this.addToSlot(slotName, node);
-// 			}
-// 		}
-// 	}
+		return NOOP as SlotFunction;
+	}
 
-// 	private addToSlot(name: string, node: Node) {
-// 		if (!this.slots[name]) {
-// 			this.slots[name] = [];
-// 		}
+	let output = slotsMap.get(instance);
 
-// 		this.slots[name].push(node);
-// 	}
+	if (!output) {
+		output = initializeSlots(instance);
+		slotsMap.set(instance, output);
+	}
 
-// 	slot(name = 'default', clone = true) {
-// 		const slotContent = this.slots[name] ?? [];
+	return output;
+}
 
-// 		if (!clone)
-// 			return html`
-// 				${slotContent}
-// 			`;
+function initializeSlots(instance: ComponentInstance): SlotFunction {
+	if (!instance.jsxSlot) {
+		return initHTMLSlots(instance);
+	}
 
-// 		const duplicate = slotContent.map(n => n.cloneNode(true));
+	return (name): Children => {
+		const jsxSlot = instance.jsxSlot!.value;
+		const isFunction = typeof jsxSlot === 'function';
 
-// 		return html`
-// 			${duplicate}
-// 		`;
-// 	}
-// }
+		if (isFunction) {
+			return name === DEFAULT_SLOT_NAME ? jsxSlot() : undefined;
+		}
 
-export function useSlots() {
-	// How it works?
-	/**
-	 * - save slots from `innerHTML`
-	 * - save slots from outside, when used inside JSX template
-	 * - expose them via returned helper function
-	 */
+		return jsxSlot[name]?.();
+	};
+}
+
+function initHTMLSlots(instance: ComponentInstance): SlotFunction {
+	const slots = new Map<string, DocumentFragment>();
+	const storedSlots = new Map<string, StoredSlot>();
+
+	for (const node of Array.from(instance.element.childNodes)) {
+		// fallback to `slot-name` for template elements
+		const slotName =
+			(node instanceof Element && (node.getAttribute('slot') || node.getAttribute('slot-name'))) ||
+			DEFAULT_SLOT_NAME;
+
+		const logWarning = addToSlotMap(slotName, node, storedSlots);
+
+		if (logWarning) {
+			logger.warn(
+				`There are multiple slots with name ${slotName} inside `,
+				instance.element,
+				`. Slots should have 1 declaration per slot`
+			);
+		}
+	}
+
+	for (const [key, value] of storedSlots) {
+		const fragment =
+			value instanceof HTMLTemplateElement
+				? value.content
+				: value.reduce<DocumentFragment>((frag, n) => {
+						frag.append(n);
+
+						return frag;
+				  }, new DocumentFragment());
+
+		slots.set(key, fragment.cloneNode(true) as DocumentFragment);
+	}
+
+	storedSlots.clear();
+
+	return (name): Fiber => {
+		const node = slots.get(name);
+
+		return {
+			type: JSX_FRAGMENT,
+			node,
+			props: {},
+		};
+	};
+}
+
+function addToSlotMap(name: string, toStore: Node, slots: Map<string, StoredSlot>): boolean {
+	const hasStoredValue = slots.has(name);
+
+	if (toStore instanceof HTMLTemplateElement) {
+		const shouldLogError = hasStoredValue;
+
+		slots.set(name, toStore);
+
+		return shouldLogError;
+	}
+
+	if (!hasStoredValue) {
+		slots.set(name, [toStore]);
+	} else {
+		const stored = slots.get(name)!;
+
+		if (Array.isArray(stored)) {
+			stored.push(toStore);
+		} else {
+			slots.set(name, [toStore]);
+
+			return true;
+		}
+	}
+
+	return false;
 }

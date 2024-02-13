@@ -1,29 +1,67 @@
-import { Child, Children, Fiber, FiberFactory, FiberProps, Props } from './types';
+import { isDefined } from '@/utils';
 
-export const TEXT_FIBER = 'TEXT_FIBER';
+import {
+	Children,
+	ElementFiberProps,
+	Fiber,
+	FiberFactory,
+	FunctionFiberProps,
+	JSXElement,
+	Props,
+} from './types';
 
-export function createFiber(tag: string | FiberFactory, _props: Props = {}): Fiber {
-	const props = { ..._props } as FiberProps;
+export const JSX_TEXT_FIBER = '__TEXT_FIBER';
+export const JSX_FRAGMENT = '__FRAGMENT';
 
-	if (_props.children) {
-		props.children = translateChildren(_props.children);
+export function createFragment(_props: ElementFiberProps = {}): Fiber {
+	const props = _props;
+
+	return {
+		type: JSX_FRAGMENT,
+		props,
+	};
+}
+
+export function createFiber(
+	tag: string | FiberFactory,
+	_props: Props | FunctionFiberProps = {},
+	key?: string
+): Fiber {
+	if (typeof tag === 'string') {
+		const props = _props as ElementFiberProps;
+		const children = (_props as Props).children;
+
+		if (children) {
+			props.children = translateChildren(children);
+		}
+
+		return {
+			type: tag,
+			props,
+			key,
+		};
 	}
+
+	const props = _props as FunctionFiberProps;
 
 	return {
 		type: tag,
 		props,
-	} as Fiber;
+		key,
+	};
 }
 
 function translateChildren(children: Children): Fiber[] {
 	if (Array.isArray(children)) {
-		return children.map(c => translateChild(c));
+		return children.map(c => translateChild(c)).filter(isDefined);
 	}
 
-	return [translateChild(children)];
+	const child = translateChild(children);
+
+	return child ? [child] : [];
 }
 
-function translateChild(child: Child): Fiber {
+function translateChild(child: JSXElement): Fiber | null | undefined {
 	if (typeof child === 'string' || typeof child === 'number') {
 		return createTextFiber(child);
 	}
@@ -33,7 +71,7 @@ function translateChild(child: Child): Fiber {
 
 function createTextFiber(text: string | number): Fiber {
 	return {
-		type: TEXT_FIBER,
+		type: JSX_TEXT_FIBER,
 		props: {
 			nodeValue: text,
 		},

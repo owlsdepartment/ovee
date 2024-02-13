@@ -1,8 +1,9 @@
+import typescript from '@rollup/plugin-typescript';
 import path from 'path';
 import { ModuleFormat, rollup, RollupOptions } from 'rollup';
 import dts from 'rollup-plugin-dts';
-import esbuild from 'rollup-plugin-esbuild';
-import { typescriptPaths } from 'rollup-plugin-typescript-paths';
+// import esbuild from 'rollup-plugin-esbuild';
+// import { typescriptPaths } from 'rollup-plugin-typescript-paths';
 
 export async function generateJsFile(
 	packagePath: string,
@@ -16,11 +17,12 @@ export async function generateJsFile(
 		...options,
 
 		plugins: [
-			typescriptPaths({
-				tsConfigPath: tsconfig,
-				preserveExtensions: true,
-			}),
-			esbuild({ target: 'es2020', tsconfig }),
+			// typescriptPaths({
+			// 	tsConfigPath: tsconfig,
+			// 	preserveExtensions: true,
+			// }),
+			// esbuild({ tsconfig }),
+			typescript({ tsconfig }),
 		],
 	});
 
@@ -43,10 +45,11 @@ export async function generateDtsFile(
 		...options,
 
 		plugins: [
-			typescriptPaths({
-				tsConfigPath: tsconfig,
-				preserveExtensions: true,
-			}),
+			// typescriptPaths({
+			// 	tsConfigPath: tsconfig,
+			// 	preserveExtensions: true,
+			// }),
+			typescript({ tsconfig }),
 			dts(),
 		],
 	});

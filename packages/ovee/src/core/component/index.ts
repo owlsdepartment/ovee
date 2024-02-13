@@ -1,4 +1,3 @@
-export type { ComponentInternalContext } from './componentContext';
 export { injectComponentContext, provideComponentContext } from './componentContext';
 export * from './ComponentInternalInstance';
 export * from './defineComponent';

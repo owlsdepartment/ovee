@@ -45,4 +45,22 @@ const OtherOne = () => (
 
 # TODO
  - how to pass 'slots' to anonymous HTML compoennts? I guess slot system smhw or rather to function argument's itself
- - situation, when in JSX we have nested components inside templates (`beforeMount` should resolve this problem)
+
+# Passing slots in JSX
+
+Inspired by Vue, if we want to pass down slots, we would need to pass a function OR a object of functions
+
+```jsx
+const template = (
+    <Component>
+        {() => 'some content'}
+    </Component>
+
+    <ComponentB>
+        {{
+            default: () => 'default slot',
+            footer: () => <p>Hi from footer!</p>
+        }}
+    </ComponentB>
+)
+```

@@ -1,65 +1,50 @@
-import { TEXT_FIBER } from './createFiber';
-import { ElementFiber, Fiber, FiberProps, FunctionFiber } from './types';
-import { isAtrribute, isEvent, isFunctionFiber, isGone, isNew } from './utils';
+import { JSX_FRAGMENT, JSX_TEXT_FIBER } from './createFiber';
+import { ElementFiber, ElementFiberProps, Fiber, FunctionFiber } from './types';
+import { areFibersSame, isAtrribute, isEvent, isFunctionFiber, isGone, isNew } from './utils';
+
+export type Process = (fiber: Fiber, target?: Node | null) => void;
 
 export type Render = (fiber: Fiber, target?: Node | null) => Promise<void>;
-export type RenderSync = (fiber: Fiber, target?: Node | null) => void;
+export type RenderSync = () => void;
 
-export function createRenderer(): { renderSync: RenderSync } {
-	let currentRoot: Fiber | null = null;
-	let wipRoot: Fiber | null = null;
-	let toDelete: Fiber[] = [];
+export class Renderer {
+	currentRoot: ElementFiber | null = null;
+	wipRoot: ElementFiber | null = null;
+	toDelete: Fiber[] = [];
 
-	// async function render(fiber: Fiber, target?: Node | null) {
-	// 	if (!target) return;
-
-	// 	wipRoot = {
-	// 		type: 'ROOT',
-	// 		node: target,
-	// 		alternate: currentRoot,
-	// 		props: {
-	// 			children: [fiber],
-	// 		},
-	// 	};
-	// 	toDelete = [];
-
-	// 	await scheduleJob(wipRoot, processFiber);
-
-	// 	console.log('after schedule...');
-	// 	commitRoot();
-	// }
-
-	async function renderSync(fiber: Fiber, target?: Node | null) {
+	/**
+	 * process fiber tree, compare with the old one and prepare for render
+	 */
+	process(fiber: Fiber, target?: Node | null) {
 		if (!target) return;
 
-		wipRoot = {
+		this.wipRoot = {
 			type: 'ROOT',
 			node: target,
-			alternate: currentRoot,
+			alternate: this.currentRoot,
 			props: {
 				children: [fiber],
 			},
 		};
-		toDelete = [];
+		this.toDelete = [];
 
-		let nextUnit: Fiber | null = wipRoot;
+		let nextUnit: Fiber | null = this.wipRoot;
 
 		while (nextUnit) {
-			nextUnit = processFiber(nextUnit);
+			nextUnit = this.processFiber(nextUnit);
 		}
-
-		commitRoot();
 	}
 
 	/**
 	 * @returns returns next fiber to process or null to finish
 	 */
-	function processFiber(fiber: Fiber): Fiber | null {
+	private processFiber(fiber: Fiber): Fiber | null {
 		const children = isFunctionFiber(fiber)
-			? updateFunctionFiber(fiber)
-			: updateElementFiber(fiber);
+			? getFunctionFiberChildren(fiber)
+			: fiber.props.children;
 
-		reconcileChildren(toDelete, fiber, children);
+		updateFiberNode(fiber);
+		reconcileChildren(this.toDelete, fiber, children);
 
 		if (fiber.child) {
 			return fiber.child;
@@ -80,47 +65,41 @@ export function createRenderer(): { renderSync: RenderSync } {
 		return null;
 	}
 
-	function commitRoot() {
-		toDelete.forEach(commitWork);
-		commitWork(wipRoot?.child);
+	render() {
+		this.toDelete.forEach(commitWork);
+		commitWork(this.wipRoot?.child);
 
-		currentRoot = wipRoot;
-		wipRoot = null;
+		this.currentRoot = this.wipRoot;
+		this.wipRoot = null;
 	}
-
-	return {
-		// render,
-		renderSync,
-	};
 }
 
-function updateFunctionFiber(fiber: FunctionFiber): Fiber[] | undefined {
-	return [fiber.type(fiber.props)];
+function getFunctionFiberChildren(fiber: FunctionFiber): Fiber[] {
+	return [fiber.type(fiber.props, fiber)];
 }
 
-function updateElementFiber(fiber: ElementFiber): Fiber[] | undefined {
+function updateFiberNode(fiber: Fiber) {
+	if (isFunctionFiber(fiber) || fiber.type === JSX_FRAGMENT) return;
+
 	if (!fiber.node) {
 		fiber.node = createNode(fiber);
 	}
-
-	return fiber.props.children;
 }
 
 function createNode(fiber: ElementFiber): Node | undefined {
 	const node =
-		fiber.type === TEXT_FIBER
+		fiber.type === JSX_TEXT_FIBER
 			? document.createTextNode(fiber.props?.nodeValue ?? '')
 			: document.createElement(fiber.type);
 
 	if (!(node instanceof Text)) {
-		updateNode(node, fiber.props);
+		updateNode(node, fiber);
 	}
 
 	return node;
 }
 
 function reconcileChildren(toDelete: Fiber[], fiber: Fiber, children?: Fiber[]) {
-	// NOTE: future feature: use keys
 	if (!children) return;
 
 	let oldChild = fiber.alternate?.child;
@@ -129,9 +108,10 @@ function reconcileChildren(toDelete: Fiber[], fiber: Fiber, children?: Fiber[]) 
 	// connect child fibers with it's parent and siblings
 	for (let i = 0; i < children.length; i++) {
 		const child = children[i];
-		const sameType = oldChild && child && oldChild.type === child.type;
+		const sameType = areFibersSame(child, oldChild);
 
 		if (sameType) {
+			if (child.key) console.log('>> update');
 			child.node = oldChild?.node;
 			child.parent = fiber;
 			child.alternate = oldChild;
@@ -139,11 +119,13 @@ function reconcileChildren(toDelete: Fiber[], fiber: Fiber, children?: Fiber[]) 
 		}
 
 		if (child && !sameType) {
+			if (child.key) console.log('>> place', child);
 			child.parent = fiber;
 			child.effectTag = 'PLACEMENT';
 		}
 
 		if (oldChild && !sameType) {
+			if (oldChild.key) console.log('>> delete', oldChild);
 			oldChild.effectTag = 'DELETION';
 			toDelete.push(oldChild);
 		}
@@ -166,23 +148,30 @@ function reconcileChildren(toDelete: Fiber[], fiber: Fiber, children?: Fiber[]) 
 function commitWork(fiber?: Fiber | null) {
 	if (!fiber) return;
 
-	let nodeParentFiber = fiber.parent;
-	while (!nodeParentFiber?.node) {
-		nodeParentFiber = nodeParentFiber?.parent;
+	let parentFiber = fiber.parent;
+
+	while (!parentFiber?.node) {
+		parentFiber = parentFiber?.parent;
 	}
 
-	const nodeParent = nodeParentFiber.node;
+	const nodeParent = parentFiber.node;
 
 	if (nodeParent) {
-		if (fiber.effectTag === 'PLACEMENT' && fiber.node) {
-			nodeParent.appendChild(fiber.node);
-		} else if (fiber.effectTag === 'DELETION') {
+		if (fiber.effectTag === 'DELETION') {
+			console.log('[jsx] delete', fiber);
 			commitDeletion(fiber, nodeParent);
-		} else if (fiber.effectTag === 'UPDATE' && fiber.node) {
-			updateNode(fiber.node, fiber.props, fiber.alternate?.props);
+		} else if (fiber.effectTag === 'PLACEMENT') {
+			console.log('[jsx] placement', fiber);
+			placeNode(fiber, nodeParent);
+		} else {
+			updateNode(fiber.node, fiber);
 		}
 	} else {
-		console.error('Unprocessed fiber was passed. Aborting');
+		if (fiber.type === JSX_FRAGMENT) {
+			console.error('Fragment was used without an existing parent.');
+		} else {
+			console.error('Unprocessed fiber was passed. Aborting');
+		}
 	}
 
 	commitWork(fiber.child);
@@ -197,8 +186,68 @@ function commitDeletion(fiber: Fiber, nodeParent: Node) {
 	}
 }
 
-function updateNode(_node: Node, nextProps: FiberProps, prevProps: FiberProps = {}) {
-	const node = _node as Element;
+function placeNode(_fiber: Fiber, nodeParent: Node) {
+	if (!_fiber.node) return;
+	if (!_fiber.sibling) {
+		return nodeParent.appendChild(_fiber.node);
+	}
+
+	nodeParent.appendChild(_fiber.node);
+}
+
+// function findPreviousNode() {
+// 	let currentFiber: Fiber | undefined = fiber;
+// 	let outputNode = currentFiber?.node;
+
+// 	while (!outputNode && currentFiber) {
+// 		if (currentFiber.child) {
+// 			outputNode = deepSearchNode(currentFiber.child);
+// 		}
+
+// 		currentFiber = currentFiber.sibling;
+// 	}
+
+// 	return outputNode;
+// }
+
+// function findSiblingNode(fiber: Fiber) {
+// 	let currentFiber = fiber.sibling;
+// 	let outputNode = currentFiber?.node;
+
+// 	while (!outputNode && currentFiber) {
+// 		if (currentFiber.child) {
+// 			outputNode = deepSearchNode(currentFiber.child)
+// 		}
+
+// 		currentFiber = currentFiber.sibling;
+// 	}
+
+// 	return outputNode;
+// }
+
+// function deepSearchNode(fiber: Fiber) {
+// 	let currentFiber: Fiber | undefined = fiber;
+// 	let outputNode = currentFiber?.node;
+
+// 	while (!outputNode && currentFiber) {
+// 		if (currentFiber.child) {
+// 			outputNode = deepSearchNode(currentFiber.child);
+// 		}
+
+// 		currentFiber = currentFiber.sibling;
+// 	}
+
+// 	return outputNode;
+// }
+
+function updateNode(_node: Node | undefined, _fiber: Fiber) {
+	// NOTE: maybe handle
+	if (!_node) return;
+
+	const fiber = _fiber as ElementFiber;
+	const node = <Element>_node;
+	const nextProps = fiber.props;
+	const prevProps = fiber.alternate?.props ?? {};
 	const shouldConsole = !!nextProps.class;
 
 	if (shouldConsole) {

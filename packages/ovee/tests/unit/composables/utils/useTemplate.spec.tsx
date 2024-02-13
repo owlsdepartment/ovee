@@ -1,32 +1,31 @@
 import { computed, nextTick, ref } from '@vue/runtime-core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { useTemplate } from '@/composables';
 import { defineComponent } from '@/core';
-import { createRenderer } from '@/jsx';
 import { createComponent, createLoggerRegExp, spyConsole } from '#/helpers';
 
-vi.mock('@/jsx', async () => {
-	const original = await vi.importActual<typeof import('@/jsx')>('@/jsx');
+// vi.mock('@/jsx', async () => {
+// 	const original = await vi.importActual<typeof import('@/jsx')>('@/jsx');
 
-	return {
-		...original,
-		createRenderer: vi.fn(original.createRenderer),
-	};
-});
+// 	return {
+// 		...original,
+// 		createRenderer: vi.fn(original.createRenderer),
+// 	};
+// });
 
 const loggerRegExp = createLoggerRegExp('useTemplate');
 
 describe('useTemplate', () => {
 	const warnSpy = spyConsole('warn');
-	const _createRenderer = vi.mocked(createRenderer);
+	// const _createRenderer = vi.mocked(createRenderer);
 
 	beforeEach(() => {
-		_createRenderer.mockClear();
+		// _createRenderer.mockClear();
 	});
 
 	it('warns user, when used outside of a component', () => {
-		useTemplate(() => {});
+		useTemplate(() => undefined);
 
 		expect(warnSpy).toBeCalledTimes(1);
 		expect(warnSpy.mock.calls[0][0]).toMatch(loggerRegExp);
@@ -36,6 +35,7 @@ describe('useTemplate', () => {
 		const c = defineComponent(() => {
 			useTemplate(() => <h1>hi</h1>);
 		});
+
 		const instance = createComponent(c);
 
 		await nextTick();
@@ -114,7 +114,7 @@ describe('useTemplate', () => {
 
 			await nextTick();
 
-			expect(_createRenderer).toBeCalledTimes(1);
+			// expect(_createRenderer).toBeCalledTimes(1);
 		});
 	});
 

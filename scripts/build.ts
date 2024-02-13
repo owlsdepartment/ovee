@@ -41,7 +41,7 @@ async function build() {
 async function buildJSXRuntime(packagePath: string) {
 	console.log(`[BUILD] Building JSX runtime...`);
 
-	const input = path.resolve(packagePath, `src/jsx-runtime.ts`);
+	const input = path.resolve(packagePath, `src/jsx/jsx-runtime.ts`);
 
 	await generateJsFile(packagePath, { input }, 'es', 'jsx-runtime.js');
 

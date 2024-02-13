@@ -1,4 +1,4 @@
-import { injectComponentContext } from '@/core';
+import { injectComponentContext } from '@/core/component';
 import { Logger } from '@/errors';
 import { getNoContextWarning } from '@/utils';
 

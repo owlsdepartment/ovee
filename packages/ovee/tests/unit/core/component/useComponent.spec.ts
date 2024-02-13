@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { App, AppConfigurator, createApp } from '@/core';
-import { ComponentInternalContext, provideComponentContext, useComponent } from '@/core/component';
+import { ComponentInstance, provideComponentContext, useComponent } from '@/core/component';
 import { resetComponentContext } from '@/core/component/componentContext';
 import { createLoggerRegExp } from '#/helpers';
 
@@ -10,7 +10,7 @@ const loggerRegExp = createLoggerRegExp('useComponent');
 describe('useComponent', () => {
 	let appConfig: AppConfigurator;
 	let app: App;
-	let context: ComponentInternalContext;
+	let context: ComponentInstance;
 	const element = document.createElement('div');
 	const options = {};
 	const _createApp = () => new App(appConfig, document.body);
@@ -25,7 +25,7 @@ describe('useComponent', () => {
 			emit: vi.fn(),
 			on: vi.fn(),
 			off: vi.fn(),
-		} as any as ComponentInternalContext;
+		} as any as ComponentInstance;
 	});
 
 	beforeEach(() => {

@@ -1,5 +1,8 @@
+import { ShallowRef } from '@vue/reactivity';
+
 import { EventDesc, ListenerOptions, TargetOptions } from '@/dom';
-import { AnyFunction } from '@/utils';
+import { SlotChildren } from '@/jsx';
+import { AnyFunction, AnyObject, EventBus } from '@/utils';
 
 import { App } from '../app';
 import { ComponentInternalInstance } from './ComponentInternalInstance';
@@ -26,4 +29,10 @@ export interface ComponentInstance<
 	Options extends ComponentOptions = ComponentOptions
 > extends ComponentContext<Options> {
 	element: Root;
+	instance?: AnyObject;
+	renderPromise?: Promise<void>;
+	beforeMountBus: EventBus;
+	mountBus: EventBus;
+	unmountBus: EventBus;
+	jsxSlot?: ShallowRef<SlotChildren>;
 }

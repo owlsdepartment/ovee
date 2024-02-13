@@ -1,36 +1,47 @@
-export type Child = string | number | Fiber;
-export type Children = Child | Child[];
+export type JSXElement = undefined | null | string | number | Fiber;
+export type Children = JSXElement | JSXElement[];
+export type SlotProp = () => Children;
+export type SlotChildren = SlotProp | Record<string | 'default', SlotProp>;
 
 export interface Props {
 	children?: Children;
 	[k: string]: any;
 }
 
-export interface FiberProps {
+export type FiberProps = FunctionFiberProps | ElementFiberProps;
+
+export interface FunctionFiberProps {
+	children?: SlotChildren;
+	[k: string]: any;
+}
+
+export interface ElementFiberProps {
 	children?: Fiber[];
 	[k: string]: any;
 }
 
 export type Fiber = ElementFiber | FunctionFiber;
 
-export interface ElementFiber extends FiberShared {
+export interface ElementFiber extends FiberShared<ElementFiberProps> {
 	type: string;
+	alternate?: ElementFiber | null;
 }
 
-export interface FunctionFiber extends FiberShared {
+export interface FunctionFiber extends FiberShared<FunctionFiberProps> {
 	type: FiberFactory;
+	alternate?: FunctionFiber | null;
 }
 
-export interface FiberShared {
-	props: FiberProps;
+export interface FiberShared<P> {
+	props: P;
+	key?: string;
 	node?: Node;
 	parent?: Fiber;
 	child?: Fiber;
 	sibling?: Fiber;
-	alternate?: Fiber | null;
 	effectTag?: EffectTag;
 }
 
-export type FiberFactory = (props?: FiberProps) => Fiber;
+export type FiberFactory = (props: FunctionFiberProps, fiber: Fiber) => Fiber;
 
 export type EffectTag = 'UPDATE' | 'PLACEMENT' | 'DELETION';

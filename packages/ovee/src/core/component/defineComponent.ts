@@ -1,7 +1,9 @@
+import { ElementFiber, ElementFiberProps, FiberFactory } from '@/jsx';
 import { AnyObject, OmitNil } from '@/utils';
 
 import { ComponentInternalInstance } from './ComponentInternalInstance';
-import { ComponentContext } from './types';
+import { injectTemplateContext } from './templateContext';
+import { ComponentContext, HTMLOveeElement } from './types';
 
 export type ComponentOptions = AnyObject;
 export type ComponentReturn = AnyObject | void;
@@ -33,6 +35,7 @@ export interface Component<
 	R extends ComponentReturn = ComponentReturn
 > extends ComponentDefineFunction<Root, O, R> {
 	__ovee_component_definition: true;
+	jsx: FiberFactory;
 }
 
 export function defineComponent<
@@ -43,6 +46,43 @@ export function defineComponent<
 	const _component = component as Component<Root, Options, Return>;
 
 	_component.__ovee_component_definition = true;
+	_component.jsx = (baseProps, fiber): ElementFiber => {
+		const type = 'ovee-anonymous';
+		const { children = {} } = baseProps;
+		const props = { ...baseProps } as ElementFiberProps;
+
+		props.children = [];
+
+		if (fiber.effectTag !== 'PLACEMENT') {
+			const node = fiber.alternate?.child?.node;
+
+			if (fiber.effectTag === 'UPDATE') {
+				const instance = (node as HTMLOveeElement)._OveeComponentInstances?.[0];
+
+				if (instance && instance.jsxSlot) instance.jsxSlot.value = children;
+			}
+
+			return { type, node, props };
+		}
+
+		const ctx = injectTemplateContext();
+
+		if (!ctx) return { type, props };
+
+		const node = document.createElement(type);
+
+		// NOTE: try default options, if exist
+		new ComponentInternalInstance<Root, Options, Return>(
+			'anonymous',
+			node as Root,
+			ctx.app,
+			_component,
+			{} as Options,
+			children
+		);
+
+		return { type, node, props };
+	};
 
 	return _component;
 }

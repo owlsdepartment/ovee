@@ -4,7 +4,7 @@ import { isComponentDefinition, isModuleDefinition, isNil } from '@/utils';
 import { AnyComponent, Component, ComponentOptions } from '../component';
 import { AnyModule, Module, ModuleOptions } from '../module';
 import { App } from './App';
-import { AppConfig } from './createApp';
+import type { AppConfig } from './createApp';
 
 export interface ComponentRegistration<O extends ComponentOptions = ComponentOptions> {
 	name: string;

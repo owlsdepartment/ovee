@@ -1,6 +1,6 @@
 import { Ref, ref } from '@vue/reactivity';
 
-import { ComponentInternalContext, injectComponentContext } from '@/core';
+import { ComponentInstance, injectComponentContext } from '@/core';
 import { Logger } from '@/errors';
 import { getNoContextWarning, MutationObserverManager, OveeReadonlyRef } from '@/utils';
 
@@ -69,7 +69,7 @@ export function useQuerySelectorAll<El extends HTMLElement = HTMLElement>(
 	return queryRef;
 }
 
-function useQuerySelectorManager(instance: ComponentInternalContext, updateValue: () => void) {
+function useQuerySelectorManager(instance: ComponentInstance, updateValue: () => void) {
 	const manager = QuerySelectorManager.getInstance(instance);
 
 	manager.register(updateValue);
@@ -84,7 +84,7 @@ function useQuerySelectorManager(instance: ComponentInternalContext, updateValue
 	});
 }
 
-const queryManagersMap = new Map<ComponentInternalContext, QuerySelectorManager>();
+const queryManagersMap = new Map<ComponentInstance, QuerySelectorManager>();
 
 class QuerySelectorManager extends MutationObserverManager {
 	connected = false;
@@ -106,7 +106,7 @@ class QuerySelectorManager extends MutationObserverManager {
 		this.callbacks.push(callback);
 	}
 
-	static getInstance(instance: ComponentInternalContext) {
+	static getInstance(instance: ComponentInstance) {
 		let manager = queryManagersMap.get(instance);
 
 		if (!manager) {

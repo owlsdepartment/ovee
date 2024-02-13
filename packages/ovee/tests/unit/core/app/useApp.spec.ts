@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { App, AppConfigurator, createApp, useApp } from '@/core';
-import { ComponentInternalContext, provideComponentContext } from '@/core/component';
+import { ComponentInstance, provideComponentContext } from '@/core/component';
 import { resetComponentContext } from '@/core/component/componentContext';
 import { ModuleInternalContext, provideModuleContext } from '@/core/module';
 import { resetModuleContext } from '@/core/module/moduleContext';
@@ -12,7 +12,7 @@ const loggerRegExp = createLoggerRegExp('useApp');
 describe('useApp', () => {
 	let appConfig: AppConfigurator;
 	let app: App;
-	let componentContext: ComponentInternalContext;
+	let componentContext: ComponentInstance;
 	let moduleContext: ModuleInternalContext;
 	const _createApp = () => new App(appConfig, document.body);
 

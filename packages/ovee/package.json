@@ -30,8 +30,8 @@
     "/dist"
   ],
   "dependencies": {
-    "@vue/reactivity": "^3.2.6",
-    "@vue/runtime-core": "^3.2.6",
+    "@vue/reactivity": "^3.4.15",
+    "@vue/runtime-core": "^3.4.15",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
