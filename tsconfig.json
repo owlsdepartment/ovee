@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "declaration": true,
+        "declaration": false,
         "module": "ESNext",
         "moduleResolution": "node",
         "isolatedModules": true,

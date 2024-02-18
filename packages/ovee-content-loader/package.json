@@ -1,7 +1,6 @@
 {
   "name": "@ovee.js/content-loader",
   "version": "2.2.3",
-  "private": false,
   "description": "Content loader module for for ovee.js",
   "author": "Owls Department",
   "license": "MIT",
@@ -19,24 +18,20 @@
   "files": [
     "/dist"
   ],
-  "dependencies": {},
   "devDependencies": {
-    "typescript": "^4.2.0"
+    "@barba/core": "^2.9.7",
+    "ovee.js": "workspace:*"
   },
   "peerDependencies": {
     "@barba/core": "^2.9.7",
     "ovee.js": "2.0.0 - 2.2.x"
   },
   "scripts": {
-    "test": "node -v && npm run test:unit",
-    "test:unit": "NODE_ENV=test jest",
-    "test:unit:watch": "NODE_ENV=test jest --watch --coverage --coverage-reporters=lcov",
     "lint": "eslint . --fix",
     "lint:no-fix": "eslint .",
-    "build": "node ../../scripts/build.js ovee-content-loader",
+    "build": "cd ../.. && npx esr scripts/build.ts ovee-content-loader",
     "clean": "rm -rf ./dist",
-    "install-peers": "install-peers -f",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run lint:no-fix && npm run build"
   },
   "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11",
   "gitHead": "013f48fd49629220bd603aa6bde92f2d97601683"

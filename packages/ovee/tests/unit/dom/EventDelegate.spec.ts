@@ -1,10 +1,12 @@
-import { AppEvent } from 'src/dom/AppEvent';
-import { EventDelegate } from 'src/dom/EventDelegate';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { AppEvent } from '@/dom/AppEvent';
+import { EventDelegate } from '@/dom/EventDelegate';
 
 const createEventDelegate = (target: Element): EventDelegate<any> => new EventDelegate(target, {});
 
 describe('EventDelegate class', () => {
-	const callback = jest.fn();
+	const callback = vi.fn();
 	let eventDelegate: EventDelegate;
 	let target: HTMLDivElement;
 
@@ -13,11 +15,11 @@ describe('EventDelegate class', () => {
 		eventDelegate = createEventDelegate(target);
 
 		callback.mockReset();
-	});
 
-	afterEach(() => {
-		eventDelegate.destroy();
-		target.remove();
+		return () => {
+			eventDelegate.destroy();
+			target.remove();
+		};
 	});
 
 	it(`should increase listeners amount with proper values accordingly to amount of 'on' calls`, () => {
@@ -44,8 +46,8 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should register and unregister event listener on default target if no target is passed', () => {
-		const addEventSpy = jest.spyOn(target, 'addEventListener');
-		const removeEventSpy = jest.spyOn(target, 'removeEventListener');
+		const addEventSpy = vi.spyOn(target, 'addEventListener');
+		const removeEventSpy = vi.spyOn(target, 'removeEventListener');
 
 		eventDelegate.on('foo', callback);
 		eventDelegate.off('foo', callback);
@@ -61,12 +63,12 @@ describe('EventDelegate class', () => {
 
 	it('should register and unregister event listener on proper target element if passed as target or target array', () => {
 		const customTarget1 = document.createElement('div');
-		const addEventSpy1 = jest.spyOn(customTarget1, 'addEventListener');
-		const removeEventSpy1 = jest.spyOn(customTarget1, 'removeEventListener');
+		const addEventSpy1 = vi.spyOn(customTarget1, 'addEventListener');
+		const removeEventSpy1 = vi.spyOn(customTarget1, 'removeEventListener');
 		const customTarget2 = document.createElement('div');
-		const addEventSpy2 = jest.spyOn(customTarget2, 'addEventListener');
-		const removeEventSpy2 = jest.spyOn(customTarget2, 'removeEventListener');
-		const addEventTargetSpy = jest.spyOn(target, 'addEventListener');
+		const addEventSpy2 = vi.spyOn(customTarget2, 'addEventListener');
+		const removeEventSpy2 = vi.spyOn(customTarget2, 'removeEventListener');
+		const addEventTargetSpy = vi.spyOn(target, 'addEventListener');
 
 		eventDelegate.on('foo', callback, { target: customTarget1 });
 		eventDelegate.off('foo', callback, { target: customTarget1 });
@@ -99,8 +101,8 @@ describe('EventDelegate class', () => {
 		const testClass = 'nested';
 		const nested = document.createElement('div');
 		const fake = document.createElement('div');
-		const addEventSpy = jest.spyOn(nested, 'addEventListener');
-		const removeEventSpy = jest.spyOn(nested, 'removeEventListener');
+		const addEventSpy = vi.spyOn(nested, 'addEventListener');
+		const removeEventSpy = vi.spyOn(nested, 'removeEventListener');
 
 		nested.classList.add(testClass);
 		fake.classList.add(testClass);
@@ -123,10 +125,10 @@ describe('EventDelegate class', () => {
 		const testClass = 'test';
 		const test1 = document.createElement('div');
 		const test2 = document.createElement('div');
-		const addEventSpy1 = jest.spyOn(test1, 'addEventListener');
-		const removeEventSpy1 = jest.spyOn(test1, 'removeEventListener');
-		const addEventSpy2 = jest.spyOn(test2, 'addEventListener');
-		const removeEventSpy2 = jest.spyOn(test2, 'removeEventListener');
+		const addEventSpy1 = vi.spyOn(test1, 'addEventListener');
+		const removeEventSpy1 = vi.spyOn(test1, 'removeEventListener');
+		const addEventSpy2 = vi.spyOn(test2, 'addEventListener');
+		const removeEventSpy2 = vi.spyOn(test2, 'removeEventListener');
 
 		test1.classList.add(testClass);
 		test2.classList.add(testClass);
@@ -155,9 +157,9 @@ describe('EventDelegate class', () => {
 
 	it(`should register event listener on proper global target if passed as string and with 'root: true'`, () => {
 		const newTarget = document.createElement('div');
-		const addEventSpy = jest.spyOn(newTarget, 'addEventListener');
-		const removeEventSpy = jest.spyOn(newTarget, 'removeEventListener');
-		const addEventTargetSpy = jest.spyOn(target, 'addEventListener');
+		const addEventSpy = vi.spyOn(newTarget, 'addEventListener');
+		const removeEventSpy = vi.spyOn(newTarget, 'removeEventListener');
+		const addEventTargetSpy = vi.spyOn(target, 'addEventListener');
 		const targetClass = 'custom';
 
 		document.body.appendChild(newTarget);
@@ -177,8 +179,8 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should register and unregister separate event listeners when multiple, space separated events passed', () => {
-		const addEventSpy = jest.spyOn(target, 'addEventListener');
-		const removeEventSpy = jest.spyOn(target, 'removeEventListener');
+		const addEventSpy = vi.spyOn(target, 'addEventListener');
+		const removeEventSpy = vi.spyOn(target, 'removeEventListener');
 
 		eventDelegate.on('foo bar', callback);
 		eventDelegate.off('foo bar', callback);
@@ -195,8 +197,8 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should unbind event listener, when returned callback is called', () => {
-		const addEventSpy = jest.spyOn(target, 'addEventListener');
-		const removeEventSpy = jest.spyOn(target, 'removeEventListener');
+		const addEventSpy = vi.spyOn(target, 'addEventListener');
+		const removeEventSpy = vi.spyOn(target, 'removeEventListener');
 		const event = 'foo';
 		const cb = eventDelegate.on(event, callback);
 
@@ -209,8 +211,8 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should unbind event listeners for multiple events, when returned callback is called', () => {
-		const addEventSpy = jest.spyOn(target, 'addEventListener');
-		const removeEventSpy = jest.spyOn(target, 'removeEventListener');
+		const addEventSpy = vi.spyOn(target, 'addEventListener');
+		const removeEventSpy = vi.spyOn(target, 'removeEventListener');
 		const events = 'foo bar baz';
 		const cb = eventDelegate.on(events, callback);
 
@@ -227,7 +229,7 @@ describe('EventDelegate class', () => {
 	});
 
 	it('should create an event handler that calls proper callback with proper params', () => {
-		const addEventSpy = jest.spyOn(target, 'addEventListener');
+		const addEventSpy = vi.spyOn(target, 'addEventListener');
 		const context = eventDelegate.context;
 
 		eventDelegate.on('foo', callback);
@@ -245,7 +247,7 @@ describe('EventDelegate class', () => {
 
 	describe('emit', () => {
 		it('should dispatch an AppEvent instance when called', () => {
-			const dispatchSpy = jest.spyOn(target, 'dispatchEvent');
+			const dispatchSpy = vi.spyOn(target, 'dispatchEvent');
 
 			eventDelegate.emit('foo', 'bar');
 
@@ -259,7 +261,7 @@ describe('EventDelegate class', () => {
 
 		it('should dispatch custom event instance if passed as argument', () => {
 			const customEvent = new Event('baz');
-			const dispatchSpy = jest.spyOn(target, 'dispatchEvent');
+			const dispatchSpy = vi.spyOn(target, 'dispatchEvent');
 
 			eventDelegate.emit(customEvent);
 
@@ -269,10 +271,10 @@ describe('EventDelegate class', () => {
 
 	it('should unbind all listeners with destroy method', () => {
 		const customTarget = document.createElement('div');
-		const addEventSpy = jest.spyOn(target, 'addEventListener');
-		const removeEventSpy = jest.spyOn(target, 'removeEventListener');
-		const addEventCustomSpy = jest.spyOn(customTarget, 'addEventListener');
-		const removeEventCustomSpy = jest.spyOn(customTarget, 'removeEventListener');
+		const addEventSpy = vi.spyOn(target, 'addEventListener');
+		const removeEventSpy = vi.spyOn(target, 'removeEventListener');
+		const addEventCustomSpy = vi.spyOn(customTarget, 'addEventListener');
+		const removeEventCustomSpy = vi.spyOn(customTarget, 'removeEventListener');
 
 		eventDelegate.on('foo', callback);
 		eventDelegate.on('foo', callback, { target: customTarget });

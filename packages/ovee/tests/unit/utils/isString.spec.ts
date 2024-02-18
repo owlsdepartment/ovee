@@ -1,4 +1,6 @@
-import { isString } from 'src/utils';
+import { describe, expect, it } from 'vitest';
+
+import { isString } from '@/utils';
 
 describe('isString helper', () => {
 	it('should identify string literal as string', () => {
