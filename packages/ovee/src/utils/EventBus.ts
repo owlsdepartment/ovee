@@ -1,3 +1,5 @@
+import { runThrowable } from './runThrowable';
+
 type Callback<Data> = Data extends undefined ? (d?: Data) => void : (d: Data) => void;
 
 interface Registered<Data> {
@@ -8,11 +10,13 @@ interface Registered<Data> {
 export class EventBus<Data = undefined> {
 	private registered = new Array<Registered<Data>>();
 
+	constructor(public name: string) {}
+
 	emit(...d: Data extends undefined ? [d?: Data] : [d: Data]) {
 		const toClean = new Array<Registered<Data>>();
 
 		this.registered.forEach(r => {
-			r.cb(...(d as [d: Data]));
+			runThrowable(this.name, () => r.cb(...(d as [d: Data])));
 
 			if (r.once) toClean.push(r);
 		});

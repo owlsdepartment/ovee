@@ -14,6 +14,7 @@ export * from './messages';
 export * from './MutationObserverManager';
 export * from './omit';
 export * from './registerCustomElement';
+export * from './runThrowable';
 export * from './Task';
 export * from './toKebabCase';
 export * from './types';

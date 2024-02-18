@@ -2,7 +2,7 @@ import { EffectScope, effectScope, ShallowRef, shallowRef } from '@vue/reactivit
 
 import { EventDelegate, EventDesc, ListenerOptions, TargetOptions } from '@/dom';
 import { SlotChildren } from '@/jsx';
-import { AnyFunction, EventBus, OmitNil } from '@/utils';
+import { AnyFunction, EventBus, OmitNil, runThrowable } from '@/utils';
 
 import { App } from '../app';
 import { provideComponentContext } from './componentContext';
@@ -16,9 +16,9 @@ export class ComponentInternalInstance<
 > implements ComponentInstance<Root, Options>
 {
 	mounted = false;
-	beforeMountBus = new EventBus();
-	mountBus = new EventBus();
-	unmountBus = new EventBus();
+	beforeMountBus = new EventBus('onBeforeMount');
+	mountBus = new EventBus('onMounted');
+	unmountBus = new EventBus('onUnmounted');
 	renderPromise?: Promise<void>;
 	jsxSlot?: ShallowRef<SlotChildren>;
 
@@ -61,7 +61,12 @@ export class ComponentInternalInstance<
 		const cleanUp = provideComponentContext(this);
 
 		this.scope = effectScope(true);
-		this.instance = this.scope.run(() => component(element, this.componentContext) ?? ({} as any));
+		this.instance = this.scope.run(() => {
+			return (
+				runThrowable('component setup', () => component(element, this.componentContext)) ??
+				({} as any)
+			);
+		});
 
 		cleanUp();
 

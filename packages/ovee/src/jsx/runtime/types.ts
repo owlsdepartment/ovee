@@ -34,11 +34,15 @@ export interface FunctionFiber extends FiberShared<FunctionFiberProps> {
 
 export interface FiberShared<P> {
 	props: P;
-	key?: string;
+	key?: string | number | symbol;
 	node?: Node;
 	parent?: Fiber;
-	child?: Fiber;
-	sibling?: Fiber;
+	parentNode?: Node;
+	firstChild?: Fiber;
+	lastChild?: Fiber;
+	prevSiblingNode?: Node | null;
+	nextSibling?: Fiber;
+	nextSiblingNode?: Node;
 	effectTag?: EffectTag;
 }
 

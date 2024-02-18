@@ -1,13 +1,12 @@
  - slots usage from HTML (test)
  - anonymous components inside template (test)
  - slots usage from JSX (test)
+ - handle module setup error (test)
+ - handle component setup error (test)
+ - handle error in evry 'from user' callback (test)
+ - using key attribute to force rerender/or keep it still (test)
+ - destroy call on anonymous element (test)
+ - module hooks (test)
 
- - handle module setup error
- - handle component setup error
- - handle error in evry 'from user' callback
  - handling initialized components on rerender (salvage? recreate?)
- - using key attribute to force rerender/or keep it still
  - different render target? teleport?
-
- - current instance with useTemplate and component init ???
- - ?

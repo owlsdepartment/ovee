@@ -1,11 +1,16 @@
+import { Logger } from '@/errors';
+
 import { JSX_FRAGMENT, JSX_TEXT_FIBER } from './createFiber';
-import { ElementFiber, ElementFiberProps, Fiber, FunctionFiber } from './types';
+import { ElementFiber, Fiber, FunctionFiber } from './types';
 import { areFibersSame, isAtrribute, isEvent, isFunctionFiber, isGone, isNew } from './utils';
 
 export type Process = (fiber: Fiber, target?: Node | null) => void;
 
 export type Render = (fiber: Fiber, target?: Node | null) => Promise<void>;
 export type RenderSync = () => void;
+
+const logger = new Logger('JSX Renderer');
+const TO_DELETE_KEY = Symbol.for('key-delete');
 
 export class Renderer {
 	currentRoot: ElementFiber | null = null;
@@ -15,7 +20,7 @@ export class Renderer {
 	/**
 	 * process fiber tree, compare with the old one and prepare for render
 	 */
-	process(fiber: Fiber, target?: Node | null) {
+	process(fiber: Fiber | null | undefined, target: Node) {
 		if (!target) return;
 
 		this.wipRoot = {
@@ -23,7 +28,7 @@ export class Renderer {
 			node: target,
 			alternate: this.currentRoot,
 			props: {
-				children: [fiber],
+				children: fiber ? [fiber] : [],
 			},
 		};
 		this.toDelete = [];
@@ -46,15 +51,15 @@ export class Renderer {
 		updateFiberNode(fiber);
 		reconcileChildren(this.toDelete, fiber, children);
 
-		if (fiber.child) {
-			return fiber.child;
+		if (fiber.firstChild) {
+			return fiber.firstChild;
 		}
 
 		let nextFiber: Fiber | undefined = fiber;
 		while (nextFiber) {
 			// setup siblings
-			if (nextFiber.sibling) {
-				return nextFiber.sibling;
+			if (nextFiber.nextSibling) {
+				return nextFiber.nextSibling;
 			}
 
 			// do a siblings look up, till a root fiber will be found with no parent
@@ -66,11 +71,71 @@ export class Renderer {
 	}
 
 	render() {
-		this.toDelete.forEach(commitWork);
-		commitWork(this.wipRoot?.child);
+		if (!this.wipRoot) return;
+
+		this.toDelete.forEach(f => commitDeletion(f));
+		this.connectNodes(this.wipRoot.node!, this.wipRoot.firstChild);
+		this.wipRoot.prevSiblingNode = this.wipRoot.node!.lastChild;
+		this.commitWork(this.wipRoot.firstChild);
 
 		this.currentRoot = this.wipRoot;
 		this.wipRoot = null;
+	}
+
+	private connectNodes(parentNode: Node, fiber?: Fiber): null | Fiber | Fiber[] {
+		if (!fiber) return null;
+
+		fiber.parentNode = parentNode;
+
+		const childNodeFibers: Array<Fiber | Fiber[]> = [];
+
+		forEachChildFiber(fiber, child => {
+			const nodes = this.connectNodes(fiber.node || parentNode, child);
+
+			if (nodes) childNodeFibers.push(nodes);
+		});
+
+		childNodeFibers.forEach((element, i) => {
+			const nextElement = childNodeFibers[i + 1];
+			const currentFiber = Array.isArray(element) ? element[element.length - 1] : element;
+			const nextFiber: Fiber | undefined = Array.isArray(nextElement)
+				? nextElement[0]
+				: nextElement;
+
+			if (!nextFiber) return;
+
+			currentFiber.nextSiblingNode = nextFiber.node;
+			nextFiber.prevSiblingNode = currentFiber.node;
+		});
+
+		if (fiber.node) return fiber;
+
+		return childNodeFibers.length ? childNodeFibers.flat() : null;
+	}
+
+	private commitWork(fiber?: Fiber | null) {
+		if (!fiber) return;
+
+		const { parentNode } = fiber;
+
+		if (parentNode) {
+			if (fiber.effectTag === 'PLACEMENT') {
+				placeNode(fiber, parentNode);
+			} else if (fiber.effectTag === 'UPDATE') {
+				updateNode(fiber.node, fiber);
+			} else {
+				logger.error('Node to delete appeared in a tree with a work to commit');
+			}
+		} else {
+			if (fiber.type === JSX_FRAGMENT) {
+				logger.error('Fragment was used without an existing parent.');
+			} else {
+				logger.error('Unprocessed fiber was passed. Aborting');
+			}
+		}
+
+		this.commitWork(fiber.firstChild);
+		this.commitWork(fiber.nextSibling);
 	}
 }
 
@@ -102,16 +167,20 @@ function createNode(fiber: ElementFiber): Node | undefined {
 function reconcileChildren(toDelete: Fiber[], fiber: Fiber, children?: Fiber[]) {
 	if (!children) return;
 
-	let oldChild = fiber.alternate?.child;
+	let oldChild = fiber.alternate?.firstChild;
 	let prevSibling: Fiber;
 
 	// connect child fibers with it's parent and siblings
 	for (let i = 0; i < children.length; i++) {
+		if (oldChild?.parent?.effectTag === 'DELETION') {
+			oldChild.key = TO_DELETE_KEY;
+			oldChild.effectTag = 'DELETION';
+		}
+
 		const child = children[i];
 		const sameType = areFibersSame(child, oldChild);
 
 		if (sameType) {
-			if (child.key) console.log('>> update');
 			child.node = oldChild?.node;
 			child.parent = fiber;
 			child.alternate = oldChild;
@@ -119,140 +188,66 @@ function reconcileChildren(toDelete: Fiber[], fiber: Fiber, children?: Fiber[]) 
 		}
 
 		if (child && !sameType) {
-			if (child.key) console.log('>> place', child);
 			child.parent = fiber;
 			child.effectTag = 'PLACEMENT';
 		}
 
 		if (oldChild && !sameType) {
-			if (oldChild.key) console.log('>> delete', oldChild);
 			oldChild.effectTag = 'DELETION';
 			toDelete.push(oldChild);
 		}
 
 		if (oldChild) {
-			oldChild = oldChild.sibling;
+			oldChild = oldChild.nextSibling;
 		}
 
 		if (i === 0) {
-			fiber.child = child;
+			fiber.firstChild = child;
 		} else {
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			prevSibling!.sibling = child;
+			prevSibling!.nextSibling = child;
+		}
+
+		if (i === children.length - 1) {
+			fiber.lastChild = child;
 		}
 
 		prevSibling = child;
 	}
 }
 
-function commitWork(fiber?: Fiber | null) {
-	if (!fiber) return;
+function commitDeletion(fiber?: Fiber) {
+	if (!fiber || !fiber.parentNode) return;
 
-	let parentFiber = fiber.parent;
+	const { parentNode } = fiber;
 
-	while (!parentFiber?.node) {
-		parentFiber = parentFiber?.parent;
-	}
-
-	const nodeParent = parentFiber.node;
-
-	if (nodeParent) {
-		if (fiber.effectTag === 'DELETION') {
-			console.log('[jsx] delete', fiber);
-			commitDeletion(fiber, nodeParent);
-		} else if (fiber.effectTag === 'PLACEMENT') {
-			console.log('[jsx] placement', fiber);
-			placeNode(fiber, nodeParent);
-		} else {
-			updateNode(fiber.node, fiber);
+	if (fiber.node) {
+		try {
+			parentNode.removeChild(fiber.node);
+		} catch (e) {
+			logger.error('There was a problem while removing node', fiber.node, e);
 		}
 	} else {
-		if (fiber.type === JSX_FRAGMENT) {
-			console.error('Fragment was used without an existing parent.');
-		} else {
-			console.error('Unprocessed fiber was passed. Aborting');
-		}
-	}
-
-	commitWork(fiber.child);
-	commitWork(fiber.sibling);
-}
-
-function commitDeletion(fiber: Fiber, nodeParent: Node) {
-	if (fiber.node) {
-		nodeParent.removeChild(fiber.node);
-	} else if (fiber.child) {
-		commitDeletion(fiber.child, nodeParent);
+		forEachChildFiber(fiber, child => commitDeletion(child));
 	}
 }
 
-function placeNode(_fiber: Fiber, nodeParent: Node) {
-	if (!_fiber.node) return;
-	if (!_fiber.sibling) {
-		return nodeParent.appendChild(_fiber.node);
-	}
+function placeNode(fiber: Fiber, nodeParent: Node) {
+	const toInsert = fiber.node;
 
-	nodeParent.appendChild(_fiber.node);
+	if (!toInsert) return;
+	if (!fiber.prevSiblingNode) return nodeParent.insertBefore(toInsert, nodeParent.firstChild);
+	if (!fiber.nextSiblingNode) return nodeParent.appendChild(toInsert);
+
+	nodeParent.insertBefore(toInsert, fiber.prevSiblingNode?.nextSibling || null);
 }
 
-// function findPreviousNode() {
-// 	let currentFiber: Fiber | undefined = fiber;
-// 	let outputNode = currentFiber?.node;
-
-// 	while (!outputNode && currentFiber) {
-// 		if (currentFiber.child) {
-// 			outputNode = deepSearchNode(currentFiber.child);
-// 		}
-
-// 		currentFiber = currentFiber.sibling;
-// 	}
-
-// 	return outputNode;
-// }
-
-// function findSiblingNode(fiber: Fiber) {
-// 	let currentFiber = fiber.sibling;
-// 	let outputNode = currentFiber?.node;
-
-// 	while (!outputNode && currentFiber) {
-// 		if (currentFiber.child) {
-// 			outputNode = deepSearchNode(currentFiber.child)
-// 		}
-
-// 		currentFiber = currentFiber.sibling;
-// 	}
-
-// 	return outputNode;
-// }
-
-// function deepSearchNode(fiber: Fiber) {
-// 	let currentFiber: Fiber | undefined = fiber;
-// 	let outputNode = currentFiber?.node;
-
-// 	while (!outputNode && currentFiber) {
-// 		if (currentFiber.child) {
-// 			outputNode = deepSearchNode(currentFiber.child);
-// 		}
-
-// 		currentFiber = currentFiber.sibling;
-// 	}
-
-// 	return outputNode;
-// }
-
-function updateNode(_node: Node | undefined, _fiber: Fiber) {
+function updateNode(_node: Node | undefined, fiber: Fiber) {
 	// NOTE: maybe handle
 	if (!_node) return;
 
-	const fiber = _fiber as ElementFiber;
 	const node = <Element>_node;
 	const nextProps = fiber.props;
 	const prevProps = fiber.alternate?.props ?? {};
-	const shouldConsole = !!nextProps.class;
-
-	if (shouldConsole) {
-		console.log('update node', { ...nextProps }, { ...prevProps });
-	}
 
 	//Remove old or changed event listeners
 	Object.keys(prevProps)
@@ -269,8 +264,6 @@ function updateNode(_node: Node | undefined, _fiber: Fiber) {
 		.filter(isAtrribute)
 		.filter(isGone(nextProps))
 		.forEach(name => {
-			if (shouldConsole) console.log('remove: ', name);
-
 			if (name === 'style' || name === 'class') {
 				node.removeAttribute(name);
 			} else {
@@ -283,8 +276,6 @@ function updateNode(_node: Node | undefined, _fiber: Fiber) {
 		.filter(isAtrribute)
 		.filter(isNew(prevProps, nextProps))
 		.forEach(name => {
-			if (shouldConsole) console.log('set: ', name);
-
 			if (name === 'style' || name === 'class') {
 				node.setAttribute(name, nextProps[name]);
 			} else {
@@ -304,4 +295,14 @@ function updateNode(_node: Node | undefined, _fiber: Fiber) {
 
 			node.addEventListener(eventType, nextProps[name]);
 		});
+}
+
+function forEachChildFiber(fiber: Fiber | null | undefined, cb: (fiber: Fiber) => void) {
+	let currentFiber = fiber?.firstChild;
+
+	while (currentFiber) {
+		cb(currentFiber);
+
+		currentFiber = currentFiber.nextSibling;
+	}
 }

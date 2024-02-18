@@ -1,3 +1,5 @@
+import { isNil } from '@/utils';
+
 import { Fiber, FiberProps, FunctionFiber } from './types';
 
 // const reservedAttributeKeys = ['children', 'innerHTML'];
@@ -24,12 +26,7 @@ export const areFibersSame = (fiberA: Fiber | undefined, fiberB: Fiber | undefin
 	const keyA = fiberA.key;
 	const keyB = fiberB.key;
 
-	if (fiberA.key) {
-		console.log('[areFibersSame] 1', fiberA, fiberB);
-		console.log('[areFibersSame] 2', keyA, keyB);
-	}
-
-	if (keyA && keyB) return keyA === keyB;
+	if (!isNil(keyA) && !isNil(keyB)) return keyA === keyB;
 
 	return areSame;
 };

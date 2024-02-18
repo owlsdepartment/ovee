@@ -1,4 +1,4 @@
-import { EventBus, OmitNil } from '@/utils';
+import { EventBus, OmitNil, runThrowable } from '@/utils';
 
 import { App } from '../app';
 import { Module } from './defineModule';
@@ -11,15 +11,15 @@ export class ModuleInternalInstance<
 > implements ModuleInternalContext<Options>
 {
 	initialized = false;
-	initBus = new EventBus();
-	destroyBus = new EventBus();
+	initBus = new EventBus('onInit');
+	destroyBus = new EventBus('onDestroy');
 
 	readonly instance: OmitNil<Return>;
 
 	constructor(public app: App, public module: Module<Options, Return>, public options: Options) {
 		const cleanUp = provideModuleContext(this);
 
-		this.instance = module({ app, options }) ?? ({} as any);
+		this.instance = runThrowable('module setup', () => module({ app, options })) ?? ({} as any);
 		cleanUp();
 	}
 
