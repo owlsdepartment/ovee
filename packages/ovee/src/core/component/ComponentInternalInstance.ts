@@ -97,6 +97,7 @@ export class ComponentInternalInstance<
 		this.mounted = false;
 		this.scope.stop();
 		this.unmountBus.emit();
+		this.eventDelegate.destroy();
 	}
 
 	saveInstanceOnElement() {
