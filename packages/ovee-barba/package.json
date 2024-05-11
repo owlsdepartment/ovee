@@ -4,7 +4,7 @@
   "description": "Barba integration for ovee.js",
   "author": "Jakub Przyborowski",
   "license": "MIT",
-  "homepage": "https://owlsdepartment.github.io/ovee/addons.html#barba-js-plugin",
+  "homepage": "https://owlsdepartment.github.io/ovee/v2/addons.html#barba-js-plugin",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/owlsdepartment/ovee.git"

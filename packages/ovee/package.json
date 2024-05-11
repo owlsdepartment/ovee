@@ -4,7 +4,7 @@
   "description": "A modern, optionally reactive framework for markup you already have",
   "author": "Jakub Przyborowski",
   "license": "MIT",
-  "homepage": "https://owlsdepartment.github.io/ovee",
+  "homepage": "https://owlsdepartment.github.io/ovee/v3",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/owlsdepartment/ovee.git"
