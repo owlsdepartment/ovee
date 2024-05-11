@@ -1,7 +1,7 @@
 module.exports = {
     title: 'Ovee.js',
     description: 'Optionally reactive framework for server-side generated markup',
-    base: '/ovee/',
+    base: '/ovee/v2/',
     themeConfig: {
         theme: '@vuepress/vue',
         lastUpdated: 'Last Updated',
