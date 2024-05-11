@@ -1,10 +1,9 @@
+import { injectComponentContext } from '@/core/component/componentContext';
+import { ComponentOptions } from '@/core/component/defineComponent';
+import { ComponentContext } from '@/core/component/types';
 import { Logger } from '@/errors';
 
-import { injectComponentContext } from './componentContext';
-import { ComponentOptions } from './defineComponent';
-import { ComponentContext } from './types';
-
-const logger = new Logger('useComponent');
+const logger = new Logger('useComponentContext');
 
 export interface ComponentPublicInstance<
 	Root extends HTMLElement = HTMLElement,
@@ -13,17 +12,17 @@ export interface ComponentPublicInstance<
 	element: Root;
 }
 
-export function useComponent<
+export function useComponentContext<
 	Root extends HTMLElement = HTMLElement,
 	Options extends ComponentOptions = ComponentOptions
 >(allowMissingContext?: boolean): ComponentPublicInstance<Root, Options>;
 
-export function useComponent<
+export function useComponentContext<
 	Root extends HTMLElement = HTMLElement,
 	Options extends ComponentOptions = ComponentOptions
 >(allowMissingContext: true): ComponentPublicInstance<Root, Options> | null;
 
-export function useComponent<
+export function useComponentContext<
 	Root extends HTMLElement = HTMLElement,
 	Options extends ComponentOptions = ComponentOptions
 >(allowMissingContext = false): ComponentPublicInstance<Root, Options> | null {

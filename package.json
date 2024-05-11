@@ -2,10 +2,10 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "docs:dev": "yarn workspace docs run docs:dev",
-    "docs:build": "yarn workspace docs run docs:build",
-    "docs:install": "cd docs && yarn install --focus",
-    "docs:deploy": "yarn run docs:install && yarn run docs:build",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "docs:deploy": "yarn run docs:build",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "lint:no-fix": "turbo run lint:no-fix",
@@ -46,6 +46,7 @@
     "tslib": "^2.5.0",
     "turbo": "^1.8.2",
     "typescript": "^4.9.5",
+    "vitepress": "^1.0.0-rc.44",
     "vitest": "^0.32.4"
   },
   "workspaces": [

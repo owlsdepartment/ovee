@@ -1,13 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { useComponentContext } from '@/composables';
 import { App, AppConfigurator, createApp } from '@/core';
-import { ComponentInstance, provideComponentContext, useComponent } from '@/core/component';
+import { ComponentInstance, provideComponentContext } from '@/core/component';
 import { resetComponentContext } from '@/core/component/componentContext';
 import { createLoggerRegExp } from '#/helpers';
 
-const loggerRegExp = createLoggerRegExp('useComponent');
+const loggerRegExp = createLoggerRegExp('useComponentContext');
 
-describe('useComponent', () => {
+describe('useComponentContext', () => {
 	let appConfig: AppConfigurator;
 	let app: App;
 	let context: ComponentInstance;
@@ -33,11 +34,11 @@ describe('useComponent', () => {
 	});
 
 	it('should throw error, when used without existing context', () => {
-		expect(() => useComponent()).toThrow(loggerRegExp);
+		expect(() => useComponentContext()).toThrow(loggerRegExp);
 	});
 
 	it(`should return 'null' when 'allowMissingContext' is set to true`, () => {
-		const ctx = useComponent(true);
+		const ctx = useComponentContext(true);
 
 		expect(ctx).toBeNull();
 	});
@@ -45,7 +46,7 @@ describe('useComponent', () => {
 	it('should return proper instance fields', () => {
 		provideComponentContext(context);
 
-		const ctx = useComponent();
+		const ctx = useComponentContext();
 
 		expect(ctx.app).toBe(app);
 		expect(ctx.element).toBe(element);
@@ -58,7 +59,7 @@ describe('useComponent', () => {
 		});
 
 		it('should proxy emit', () => {
-			const ctx = useComponent();
+			const ctx = useComponentContext();
 			const ev = 'event';
 			const detail = {};
 
@@ -69,7 +70,7 @@ describe('useComponent', () => {
 		});
 
 		it('should proxy on', () => {
-			const ctx = useComponent();
+			const ctx = useComponentContext();
 			const ev = 'event';
 			const cb = () => {};
 			const options = {};
@@ -81,7 +82,7 @@ describe('useComponent', () => {
 		});
 
 		it('should proxy off', () => {
-			const ctx = useComponent();
+			const ctx = useComponentContext();
 			const ev = 'event';
 			const cb = () => {};
 			const options = {};

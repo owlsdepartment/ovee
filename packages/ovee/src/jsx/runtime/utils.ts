@@ -4,7 +4,7 @@ import { Fiber, FiberProps, FunctionFiber } from './types';
 
 // const reservedAttributeKeys = ['children', 'innerHTML'];
 
-export const isUpperCase = (letter: string) => letter === letter.toUpperCase();
+export const isUpperCase = (letter: string) => !!letter && letter === letter.toUpperCase();
 
 export const isEvent = (key: string) => key.startsWith('on') && isUpperCase(key[2]);
 
