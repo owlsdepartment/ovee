@@ -5,8 +5,6 @@ name: Deploy VitePress site to Pages
 on:
   push:
     branches: [v3]
-  pull_request:
-    branches: [v3]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -25,7 +23,7 @@ concurrency:
 
 jobs:
   # Build job
-  build:
+  build_v3:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -39,29 +37,64 @@ jobs:
         with:
           node-version: 20
           cache: yarn
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+      # - name: Setup Pages
+      #   uses: actions/configure-pages@v4
       - name: Install dependencies
         run: yarn install
       - name: Build with VitePress
         run: yarn docs:deploy
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          path: docs/.vitepress/dist
+          name: v3
+          path: docs/.vitepress/dist/
+
+  build_v2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Not needed if lastUpdated is not enabled
+          ref: master
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      # - name: Setup Pages
+      #   uses: actions/configure-pages@v4
+      - name: Install dependencies
+        run: yarn docs:install
+      - name: Build with VuePress
+        run: yarn docs:build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2
+          path: docs/.vuepress/dist/
 
   # Deployment job
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
+    needs:
+      - build_v3
+      - build_v2
     runs-on: ubuntu-latest
     name: Deploy
     steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: $GITHUB_WORKSPACE
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Upload artifacts as tar
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: $GITHUB_WORKSPACE
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/download-artifact@v4
-        with:
-          path: $GITHUB_WORKSPACE/v3
-      - run: echo $GITHUB_WORKSPACE
