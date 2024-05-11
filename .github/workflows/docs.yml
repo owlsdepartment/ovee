@@ -1,6 +1,6 @@
 # Sample workflow for building and deploying a VitePress site to GitHub Pages
 #
-name: Deploy VitePress site to Pages
+name: Deploy docs to Pages
 
 on:
   push:

@@ -4,6 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "Ovee.js",
   description: "Simple fully reactive framework for server-side generated markup",
+  base: '/ovee/v3/',
 
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
