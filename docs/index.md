@@ -13,19 +13,12 @@ hero:
     - theme: alt
       text: API
       link: /api-examples
-
-# features:
-#   - title: Feature A
-#     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-#   - title: Feature B
-#     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-#   - title: Feature C
-#     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
 ---
 
 ## Getting started
 
-Scaffold your first Ovee project with simple command and start coding right away!
-<!-- TODO: -->
-```
+Scaffold your first Ovee project with this simple command and start coding right away!
+
+```sh
+npx degit owlsdepartment/ovee-starter#v3 ovee-project
 ```
