@@ -14,6 +14,6 @@ export const MyComponent = defineComponent(() => {
 })
 ```
 
-::: note
-Returned ref NOT reactive as it reads elements instance values directly
+::: warning
+Returned ref is NOT reactive as it reads elements instance values directly
 :::
