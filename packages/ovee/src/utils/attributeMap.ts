@@ -1,6 +1,8 @@
 import { isNil } from './isNil';
 
 export type AttributeMapType = 'number' | 'boolean';
+export type GetTypeFromMapType<T extends AttributeMapType> = T extends 'number' ? number : boolean;
+export type ObjectNotationMapValues = AttributeMapType | AttributeMap | '' | null | undefined;
 export interface AttributeMap<V = any> {
 	get(v: string | null | undefined): V;
 	set(v: V): string | null | undefined;
