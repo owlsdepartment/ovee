@@ -1,4 +1,5 @@
 export * from './useAttribute';
+export * from './useComponent';
 export * from './useComponentContext';
 export * from './useDataAttr';
 export * from './useElementRef';
