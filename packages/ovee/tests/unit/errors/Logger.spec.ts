@@ -1,4 +1,7 @@
 import { Logger } from 'src/errors';
+import { describe, expect, it } from 'vitest';
+
+import { spyConsole } from '#/helpers';
 
 describe('Logger class', () => {
 	const logSpy = spyConsole('log');
@@ -47,14 +50,14 @@ describe('Logger class', () => {
 			logger.log(firstObj, secondObj);
 			logger.log();
 
-			expect(logSpy.console).toBeCalledTimes(4);
-			expect(logSpy.console.mock.calls[0][0]).toMatch(`${basePrefix} ${message}`);
-			expect(logSpy.console.mock.calls[1][0]).toMatch(basePrefix);
-			expect(logSpy.console.mock.calls[2][0]).toMatch(basePrefix);
-			expect(logSpy.console.mock.calls[1][1]).toBe(firstObj);
-			expect(logSpy.console.mock.calls[2][1]).toBe(firstObj);
-			expect(logSpy.console.mock.calls[2][2]).toBe(secondObj);
-			expect(logSpy.console.mock.calls[3]).toEqual([]);
+			expect(logSpy).toBeCalledTimes(4);
+			expect(logSpy.mock.calls[0][0]).toMatch(`${basePrefix} ${message}`);
+			expect(logSpy.mock.calls[1][0]).toMatch(basePrefix);
+			expect(logSpy.mock.calls[2][0]).toMatch(basePrefix);
+			expect(logSpy.mock.calls[1][1]).toBe(firstObj);
+			expect(logSpy.mock.calls[2][1]).toBe(firstObj);
+			expect(logSpy.mock.calls[2][2]).toBe(secondObj);
+			expect(logSpy.mock.calls[3]).toEqual([]);
 		});
 	});
 
@@ -69,10 +72,10 @@ describe('Logger class', () => {
 			logger.logSpecific(['a'], message);
 			logger.logSpecific([...parts], message);
 
-			expect(logSpy.console).toBeCalledTimes(3);
-			expect(logSpy.console.mock.calls[0][0]).toMatch(`[${basePrefix}] ${message}`);
-			expect(logSpy.console.mock.calls[1][0]).toMatch(`[${basePrefix} ~ a] ${message}`);
-			expect(logSpy.console.mock.calls[2][0]).toMatch(`[${basePrefix} ~ a ~ b] ${message}`);
+			expect(logSpy).toBeCalledTimes(3);
+			expect(logSpy.mock.calls[0][0]).toMatch(`[${basePrefix}] ${message}`);
+			expect(logSpy.mock.calls[1][0]).toMatch(`[${basePrefix} ~ a] ${message}`);
+			expect(logSpy.mock.calls[2][0]).toMatch(`[${basePrefix} ~ a ~ b] ${message}`);
 		});
 	});
 
@@ -89,14 +92,14 @@ describe('Logger class', () => {
 			logger.info(firstObj, secondObj);
 			logger.info();
 
-			expect(infoSpy.console).toBeCalledTimes(4);
-			expect(infoSpy.console.mock.calls[0][0]).toMatch(`${basePrefix} ${message}`);
-			expect(infoSpy.console.mock.calls[1][0]).toMatch(basePrefix);
-			expect(infoSpy.console.mock.calls[2][0]).toMatch(basePrefix);
-			expect(infoSpy.console.mock.calls[1][1]).toBe(firstObj);
-			expect(infoSpy.console.mock.calls[2][1]).toBe(firstObj);
-			expect(infoSpy.console.mock.calls[2][2]).toBe(secondObj);
-			expect(infoSpy.console.mock.calls[3]).toEqual([]);
+			expect(infoSpy).toBeCalledTimes(4);
+			expect(infoSpy.mock.calls[0][0]).toMatch(`${basePrefix} ${message}`);
+			expect(infoSpy.mock.calls[1][0]).toMatch(basePrefix);
+			expect(infoSpy.mock.calls[2][0]).toMatch(basePrefix);
+			expect(infoSpy.mock.calls[1][1]).toBe(firstObj);
+			expect(infoSpy.mock.calls[2][1]).toBe(firstObj);
+			expect(infoSpy.mock.calls[2][2]).toBe(secondObj);
+			expect(infoSpy.mock.calls[3]).toEqual([]);
 		});
 	});
 
@@ -111,10 +114,10 @@ describe('Logger class', () => {
 			logger.infoSpecific(['a'], message);
 			logger.infoSpecific([...parts], message);
 
-			expect(infoSpy.console).toBeCalledTimes(3);
-			expect(infoSpy.console.mock.calls[0][0]).toMatch(`[${basePrefix}] ${message}`);
-			expect(infoSpy.console.mock.calls[1][0]).toMatch(`[${basePrefix} ~ a] ${message}`);
-			expect(infoSpy.console.mock.calls[2][0]).toMatch(`[${basePrefix} ~ a ~ b] ${message}`);
+			expect(infoSpy).toBeCalledTimes(3);
+			expect(infoSpy.mock.calls[0][0]).toMatch(`[${basePrefix}] ${message}`);
+			expect(infoSpy.mock.calls[1][0]).toMatch(`[${basePrefix} ~ a] ${message}`);
+			expect(infoSpy.mock.calls[2][0]).toMatch(`[${basePrefix} ~ a ~ b] ${message}`);
 		});
 	});
 
@@ -131,14 +134,14 @@ describe('Logger class', () => {
 			logger.warn(firstObj, secondObj);
 			logger.warn();
 
-			expect(warnSpy.console).toBeCalledTimes(4);
-			expect(warnSpy.console.mock.calls[0][0]).toMatch(`${basePrefix} ${message}`);
-			expect(warnSpy.console.mock.calls[1][0]).toMatch(basePrefix);
-			expect(warnSpy.console.mock.calls[2][0]).toMatch(basePrefix);
-			expect(warnSpy.console.mock.calls[1][1]).toBe(firstObj);
-			expect(warnSpy.console.mock.calls[2][1]).toBe(firstObj);
-			expect(warnSpy.console.mock.calls[2][2]).toBe(secondObj);
-			expect(warnSpy.console.mock.calls[3]).toEqual([]);
+			expect(warnSpy).toBeCalledTimes(4);
+			expect(warnSpy.mock.calls[0][0]).toMatch(`${basePrefix} ${message}`);
+			expect(warnSpy.mock.calls[1][0]).toMatch(basePrefix);
+			expect(warnSpy.mock.calls[2][0]).toMatch(basePrefix);
+			expect(warnSpy.mock.calls[1][1]).toBe(firstObj);
+			expect(warnSpy.mock.calls[2][1]).toBe(firstObj);
+			expect(warnSpy.mock.calls[2][2]).toBe(secondObj);
+			expect(warnSpy.mock.calls[3]).toEqual([]);
 		});
 	});
 
@@ -153,10 +156,10 @@ describe('Logger class', () => {
 			logger.warnSpecific(['a'], message);
 			logger.warnSpecific([...parts], message);
 
-			expect(warnSpy.console).toBeCalledTimes(3);
-			expect(warnSpy.console.mock.calls[0][0]).toMatch(`[${basePrefix}] ${message}`);
-			expect(warnSpy.console.mock.calls[1][0]).toMatch(`[${basePrefix} ~ a] ${message}`);
-			expect(warnSpy.console.mock.calls[2][0]).toMatch(`[${basePrefix} ~ a ~ b] ${message}`);
+			expect(warnSpy).toBeCalledTimes(3);
+			expect(warnSpy.mock.calls[0][0]).toMatch(`[${basePrefix}] ${message}`);
+			expect(warnSpy.mock.calls[1][0]).toMatch(`[${basePrefix} ~ a] ${message}`);
+			expect(warnSpy.mock.calls[2][0]).toMatch(`[${basePrefix} ~ a ~ b] ${message}`);
 		});
 	});
 
@@ -173,14 +176,14 @@ describe('Logger class', () => {
 			logger.error(firstObj, secondObj);
 			logger.error();
 
-			expect(errorSpy.console).toBeCalledTimes(4);
-			expect(errorSpy.console.mock.calls[0][0]).toMatch(`${basePrefix} ${message}`);
-			expect(errorSpy.console.mock.calls[1][0]).toMatch(basePrefix);
-			expect(errorSpy.console.mock.calls[2][0]).toMatch(basePrefix);
-			expect(errorSpy.console.mock.calls[1][1]).toBe(firstObj);
-			expect(errorSpy.console.mock.calls[2][1]).toBe(firstObj);
-			expect(errorSpy.console.mock.calls[2][2]).toBe(secondObj);
-			expect(errorSpy.console.mock.calls[3]).toEqual([]);
+			expect(errorSpy).toBeCalledTimes(4);
+			expect(errorSpy.mock.calls[0][0]).toMatch(`${basePrefix} ${message}`);
+			expect(errorSpy.mock.calls[1][0]).toMatch(basePrefix);
+			expect(errorSpy.mock.calls[2][0]).toMatch(basePrefix);
+			expect(errorSpy.mock.calls[1][1]).toBe(firstObj);
+			expect(errorSpy.mock.calls[2][1]).toBe(firstObj);
+			expect(errorSpy.mock.calls[2][2]).toBe(secondObj);
+			expect(errorSpy.mock.calls[3]).toEqual([]);
 		});
 	});
 
@@ -195,10 +198,10 @@ describe('Logger class', () => {
 			logger.errorSpecific(['a'], message);
 			logger.errorSpecific([...parts], message);
 
-			expect(errorSpy.console).toBeCalledTimes(3);
-			expect(errorSpy.console.mock.calls[0][0]).toMatch(`[${basePrefix}] ${message}`);
-			expect(errorSpy.console.mock.calls[1][0]).toMatch(`[${basePrefix} ~ a] ${message}`);
-			expect(errorSpy.console.mock.calls[2][0]).toMatch(`[${basePrefix} ~ a ~ b] ${message}`);
+			expect(errorSpy).toBeCalledTimes(3);
+			expect(errorSpy.mock.calls[0][0]).toMatch(`[${basePrefix}] ${message}`);
+			expect(errorSpy.mock.calls[1][0]).toMatch(`[${basePrefix} ~ a] ${message}`);
+			expect(errorSpy.mock.calls[2][0]).toMatch(`[${basePrefix} ~ a ~ b] ${message}`);
 		});
 	});
 });

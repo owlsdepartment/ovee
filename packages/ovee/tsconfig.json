@@ -5,10 +5,12 @@
         "baseUrl": ".",
         "rootDir": "./src",
         "outDir": "./dist/src",
-        "declarationDir": "./types",
+        "jsx": "react-jsx",
+        "jsxImportSource": "@/jsx",
         "paths": {
-            "src/*": ["./src/*"],
-            "tests/*": ["./tests/*"]
+            "@/*": ["./src/*"],
+            "#/*": ["./tests/*"],
+            "~/*": ["./*"],
         }
     },
 

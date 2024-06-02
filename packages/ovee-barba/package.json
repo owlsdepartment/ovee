@@ -1,11 +1,10 @@
 {
   "name": "@ovee.js/barba",
   "version": "2.2.3",
-  "private": false,
   "description": "Barba integration for ovee.js",
   "author": "Jakub Przyborowski",
   "license": "MIT",
-  "homepage": "https://owlsdepartment.github.io/ovee/addons.html#barba-js-plugin",
+  "homepage": "https://owlsdepartment.github.io/ovee/v2/addons.html#barba-js-plugin",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/owlsdepartment/ovee.git"
@@ -23,20 +22,17 @@
     "@barba/core": "^2.9.7"
   },
   "devDependencies": {
-    "typescript": "^4.2.0"
+    "ovee.js": "workspace:*"
   },
   "peerDependencies": {
     "ovee.js": "2.0.0 - 2.2.x"
   },
   "scripts": {
-    "test": "node -v && npm run test:unit",
-    "test:unit": "NODE_ENV=test jest",
-    "test:unit:watch": "NODE_ENV=test jest --watch --coverage --coverage-reporters=lcov",
     "lint": "eslint . --fix",
     "lint:no-fix": "eslint .",
-    "build": "node ../../scripts/build.js ovee-barba",
+    "build": "cd ../.. && npx esr scripts/build.ts ovee-barba",
     "clean": "rm -rf ./dist",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run lint:no-fix && npm run build"
   },
   "browserslist": "> 0.5% and last 3 versions and not dead, ie >= 11",
   "gitHead": "803d4b89d6092ef596e4f5cbac4c86a3af835487"

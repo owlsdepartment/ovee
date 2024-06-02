@@ -1,3 +1,3 @@
-export function flushPromises(): Promise<NodeJS.Immediate> {
-	return new Promise(jest.requireActual('timers').setImmediate);
+export function flushPromises(): Promise<void> {
+	return new Promise(res => setImmediate(res));
 }
