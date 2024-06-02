@@ -30,10 +30,11 @@ export const MyComponent = defineComponent((element, { on }) => {
 
 And that's it! You don't need to clear this event. Once the component is destroyed, all listeners are removed as well. Notice that we didn't refer to the element. When you don't specify a target, `on` assumes that you want to connect it to the component's root. It also doesn't need any special context and can be called anytime, from any place possible.
 
-The third argument, `ListenerOptions`, allows for some more customization. It is an object similar to options passed to `addEventListener` ([MDN documentation](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#options)) with three new fields:
- - `target: string | EventTarget | EventTarget[]` - specify a target element. It can be a query selector string or element instance. It also accepts an array of elements
- - `root: boolean` - if you specify `root: true` without using `target`, events will be connected to the root document element. If the `target` is a `string` and the `root` equals `true`, then elements will be searched relatively to the whole document. In other cases, `querySelector` will be run relatively to the components element.
- - `multiple: boolean` - when set to true and the `target` is a string, it will connect the listener to all elements matching the selector. Otherwise, it will match to the first one found
+The third argument, `ListenerOptions`, allows for some more customization. It is an object similar to options passed to `addEventListener` ([MDN documentation](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#options)) with new fields:
+ - `target?: string | EventTarget | EventTarget[]` - specify a target element. It can be a query selector string or element instance. It also accepts an array of elements
+ - `root?: boolean` - if you specify `root: true` without using `target`, events will be connected to the root document element. If the `target` is a `string` and the `root` equals `true`, then elements will be searched relatively to the whole document. In other cases, `querySelector` will be run relatively to the components element.
+ - `multiple?: boolean` - when set to true and the `target` is a string, it will connect the listener to all elements matching the selector. Otherwise, it will match to the first one found
+ - `optional?: boolean` - if set to true, no error is logged, when matching element isn't found
 
 So to add a `click` handler to all nested buttons you should write:
 

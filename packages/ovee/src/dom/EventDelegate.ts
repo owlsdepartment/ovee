@@ -1,3 +1,4 @@
+import { NOOP } from '@/constants';
 import { Logger } from '@/errors';
 import { isString, omit } from '@/utils';
 
@@ -13,6 +14,7 @@ export interface TargetOptions {
 	target?: Target;
 	root?: true;
 	multiple?: boolean;
+	optional?: boolean;
 }
 
 export interface ListenerOptions extends AddEventListenerOptions, TargetOptions {}
@@ -40,6 +42,10 @@ export class EventDelegate<Context = any> {
 			: undefined;
 		const { targetOption, target } = this.getTarget(options);
 		const removeListeners: Array<() => void> = [];
+
+		if (!target) {
+			return NOOP;
+		}
 
 		events.split(' ').forEach(event => {
 			const handler = (...args: any[]) => callback.apply(this.context, args);
@@ -90,11 +96,11 @@ export class EventDelegate<Context = any> {
 	}
 
 	private getTarget(options?: TargetOptions): {
-		target: EventTarget | EventTarget[];
+		target: EventTarget | EventTarget[] | null;
 		targetOption: Target;
 	} {
 		const targetOption = options?.target ?? this.targetElement;
-		let target: EventTarget | EventTarget[];
+		let target: EventTarget | EventTarget[] | null;
 
 		if (isString(targetOption)) {
 			const isAbsolute = options?.root;
@@ -105,16 +111,20 @@ export class EventDelegate<Context = any> {
 				: selectorBase.querySelector(targetOption);
 
 			if (!newTarget || (Array.isArray(newTarget) && !newTarget.length)) {
-				const errorMessage = `Could not find element${
-					multipleTargets ? 's' : ''
-				} with selector '${targetOption}' ${
-					isAbsolute ? 'in document' : 'relatively to current element'
-				}`;
+				if (!options?.optional) {
+					const errorMessage = `Could not find element${
+						multipleTargets ? 's' : ''
+					} with selector '${targetOption}' ${
+						isAbsolute ? 'in document' : 'relatively to current element'
+					}`;
 
-				throw Error(logger.getMessage(errorMessage));
+					logger.error(errorMessage);
+				}
+
+				target = null;
+			} else {
+				target = newTarget;
 			}
-
-			target = newTarget;
 		} else {
 			target = targetOption;
 		}
