@@ -1,8 +1,8 @@
+import { Ref } from '@vue/reactivity';
 import { describe, expect, it } from 'vitest';
 
 import { onMounted, useProp } from '@/composables';
 import { defineComponent } from '@/core';
-import { OveeRef } from '@/utils';
 import { createComponent, createLoggerRegExp, spyConsole } from '#/helpers';
 
 const loggerRegExp = createLoggerRegExp('useProp');
@@ -18,7 +18,7 @@ describe('useProp', () => {
 	});
 
 	it('returns elements property value', () => {
-		let title: OveeRef<string>;
+		let title: Ref<string>;
 		const propName = 'title';
 		const c = defineComponent(() => {
 			title = useProp(propName);

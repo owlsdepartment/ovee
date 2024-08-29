@@ -1,8 +1,8 @@
+import { Ref } from '@vue/reactivity';
 import { assertType, describe, expect, it } from 'vitest';
 
 import { onMounted, useProp } from '@/composables';
 import { defineComponent } from '@/core';
-import { OveeRef } from '@/utils';
 import { createComponent, createLoggerRegExp, spyConsole } from '#/helpers';
 
 const loggerRegExp = createLoggerRegExp('useProp');
@@ -18,7 +18,7 @@ describe('useProp', () => {
 	});
 
 	it('returns ovee ref with current value of a property', () => {
-		let innerTextRef: OveeRef<any>;
+		let innerTextRef: Ref<any>;
 		const testText = 'hi from the inside';
 		const component = defineComponent(() => {
 			innerTextRef = useProp('innerText');

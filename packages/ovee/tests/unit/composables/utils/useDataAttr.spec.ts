@@ -1,9 +1,8 @@
-import { watchEffect } from '@vue/runtime-core';
+import { Ref, watchEffect } from '@vue/runtime-core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { onMounted, useDataAttr } from '@/composables';
 import { defineComponent } from '@/core';
-import { OveeRef } from '@/utils';
 import { createComponent, createLoggerRegExp, spyConsole } from '#/helpers';
 
 const loggerRegExp = createLoggerRegExp('useDataAttr');
@@ -19,7 +18,7 @@ describe('useDataAttr', () => {
 	});
 
 	it('returns data param value', () => {
-		let data: OveeRef<string | undefined>;
+		let data: Ref<string | undefined>;
 		const attrName = 'disabled';
 		const attrValue = '';
 		const c = defineComponent(() => {
@@ -54,8 +53,8 @@ describe('useDataAttr', () => {
 	});
 
 	it('maps attribute values with prebuilt mappers', () => {
-		let d1: OveeRef<number>;
-		let d2: OveeRef<boolean>;
+		let d1: Ref<number>;
+		let d2: Ref<boolean>;
 		const d1Name = 'amount';
 		const d2Name = 'enabled';
 		const c = defineComponent(() => {
@@ -85,8 +84,8 @@ describe('useDataAttr', () => {
 	});
 
 	it('maps attribute values with custom mappers', () => {
-		let d1: OveeRef<number>;
-		let d2: OveeRef<string>;
+		let d1: Ref<number>;
+		let d2: Ref<string>;
 		const d1Name = 'index';
 		const d2Name = 'upper';
 		const c = defineComponent(() => {

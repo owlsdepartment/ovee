@@ -1,17 +1,19 @@
+import { computed, Ref } from '@vue/reactivity';
+
 import { injectComponentContext } from '@/core';
 import { Logger } from '@/errors';
-import { ClassConstructor, getNoContextWarning, OveeRef } from '@/utils';
+import { ClassConstructor, getNoContextWarning } from '@/utils';
 
 const logger = new Logger('useProp');
 
 export function useProp<El extends HTMLElement, Key extends keyof El>(
 	propName: Key,
 	base: ClassConstructor<El> | El
-): OveeRef<El[Key]>;
-export function useProp<Key extends keyof HTMLElement>(propName: Key): OveeRef<HTMLElement[Key]>;
-export function useProp<R = any>(propName: string): OveeRef<R>;
+): Ref<El[Key]>;
+export function useProp<Key extends keyof HTMLElement>(propName: Key): Ref<HTMLElement[Key]>;
+export function useProp<R = any>(propName: string): Ref<R>;
 
-export function useProp(propName: string): OveeRef<any> {
+export function useProp(propName: string): Ref<any> {
 	const instance = injectComponentContext(true);
 
 	if (!instance) {
@@ -20,15 +22,15 @@ export function useProp(propName: string): OveeRef<any> {
 		return { value: undefined } as any;
 	}
 
-	const propRef: OveeRef<any> = {
-		get value() {
+	const propRef = computed<any>({
+		get() {
 			return Reflect.get(instance.element, propName);
 		},
 
-		set value(v) {
+		set(v) {
 			Reflect.set(instance.element, propName, v);
 		},
-	};
+	});
 
 	return propRef;
 }

@@ -1,4 +1,4 @@
-import { ref } from '@vue/reactivity';
+import { computed, Ref, ref } from '@vue/reactivity';
 
 import { injectComponentContext } from '@/core';
 import { Logger } from '@/errors';
@@ -12,7 +12,6 @@ import {
 	isNil,
 	isString,
 	ObjectNotationMapValues,
-	OveeRef,
 	toKebabCase,
 } from '@/utils';
 
@@ -23,7 +22,7 @@ const logger = new Logger('useDataAttr');
 export function useDataAttr<Keys extends Record<string, ObjectNotationMapValues>>(
 	keys: Keys
 ): {
-	[Key in keyof Keys]: OveeRef<
+	[Key in keyof Keys]: Ref<
 		Keys[Key] extends AttributeMap
 			? ReturnType<Keys[Key]['get']>
 			: Keys[Key] extends AttributeMapType
@@ -34,26 +33,26 @@ export function useDataAttr<Keys extends Record<string, ObjectNotationMapValues>
 
 export function useDataAttr<Keys extends string[]>(
 	keys: [...Keys]
-): { [Key in keyof Keys]: OveeRef<string | null> };
+): { [Key in keyof Keys]: Ref<string | null> };
 
-export function useDataAttr(key: string): OveeRef<string | undefined>;
+export function useDataAttr(key: string): Ref<string | undefined>;
 
-export function useDataAttr<Type>(key: string, map: AttributeMap<Type>): OveeRef<Type>;
+export function useDataAttr<Type>(key: string, map: AttributeMap<Type>): Ref<Type>;
 export function useDataAttr<MapType extends AttributeMapType>(
 	key: string,
 	map: MapType
-): OveeRef<GetTypeFromMapType<MapType>>;
+): Ref<GetTypeFromMapType<MapType>>;
 
 export function useDataAttr(
 	key: string | string[] | Record<string, ObjectNotationMapValues>,
 	_map?: AttributeMap | AttributeMapType
-): OveeRef<any> | OveeRef<any>[] | Record<string, OveeRef<any>> {
+): Ref<any> | Ref<any>[] | Record<string, Ref<any>> {
 	const instance = injectComponentContext(true);
 
 	if (!instance) {
 		logger.warn(getNoContextWarning('useDataAttr'));
 
-		return { value: undefined };
+		return ref(null);
 	}
 
 	if (Array.isArray(key)) {
@@ -76,14 +75,14 @@ export function useDataAttr(
 	const map = typeof _map === 'string' ? attributeMaps[_map] : _map;
 	const domKey = `data-${toKebabCase(key)}`;
 
-	const dataRef: OveeRef<string | undefined> = {
-		get value() {
+	const dataRef = computed<string | undefined>({
+		get() {
 			updateDatasetValue();
 
 			return cachedValue.value;
 		},
 
-		set value(v: string | undefined) {
+		set(v) {
 			const dataValue = map ? map.set(v) : v;
 
 			if (isNil(dataValue)) {
@@ -92,7 +91,7 @@ export function useDataAttr(
 				instance.element.dataset[key] = dataValue;
 			}
 		},
-	};
+	});
 
 	const { observe, disconnect } = attachAttributeObserver(domKey, () => updateDatasetValue());
 

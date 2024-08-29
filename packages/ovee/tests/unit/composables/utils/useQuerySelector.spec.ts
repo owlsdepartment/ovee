@@ -1,8 +1,8 @@
+import { ComputedRef } from '@vue/reactivity';
 import { describe, expect, it, vi } from 'vitest';
 
 import { useQuerySelector, useQuerySelectorAll } from '@/composables';
 import { defineComponent } from '@/core';
-import { OveeReadonlyRef } from '@/utils';
 import { createComponent, createLoggerRegExp, spyConsole } from '#/helpers';
 
 describe('useQuerySelector', () => {
@@ -24,7 +24,7 @@ describe('useQuerySelector', () => {
 				<p></p>
 				<span></span>
 			`;
-			let elRef: OveeReadonlyRef<HTMLElement | null>;
+			let elRef: ComputedRef<HTMLElement | null>;
 			const component = defineComponent(() => {
 				elRef = useQuerySelector('#not-existing');
 			});
@@ -44,7 +44,7 @@ describe('useQuerySelector', () => {
 			`;
 			const element = document.querySelector<HTMLElement>('#test-1')!;
 			const parahraph = document.querySelector<HTMLElement>(`.${className}`);
-			let elRef: OveeReadonlyRef<HTMLElement | null>;
+			let elRef: ComputedRef<HTMLElement | null>;
 			const component = defineComponent(() => {
 				elRef = useQuerySelector(`.${className}`);
 			});
@@ -62,7 +62,7 @@ describe('useQuerySelector', () => {
 				</div>
 			`;
 			const element = document.querySelector<HTMLElement>('#test-1')!;
-			let elRef: OveeReadonlyRef<HTMLElement | null>;
+			let elRef: ComputedRef<HTMLElement | null>;
 			const component = defineComponent(() => {
 				elRef = useQuerySelector(`.${className}`);
 			});
@@ -120,7 +120,7 @@ describe('useQuerySelector', () => {
 				<p></p>
 				<span></span>
 			`;
-			let elRef: OveeReadonlyRef<HTMLElement[]>;
+			let elRef: ComputedRef<HTMLElement[]>;
 			const component = defineComponent(() => {
 				elRef = useQuerySelectorAll('.not-existing');
 			});
@@ -142,7 +142,7 @@ describe('useQuerySelector', () => {
 			`;
 			const element = document.querySelector<HTMLElement>('#test-1')!;
 			const paragraphs = Array.from(document.querySelectorAll('p'));
-			let elRef: OveeReadonlyRef<HTMLElement[]>;
+			let elRef: ComputedRef<HTMLElement[]>;
 			const component = defineComponent(() => {
 				elRef = useQuerySelectorAll(`.${itemClass}`);
 			});
@@ -163,7 +163,7 @@ describe('useQuerySelector', () => {
 				<div id="test-1"></div>
 			`;
 			const element = document.querySelector<HTMLElement>('#test-1')!;
-			let elRef: OveeReadonlyRef<HTMLElement[]>;
+			let elRef: ComputedRef<HTMLElement[]>;
 			const component = defineComponent(() => {
 				elRef = useQuerySelectorAll(`.${itemClass}`);
 			});

@@ -1,9 +1,8 @@
-import { nextTick, watch } from '@vue/runtime-core';
+import { ComputedRef, nextTick, watch } from '@vue/runtime-core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { useQueryComponent, useQueryComponentAll } from '@/composables';
 import { defineComponent, HTMLOveeElement } from '@/core';
-import { OveeReadonlyRef } from '@/utils';
 import {
 	createComponent,
 	createLoggerRegExp,
@@ -34,7 +33,7 @@ describe('useQueryComponent', () => {
 		});
 
 		it('logs warning, if passed component is not yet registered', () => {
-			let missingRef: OveeReadonlyRef<any>, testRef: OveeReadonlyRef<any>;
+			let missingRef: ComputedRef<any>, testRef: ComputedRef<any>;
 			const testComp = defineComponent(() => {});
 			const component = defineComponent(() => {
 				missingRef = useQueryComponent('missing');
@@ -50,7 +49,7 @@ describe('useQueryComponent', () => {
 		});
 
 		it("returns dynamic ref with current value of a nested component's instance and is reactive", async () => {
-			let stringRef: OveeReadonlyRef<any>, componentRef: OveeReadonlyRef<any>;
+			let stringRef: ComputedRef<any>, componentRef: ComputedRef<any>;
 			const watchFn = vi.fn();
 
 			const component = defineComponent(() => {
@@ -97,7 +96,7 @@ describe('useQueryComponent', () => {
 		});
 
 		it('serves as a one time helper when target is passed as an additional argument', () => {
-			let stringRef: OveeReadonlyRef<any>, componentRef: OveeReadonlyRef<any>;
+			let stringRef: ComputedRef<any>, componentRef: ComputedRef<any>;
 
 			const component = defineComponent(() => {
 				stringRef = useQueryComponent('component-1', document.documentElement);
@@ -138,7 +137,7 @@ describe('useQueryComponent', () => {
 		});
 
 		it('logs warning, if passed component is not yet registered', () => {
-			let missingRef: OveeReadonlyRef<any>, testRef: OveeReadonlyRef<any>;
+			let missingRef: ComputedRef<any>, testRef: ComputedRef<any>;
 			const testComp = defineComponent(() => {});
 			const component = defineComponent(() => {
 				missingRef = useQueryComponentAll('missing');
@@ -154,7 +153,7 @@ describe('useQueryComponent', () => {
 		});
 
 		it("returns dynamic ref array with all current values of a nested component's instances and is reactive", async () => {
-			let stringRef: OveeReadonlyRef<any[]>, componentRef: OveeReadonlyRef<any[]>;
+			let stringRef: ComputedRef<any[]>, componentRef: ComputedRef<any[]>;
 			const watchFn = vi.fn();
 
 			const component = defineComponent(() => {
@@ -207,7 +206,7 @@ describe('useQueryComponent', () => {
 		});
 
 		it('serves as a one time helper when target is passed as an additional argument', () => {
-			let stringRef: OveeReadonlyRef<any[]>, componentRef: OveeReadonlyRef<any[]>;
+			let stringRef: ComputedRef<any[]>, componentRef: ComputedRef<any[]>;
 
 			const component = defineComponent(() => {
 				stringRef = useQueryComponentAll('component-1', document.documentElement);

@@ -1,3 +1,5 @@
+export type nil = null | undefined;
+
 export interface ClassConstructor<T> extends Function {
 	new (...args: any[]): T;
 }
@@ -24,11 +26,3 @@ export type OmitConstructorKeys<T> = {
 }[keyof T];
 
 export type OmitConstructor<T> = Pick<T, OmitConstructorKeys<T>>;
-
-export interface OveeRef<V> {
-	value: V;
-}
-
-export interface OveeReadonlyRef<V> {
-	readonly value: V;
-}

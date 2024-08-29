@@ -1,9 +1,11 @@
+import { computed, ComputedRef } from '@vue/reactivity';
+
 import { useQuerySelector, useQuerySelectorAll } from '@/composables';
 import { injectComponentContext } from '@/core';
 import { Logger } from '@/errors';
-import { getNoContextWarning, OveeReadonlyRef } from '@/utils';
+import { getNoContextWarning } from '@/utils';
 
-export type ElementRef<E = HTMLElement | null> = OveeReadonlyRef<E>;
+export type ElementRef<E = HTMLElement | null> = ComputedRef<E>;
 
 const logger = new Logger('useElementRef');
 const loggerMultiple = new Logger('useElementRefs');
@@ -16,7 +18,7 @@ export function useElementRef<E extends HTMLElement = HTMLElement>(
 	if (!instance) {
 		logger.warn(getNoContextWarning('useElementRef'));
 
-		return { value: null };
+		return computed(() => null);
 	}
 
 	return useQuerySelector(`[ref="${name}"]`);
@@ -28,7 +30,7 @@ export function useElementRefs<E extends HTMLElement = HTMLElement>(name: string
 	if (!instance) {
 		loggerMultiple.warn(getNoContextWarning('useElementRefs'));
 
-		return { value: [] };
+		return computed(() => []);
 	}
 
 	return useQuerySelectorAll(`[ref="${name}"]`);

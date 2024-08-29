@@ -3,7 +3,7 @@ import { watch } from '@vue/runtime-core';
 
 import { AnyComponent, Component, GetComponentInstance, HTMLOveeElement, useApp } from '@/core';
 import { Logger } from '@/errors';
-import { getNoContextWarning, isDefined, isString, OveeReadonlyRef, toKebabCase } from '@/utils';
+import { getNoContextWarning, isDefined, isString, toKebabCase } from '@/utils';
 import { extractComponent } from '@/utils/extractComponent';
 import { extractComponentInternalInstance } from '@/utils/extractComponentInternalInstance';
 
@@ -22,13 +22,13 @@ const loggerAll = new Logger('useQueryComponentAll');
 export function useQueryComponent<C extends Component = AnyComponent>(
 	component: C | string,
 	target?: ParentNode
-): OveeReadonlyRef<GetComponentInstance<C> | undefined> {
+): ComputedRef<GetComponentInstance<C> | undefined> {
 	const app = useApp(true);
 
 	if (!app) {
 		logger.warn(getNoContextWarning('useQueryComponent'));
 
-		return { value: undefined };
+		return computed(() => undefined);
 	}
 
 	let componentName: string;
@@ -54,10 +54,9 @@ export function useQueryComponent<C extends Component = AnyComponent>(
 
 	if (target) {
 		const element = target.querySelector<HTMLOveeElement>(selector);
+		const outputComponent = element ? extractComponent(element, componentName) : undefined;
 
-		return {
-			value: element ? extractComponent(element, componentName) : undefined,
-		};
+		return computed(() => outputComponent);
 	}
 
 	const element = useQuerySelector<HTMLOveeElement>(selector);
@@ -67,11 +66,6 @@ export function useQueryComponent<C extends Component = AnyComponent>(
 	const publicInstance: ComputedRef<GetComponentInstance<AnyComponent> | undefined> = computed(
 		() => internalInstance.value?.instance
 	);
-	const instanceRef: OveeReadonlyRef<GetComponentInstance<AnyComponent> | undefined> = {
-		get value() {
-			return publicInstance.value;
-		},
-	};
 
 	watch(
 		internalInstance,
@@ -86,7 +80,7 @@ export function useQueryComponent<C extends Component = AnyComponent>(
 		internalInstance.effect.scheduler?.();
 	}
 
-	return instanceRef;
+	return publicInstance;
 }
 
 /**
@@ -99,13 +93,13 @@ export function useQueryComponent<C extends Component = AnyComponent>(
 export function useQueryComponentAll<C extends Component = AnyComponent>(
 	component: C | string,
 	target?: ParentNode
-): OveeReadonlyRef<GetComponentInstance<C>[]> {
+): ComputedRef<GetComponentInstance<C>[]> {
 	const app = useApp(true);
 
 	if (!app) {
 		loggerAll.warn(getNoContextWarning('useQueryComponent'));
 
-		return { value: [] };
+		return computed(() => []);
 	}
 
 	let componentName: string;
@@ -133,9 +127,7 @@ export function useQueryComponentAll<C extends Component = AnyComponent>(
 		const elements = Array.from(target.querySelectorAll<HTMLOveeElement>(selector));
 		const instances = elements.map(e => extractComponent(e, componentName)).filter(isDefined);
 
-		return {
-			value: instances,
-		};
+		return computed(() => instances);
 	}
 
 	const elements = useQuerySelectorAll<HTMLOveeElement>(selector);
@@ -145,11 +137,6 @@ export function useQueryComponentAll<C extends Component = AnyComponent>(
 	const publicInstance: ComputedRef<GetComponentInstance<AnyComponent> | undefined> = computed(() =>
 		internalInstances.value.map(i => i.instance).filter(isDefined)
 	);
-	const instanceRef: OveeReadonlyRef<GetComponentInstance<AnyComponent> | undefined> = {
-		get value() {
-			return publicInstance.value;
-		},
-	};
 
 	watch(
 		internalInstances,
@@ -164,13 +151,13 @@ export function useQueryComponentAll<C extends Component = AnyComponent>(
 		internalInstances.effect.scheduler?.();
 	}
 
-	return instanceRef;
+	return publicInstance;
 }
 
-function warnAboutNotExistingComponent<D>(logger: Logger, defaultValue: D): OveeReadonlyRef<D> {
+function warnAboutNotExistingComponent<D>(logger: Logger, defaultValue: D): ComputedRef<D> {
 	logger.warn(
 		'Component passed as any argument is not registered in the app yet. Consider registering it yourself, or pass a name that this component will have'
 	);
 
-	return { value: defaultValue };
+	return computed(() => defaultValue);
 }

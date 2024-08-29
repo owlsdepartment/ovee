@@ -1,6 +1,6 @@
 # Use Element Ref
 
-Returns `OveeRef` with elements instance, matching `ref="..."` value.
+Returns `OveeRef` with elements instance, matching `ref="..."` value. It only will search for refs inside a component.
 
 ::: code-group
 ```ts [MyComponent.ts]

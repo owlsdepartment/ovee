@@ -1,4 +1,4 @@
-import { ref } from '@vue/reactivity';
+import { computed, Ref, ref } from '@vue/reactivity';
 
 import { injectComponentContext } from '@/core';
 import { Logger } from '@/errors';
@@ -12,7 +12,6 @@ import {
 	isNil,
 	isString,
 	ObjectNotationMapValues,
-	OveeRef,
 } from '@/utils';
 
 import { onMounted, onUnmounted } from '../hooks';
@@ -24,7 +23,7 @@ const logger = new Logger('useAttribute');
 export function useAttribute<Keys extends Record<string, ObjectNotationMapValues>>(
 	keys: Keys
 ): {
-	[Key in keyof Keys]: OveeRef<
+	[Key in keyof Keys]: Ref<
 		Keys[Key] extends AttributeMap
 			? ReturnType<Keys[Key]['get']>
 			: Keys[Key] extends AttributeMapType
@@ -35,26 +34,26 @@ export function useAttribute<Keys extends Record<string, ObjectNotationMapValues
 
 export function useAttribute<Keys extends string[]>(
 	keys: [...Keys]
-): { [Key in keyof Keys]: OveeRef<string | null> };
+): { [Key in keyof Keys]: Ref<string | null> };
 
-export function useAttribute(key: string): OveeRef<string | null>;
+export function useAttribute(key: string): Ref<string | null>;
 
-export function useAttribute<Type>(key: string, map: AttributeMap<Type>): OveeRef<Type>;
+export function useAttribute<Type>(key: string, map: AttributeMap<Type>): Ref<Type>;
 export function useAttribute<MapType extends AttributeMapType>(
 	key: string,
 	map: MapType
-): OveeRef<GetTypeFromMapType<MapType>>;
+): Ref<GetTypeFromMapType<MapType>>;
 
 export function useAttribute(
 	key: string | string[] | Record<string, ObjectNotationMapValues>,
 	_map?: AttributeMap | AttributeMapType
-): OveeRef<any> | OveeRef<any>[] | Record<string, OveeRef<any>> {
+): Ref<any> | Ref<any>[] | Record<string, Ref<any>> {
 	const instance = injectComponentContext(true);
 
 	if (!instance) {
 		logger.warn(getNoContextWarning('useAttribute'));
 
-		return { value: null };
+		return ref(null);
 	}
 
 	if (Array.isArray(key)) {
@@ -76,14 +75,14 @@ export function useAttribute(
 	// TODO: log warning that there is no map
 	const map = typeof _map === 'string' ? attributeMaps[_map] : _map;
 	const cachedValue = ref();
-	const attributeRef: OveeRef<string | null> = {
-		get value() {
+	const attributeRef = computed<string | null>({
+		get() {
 			updateAttributeValue();
 
 			return cachedValue.value;
 		},
 
-		set value(v: string | null) {
+		set(v) {
 			const value = map ? map.set(v) : v;
 
 			if (isNil(value)) {
@@ -92,7 +91,7 @@ export function useAttribute(
 				instance.element.setAttribute(key, value);
 			}
 		},
-	};
+	});
 
 	const { observe, disconnect } = attachAttributeObserver(key, () => {
 		updateAttributeValue();
