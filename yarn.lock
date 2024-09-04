@@ -4217,7 +4217,7 @@ __metadata:
     ovee.js: "workspace:*"
   peerDependencies:
     "@barba/core": ^2.9.7
-    ovee.js: 2.0.0 - 2.2.x
+    ovee.js: ^3.0.0-alpha.6
   languageName: unknown
   linkType: soft
 
