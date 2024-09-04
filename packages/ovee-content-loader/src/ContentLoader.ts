@@ -1,68 +1,87 @@
-import Barba from '@barba/core';
-import { Module } from 'ovee.js';
+import barba from '@barba/core';
+import { defineModule } from 'ovee.js';
 
 import { ResolverClass } from './Resolver';
 
-const { history, dom, request } = Barba;
 export const DEFAULT_TIMEOUT = 20000;
 
 export interface ContentLoaderOptions {
+	resolvers: Record<string, ResolverClass>;
 	timeout?: number;
-	resolvers?: Record<string, ResolverClass>;
 }
 
-export class ContentLoader extends Module<ContentLoaderOptions> {
-	timeout = DEFAULT_TIMEOUT;
-	resolvers: Record<string, ResolverClass> = {};
+const { request } = barba;
 
-	init(): void {
-		this.timeout = this.options.timeout ?? DEFAULT_TIMEOUT;
-		this.resolvers = this.options.resolvers ?? {};
-	}
-
-	getResolver(name: string): ResolverClass | false {
-		if (this.resolvers[name] === undefined) {
-			console.error(`Resolver not registered for key ${name}`);
-
-			return false;
-		}
-
-		return this.resolvers[name];
-	}
-
-	async loadPage(
+export interface ContentLoaderReturn {
+	loadPage: (
 		url: string,
 		resolverName: string,
-		target: Element | null = null,
-		pushState = true
-	): Promise<void> {
-		const ResolverCtor = this.getResolver(resolverName);
-
-		if (!ResolverCtor) {
-			return;
-		}
-
-		const resolver = new ResolverCtor(this.$app, target, url, pushState);
-		const requestPage = request(url, this.timeout, (_url, err) => {
-			console.error(`[ContentLoader] Error while requesting ${_url}`, err);
-
-			return false;
-		});
-
-		await resolver.contentOut();
-
-		const content = dom.toDocument(await requestPage);
-
-		if (resolver.pushState && resolver.shouldPushState) {
-			document.title = content.title;
-			history.add(url, 'barba');
-		}
-
-		await resolver.updateContent(content);
-		await resolver.contentIn();
-	}
-
-	static getName(): string {
-		return 'ContentLoader';
-	}
+		target?: Element | null,
+		pushState?: boolean
+	) => Promise<void>;
 }
+
+export const ContentLoader = defineModule<ContentLoaderOptions, ContentLoaderReturn>(
+	({ app, options }) => {
+		const timeout = options.timeout ?? DEFAULT_TIMEOUT;
+		const resolvers: Record<string, ResolverClass> = options.resolvers;
+
+		function getResolver(name: string): ResolverClass | false {
+			if (resolvers[name] === undefined) {
+				console.error(`[ovee.js/ContentLoader] Resolver not registered for key ${name}`);
+
+				return false;
+			}
+
+			return resolvers[name];
+		}
+
+		async function loadPage(
+			url: string,
+			resolverName: string,
+			target: Element | null = null,
+			pushState = true
+		): Promise<void> {
+			const ResolverCtor = getResolver(resolverName);
+
+			if (!ResolverCtor) {
+				return;
+			}
+
+			const resolver = new ResolverCtor(app, target, url, pushState);
+			const requestPage = request(url, timeout, (reqUrl, reqErr) => {
+				console.error(`[ovee.js/ContentLoader] Error while requesting ${reqUrl}`, reqErr);
+
+				return false;
+			});
+
+			await resolver.contentOut();
+
+			let content: string | null = null;
+
+			try {
+				content = await requestPage;
+			} catch {
+				resolver.handleError();
+			}
+
+			if (!content) {
+				return;
+			}
+
+			const parser = new DOMParser();
+			const doc = parser.parseFromString(content, 'text/html');
+
+			if (resolver.pushState && resolver.shouldPushState) {
+				resolver.updateHistory(doc.title, url);
+			}
+
+			await resolver.updateContent(doc);
+			await resolver.contentIn();
+		}
+
+		return {
+			loadPage,
+		};
+	}
+);
