@@ -44,10 +44,20 @@ async function buildJSXRuntime(packagePath: string) {
 	const input = path.resolve(packagePath, `src/jsx/jsx-runtime.ts`);
 
 	await generateJsFile(packagePath, { input }, 'es', 'jsx-runtime.js');
+	// dupe for dev
+	fs.copyFileSync(
+		path.join(packagePath, 'dist/jsx-runtime.js'),
+		path.join(packagePath, 'dist/jsx-dev-runtime.js')
+	);
 
 	console.log(`[BUILD] Generating JSX typings...`);
 
 	await generateDtsFile(packagePath, { input }, 'jsx-runtime');
+	// dupe for dev
+	fs.copyFileSync(
+		path.join(packagePath, 'dist/jsx-runtime.d.ts'),
+		path.join(packagePath, 'dist/jsx-dev-runtime.d.ts')
+	);
 
 	console.log(`[BUILD] Jsx runtime package build!`);
 }

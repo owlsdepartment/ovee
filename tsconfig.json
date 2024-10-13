@@ -5,6 +5,7 @@
         "moduleResolution": "node",
         "isolatedModules": true,
         "noImplicitAny": true,
+        "noImplicitOverride": true,
         "lib": ["ES2017", "ES7", "ES6", "DOM"],
         "target": "ESNext",
         "strict": true,

@@ -1,6 +1,6 @@
 import type * as jsx from 'html-jsx';
 
-import { JSXElement } from './runtime';
+import { Children, JSXElement } from './runtime';
 
 // this declaration allows us to augment JSX interfaces
 declare module 'html-jsx' {
@@ -28,9 +28,9 @@ declare global {
 			[k: string]: unknown;
 		}
 
-		// interface ElementChildrenAttribute {
-		// 	children: Children;
-		// }
+		interface ElementChildrenAttribute {
+			children: Children;
+		}
 
 		/**
 		 * These are exported to the global JSX namespace to allow

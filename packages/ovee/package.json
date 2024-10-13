@@ -17,12 +17,16 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": "./dist/index.mjs",
-    "./jsx-runtime": "./dist/jsx-runtime.js"
+    "./jsx-runtime": "./dist/jsx-runtime.js",
+    "./jsx-dev-runtime": "./dist/jsx-dev-runtime.js"
   },
   "typesVersions": {
     "*": {
       "jsx-runtime": [
         "dist/jsx-runtime.d.ts"
+      ],
+      "jsx-dev-runtime": [
+        "dist/jsx-dev-runtime.d.ts"
       ]
     }
   },
@@ -36,7 +40,7 @@
   },
   "devDependencies": {
     "html-jsx": "^1.0.0",
-    "typescript": "^4.9.5",
+    "typescript": "^5.6.2",
     "vitest": "^0.32.4"
   },
   "scripts": {

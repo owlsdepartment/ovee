@@ -1,30 +1,35 @@
-import { EffectScope, effectScope, ShallowRef, shallowRef } from '@vue/reactivity';
+import { EffectScope, effectScope, reactive, ShallowRef, shallowRef } from '@vue/reactivity';
 
 import { EventDelegate, EventDesc, ListenerOptions, TargetOptions } from '@/dom';
 import { SlotChildren } from '@/jsx';
-import { AnyFunction, EventBus, OmitNil, runThrowable } from '@/utils';
+import { AnyFunction, AnyObject, Data, EventBus, OmitNil, runThrowable } from '@/utils';
 
 import { App } from '../app';
 import { provideComponentContext } from './componentContext';
 import { Component, ComponentOptions, ComponentReturn } from './defineComponent';
+import { NormalizedProps, PropsDefinition, resolvePropsValues } from './props';
 import { ComponentContext, ComponentInstance, WithOveeInstances } from './types';
 
 export class ComponentInternalInstance<
 	Root extends HTMLElement = HTMLElement,
 	Options extends ComponentOptions = ComponentOptions,
+	Props extends ComponentOptions = ComponentOptions,
 	Return extends ComponentReturn = ComponentReturn
-> implements ComponentInstance<Root, Options>
+> implements ComponentInstance<Root, Options, Props>
 {
 	mounted = false;
 	beforeMountBus = new EventBus('onBeforeMount');
 	mountBus = new EventBus('onMounted');
 	unmountBus = new EventBus('onUnmounted');
+	props = reactive({}) as Props;
 	renderPromise?: Promise<void>;
 	jsxSlot?: ShallowRef<SlotChildren>;
 
 	readonly instance: OmitNil<Return>;
 	readonly eventDelegate: EventDelegate<this>;
 	readonly scope: EffectScope;
+
+	private cachedPropsDefaults: AnyObject = {};
 
 	get unmounted() {
 		return !this.mounted;
@@ -34,11 +39,16 @@ export class ComponentInternalInstance<
 		return this.element as Root & WithOveeInstances;
 	}
 
-	private get componentContext(): ComponentContext<Options> {
+	get rawProps(): NormalizedProps {
+		return this.component.__ovee_props;
+	}
+
+	private get componentContext(): ComponentContext<Options, Props> {
 		return {
 			name: this.name,
 			app: this.app,
 			options: this.options as Options,
+			props: this.props,
 
 			emit: (...args) => this.emit(...args),
 			on: (...args) => this.on(...args),
@@ -50,13 +60,16 @@ export class ComponentInternalInstance<
 		public name: string,
 		public element: Root,
 		public app: App,
-		public component: Component<Root, Options, Return>,
+		public component: Component<Root, Options, PropsDefinition, Return>,
 		public options: Options,
-		jsxSlot?: SlotChildren
+		jsxSlot?: SlotChildren,
+		preSetup?: (instance: ComponentInternalInstance) => void
 	) {
 		this.eventDelegate = new EventDelegate(element, this);
 
 		if (jsxSlot) this.jsxSlot = shallowRef(jsxSlot);
+
+		preSetup?.(this as any);
 
 		const cleanUp = provideComponentContext(this);
 
@@ -122,5 +135,17 @@ export class ComponentInternalInstance<
 
 	emit<D = any>(eventDesc: EventDesc, detail?: D): void {
 		this.eventDelegate.emit(eventDesc, detail);
+	}
+
+	/**
+	 * @returns omitted props, not included in generation
+	 */
+	updateProps(rawProps: Data): Data {
+		return resolvePropsValues(
+			rawProps,
+			this.props,
+			this.component.__ovee_props,
+			this.cachedPropsDefaults
+		);
 	}
 }

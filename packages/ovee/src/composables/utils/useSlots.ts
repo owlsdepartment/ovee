@@ -1,7 +1,7 @@
 import { NOOP } from '@/constants';
 import { ComponentInstance, injectComponentContext } from '@/core';
 import { Logger } from '@/errors';
-import { Children, Fiber, JSX_FRAGMENT } from '@/jsx';
+import { Fiber, JSX_FRAGMENT, JSXElement } from '@/jsx';
 import { getNoContextWarning } from '@/utils';
 
 type StoredSlot = HTMLTemplateElement | Node[];
@@ -10,7 +10,7 @@ const logger = new Logger('useSlots');
 const DEFAULT_SLOT_NAME = 'default';
 
 // NOTE: may be built in useTemplate, for now it's seperate
-export type SlotFunction = (name: string) => Children;
+export type SlotFunction = (props: { name?: string }) => JSXElement;
 
 const slotsMap = new Map<ComponentInstance, SlotFunction>();
 
@@ -38,7 +38,7 @@ function initializeSlots(instance: ComponentInstance): SlotFunction {
 		return initHTMLSlots(instance);
 	}
 
-	return (name): Children => {
+	return ({ name = DEFAULT_SLOT_NAME }) => {
 		const jsxSlot = instance.jsxSlot!.value;
 		const isFunction = typeof jsxSlot === 'function';
 
@@ -86,7 +86,7 @@ function initHTMLSlots(instance: ComponentInstance): SlotFunction {
 
 	storedSlots.clear();
 
-	return (name): Fiber => {
+	return ({ name = DEFAULT_SLOT_NAME }): Fiber => {
 		const node = slots.get(name);
 
 		return {

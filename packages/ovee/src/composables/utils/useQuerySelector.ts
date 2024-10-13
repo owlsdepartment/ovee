@@ -140,7 +140,7 @@ function useQuerySelectorManager<El extends HTMLElement = HTMLElement>(
 const queryManagersMap = new Map<ComponentInstance, QuerySelectorManager>();
 
 class QuerySelectorManager extends MutationObserverManager {
-	connected = false;
+	override connected = false;
 	observer: MutationObserver;
 	callbacks: Array<() => void> = [];
 	observeOptions = observerOptions;
