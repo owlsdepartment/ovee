@@ -10,10 +10,15 @@ export const isEvent = (key: string) => key.startsWith('on') && isUpperCase(key[
 
 export const isAtrribute = (key: string) => key !== 'children';
 
-export const isNew = (prev: FiberProps, next: FiberProps) => (key: string) =>
-	prev[key] !== next[key];
+export const isNew = (prev: FiberProps, next: FiberProps) => (key: string) => {
+	if (key in next && !(key in prev)) return true;
 
-export const isGone = (next: FiberProps) => (key: string) => !(key in next);
+	return prev[key] !== next[key];
+};
+
+export const isGone = (prev: FiberProps, next: FiberProps) => (key: string) => {
+	return !(key in next) || (isNil(next[key]) && prev[key] !== next[key]);
+};
 
 export const isFunctionFiber = (fiber: Fiber): fiber is FunctionFiber =>
 	typeof fiber.type === 'function';

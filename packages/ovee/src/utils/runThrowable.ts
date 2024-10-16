@@ -1,6 +1,6 @@
 import { Logger } from '@/errors';
 
-import { isString } from './isString';
+import { isString } from './typeChecking';
 
 export function runThrowable<R>(
 	what: string,

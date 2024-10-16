@@ -1,4 +1,4 @@
-import { isNil } from './isNil';
+import { isNil } from './typeChecking';
 
 export type AttributeMapType = 'number' | 'boolean';
 export type GetTypeFromMapType<T extends AttributeMapType> = T extends 'number' ? number : boolean;

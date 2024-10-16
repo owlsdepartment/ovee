@@ -7,8 +7,8 @@ import {
 	GetComponentInternalInstance,
 	HTMLOveeElement,
 } from '../core';
-import { isString } from './isString';
 import { toKebabCase } from './toKebabCase';
+import { isString } from './typeChecking';
 
 export function extractComponentInternalInstance<C extends Component = AnyComponent>(
 	element: HTMLOveeElement,

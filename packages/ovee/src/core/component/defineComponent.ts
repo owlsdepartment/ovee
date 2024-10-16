@@ -136,8 +136,6 @@ export function defineComponent<
 
 		node.setup(<any>instance);
 
-		console.log('-->', props);
-
 		return { type, node, props };
 	};
 

@@ -1,10 +1,12 @@
-export type JSXElement = undefined | null | string | number | Fiber;
+import { AnyObject } from '@/utils';
+
+export type JSXElement = undefined | null | boolean | string | number | Fiber;
 export type Children = JSXElement | JSXElement[];
-export type SlotProp = () => Children;
+export type SlotProp = () => JSXElement;
 export type SlotChildren = SlotProp | Record<string | 'default', SlotProp>;
 
 export interface Props {
-	children?: Children;
+	children?: Children | Children[];
 	[k: string]: any;
 }
 
@@ -46,6 +48,9 @@ export interface FiberShared<P> {
 	effectTag?: EffectTag;
 }
 
-export type FiberFactory = (props: FunctionFiberProps, fiber: Fiber) => Fiber;
+export type FiberFactory<Props extends AnyObject = AnyObject> = (
+	props: FunctionFiberProps & Props,
+	fiber: Fiber
+) => Fiber;
 
 export type EffectTag = 'UPDATE' | 'PLACEMENT' | 'DELETION';

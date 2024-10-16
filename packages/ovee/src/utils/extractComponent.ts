@@ -1,6 +1,6 @@
 import { AnyComponent, App, Component, GetComponentInstance, HTMLOveeElement } from '../core';
 import { extractComponentInternalInstance } from './extractComponentInternalInstance';
-import { isString } from './isString';
+import { isString } from './typeChecking';
 
 export function extractComponent<C extends Component = AnyComponent>(
 	element: HTMLOveeElement,

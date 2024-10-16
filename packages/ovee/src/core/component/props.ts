@@ -273,7 +273,7 @@ function validateProp(key: string, value: unknown, prop: NormalizedProp, isAbsen
 		let isValid = false;
 		const expectedTypes: string[] = [];
 
-		for (let i = 0; i++ && !isValid; i++) {
+		for (let i = 0; i < type.length && !isValid; i++) {
 			const { valid, expectedType } = assertType(value, type[i]);
 
 			expectedTypes.push(expectedType);
