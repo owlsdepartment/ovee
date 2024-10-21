@@ -10,16 +10,16 @@ export interface ContentLoaderOptions {
 	timeout?: number;
 }
 
-const { request } = barba;
-
 export interface ContentLoaderReturn {
-	loadPage: (
-		url: string,
-		resolverName: string,
-		target?: Element | null,
-		pushState?: boolean
-	) => Promise<void>;
+	loadPage: LoadPage;
 }
+
+type LoadPage = (
+	url: string,
+	resolverName: string,
+	target?: Element | null,
+	pushState?: boolean
+) => Promise<void>;
 
 export const ContentLoader = defineModule<ContentLoaderOptions, ContentLoaderReturn>(
 	({ app, options }) => {
@@ -36,12 +36,7 @@ export const ContentLoader = defineModule<ContentLoaderOptions, ContentLoaderRet
 			return resolvers[name];
 		}
 
-		async function loadPage(
-			url: string,
-			resolverName: string,
-			target: Element | null = null,
-			pushState = true
-		): Promise<void> {
+		const loadPage: LoadPage = async (url, resolverName, target = null, pushState = true) => {
 			const ResolverCtor = getResolver(resolverName);
 
 			if (!ResolverCtor) {
@@ -49,7 +44,7 @@ export const ContentLoader = defineModule<ContentLoaderOptions, ContentLoaderRet
 			}
 
 			const resolver = new ResolverCtor(app, target, url, pushState);
-			const requestPage = request(url, timeout, (reqUrl, reqErr) => {
+			const requestPage = barba.request(url, timeout, (reqUrl, reqErr) => {
 				console.error(`[ovee.js/ContentLoader] Error while requesting ${reqUrl}`, reqErr);
 
 				return false;
@@ -78,7 +73,7 @@ export const ContentLoader = defineModule<ContentLoaderOptions, ContentLoaderRet
 
 			await resolver.updateContent(doc);
 			await resolver.contentIn();
-		}
+		};
 
 		return {
 			loadPage,
