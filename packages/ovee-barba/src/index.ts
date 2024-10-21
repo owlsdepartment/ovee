@@ -1,4 +1,4 @@
-import barba, { IBarbaOptions, IBarbaPlugin, LinkEvent, Trigger, HooksPage } from '@barba/core';
+import barba, { HooksPage, IBarbaOptions, IBarbaPlugin, LinkEvent, Trigger } from '@barba/core';
 import { defineModule, onDestroy } from 'ovee.js';
 
 declare module 'ovee.js' {
@@ -13,15 +13,26 @@ export interface OveeBarbaOptions extends IBarbaOptions {
 	hooks: BarbaHooks;
 }
 
-export type BarbaHooks = Partial<Record<HooksPage, () => any>>;
+export interface OveeBarbaReturn {
+	go: BarbaGo;
+	prefetch: BarbaPrefetch;
+}
 
+export type BarbaHooks = Partial<Record<HooksPage, () => any>>;
 export type BarbaPlugin<T = any> = IBarbaPlugin<T> | [IBarbaPlugin<T>, T];
 
-export const OveeBarba = defineModule<OveeBarbaOptions>(({ app, options }) => {
+export type BarbaGo = (
+	href: string,
+	trigger?: Trigger,
+	e?: LinkEvent | PopStateEvent
+) => Promise<void>;
+export type BarbaPrefetch = (href: string) => void;
+
+export const OveeBarba = defineModule<OveeBarbaOptions, OveeBarbaReturn>(({ app, options }) => {
 	const defaultOptions: OveeBarbaOptions = {
 		plugins: [],
 		hooks: {},
-	};	
+	};
 	const hooks: BarbaHooks = options.hooks ?? {};
 
 	options = {
@@ -29,22 +40,20 @@ export const OveeBarba = defineModule<OveeBarbaOptions>(({ app, options }) => {
 		...options,
 	};
 
-	init();
+	checkOptions();
+	usePlugins();
+	barba.init(options);
+	initHooks();
+
+	const go: BarbaGo = (...args) => barba.go(...args);
+	const prefetch: BarbaPrefetch = (...args) => barba.prefetch(...args);
+
+	app.$go = go;
+	app.$prefetch = prefetch;
 
 	onDestroy(() => {
 		barba.destroy();
-	})
-
-	function init() {
-		checkOptions();
-		usePlugins();
-
-		barba.init(options);
-		initHooks();
-
-		app.$go = (...args) => barba.go(...args)
-		app.$prefetch = (...args) => barba.prefetch(...args);
-	}
+	});
 
 	function checkOptions() {
 		const opt = options as any;
@@ -94,4 +103,9 @@ export const OveeBarba = defineModule<OveeBarbaOptions>(({ app, options }) => {
 		hooks[name]?.();
 		app.$emit(`barba:${appName ?? name}`);
 	}
+
+	return {
+		go,
+		prefetch,
+	};
 });

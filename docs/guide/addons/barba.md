@@ -63,15 +63,20 @@ The module's options object accepts same set of options that Barba would use. Ad
 
 | Method | Description |
 |:------ |:----------- |
-| `$go(href: string, trigger?: Trigger, e?: LinkEvent | PopStateEvent)` | Tell Barba to go to a specific URL |
-| `$prefetch(href: string)` | Prefetch the given URL |
+| `go(href: string, trigger?: Trigger, e?: LinkEvent | PopStateEvent)` | Tell Barba to go to a specific URL |
+| `prefetch(href: string)` | Prefetch the given URL |
+
+Those methods are also available on `app` instance with `$` prefix.
 
 Example:
 
 ```ts
 export const MyComponent = defineComponent(() => {
-   const app = useApp(); // [!code focus]
-   app.$prefetch('/about-us'); // [!code focus]
+    const oveeBarba = useModule(OveeBarba); // [!code focus]
+    oveeBarba.prefetch('/about-us'); // [!code focus]
+    // with app  // [!code focus]
+    const app = useApp() // [!code focus]
+    app.$prefetch('/about-us') // [!code focus]
 })
 ```
 
