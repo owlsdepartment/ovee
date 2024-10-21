@@ -1,6 +1,5 @@
-/* eslint-disable max-classes-per-file */
-import barba, { IBarbaOptions, IBarbaPlugin, LinkEvent, Trigger } from '@barba/core';
-import { Module } from 'ovee.js';
+import barba, { HooksPage, IBarbaOptions, IBarbaPlugin, LinkEvent, Trigger } from '@barba/core';
+import { defineModule, onDestroy } from 'ovee.js';
 
 declare module 'ovee.js' {
 	interface App {
@@ -9,59 +8,55 @@ declare module 'ovee.js' {
 	}
 }
 
-type Hook =
-	| 'before'
-	| 'beforeLeave'
-	| 'leave'
-	| 'afterLeave'
-	| 'beforeEnter'
-	| 'enter'
-	| 'afterEnter'
-	| 'after';
-
 export interface OveeBarbaOptions extends IBarbaOptions {
 	plugins: BarbaPlugin[];
 	hooks: BarbaHooks;
 }
 
-export type BarbaHooks = Partial<Record<Hook, () => any>>;
+export interface OveeBarbaReturn {
+	go: BarbaGo;
+	prefetch: BarbaPrefetch;
+}
 
+export type BarbaHooks = Partial<Record<HooksPage, () => any>>;
 export type BarbaPlugin<T = any> = IBarbaPlugin<T> | [IBarbaPlugin<T>, T];
 
-const defaultOptions: OveeBarbaOptions = {
-	plugins: [],
-	hooks: {},
-};
+export type BarbaGo = (
+	href: string,
+	trigger?: Trigger,
+	e?: LinkEvent | PopStateEvent
+) => Promise<void>;
+export type BarbaPrefetch = (href: string) => void;
 
-export class OveeBarba extends Module<OveeBarbaOptions> {
-	get hooks(): BarbaHooks {
-		return this.options.hooks ?? {};
-	}
+export const OveeBarba = defineModule<OveeBarbaOptions, OveeBarbaReturn>(({ app, options }) => {
+	const defaultOptions: OveeBarbaOptions = {
+		plugins: [],
+		hooks: {},
+	};
+	const hooks: BarbaHooks = options.hooks ?? {};
 
-	init(): void {
-		this.options = {
-			...defaultOptions,
-			...this.options,
-		};
+	options = {
+		...defaultOptions,
+		...options,
+	};
 
-		this.checkOptions();
-		this.usePlugins();
+	checkOptions();
+	usePlugins();
+	barba.init(options);
+	initHooks();
 
-		barba.init(this.options);
-		this.initHooks();
+	const go: BarbaGo = (...args) => barba.go(...args);
+	const prefetch: BarbaPrefetch = (...args) => barba.prefetch(...args);
 
-		this.$app.$go = (...args) => barba.go(...args);
-		this.$app.$prefetch = (...args) => barba.prefetch(...args);
-	}
+	app.$go = go;
+	app.$prefetch = prefetch;
 
-	destroy(): void {
-		super.destroy();
-
+	onDestroy(() => {
 		barba.destroy();
-	}
+	});
 
-	private checkOptions(): void {
-		const opt = this.options as any;
+	function checkOptions() {
+		const opt = options as any;
 
 		if (opt.useCss || opt.useRouter || opt.usePrefetch) {
 			throw Error(
@@ -70,8 +65,8 @@ export class OveeBarba extends Module<OveeBarbaOptions> {
 		}
 	}
 
-	private usePlugins(): void {
-		for (const plugin of this.options.plugins) {
+	function usePlugins() {
+		for (const plugin of options.plugins) {
 			if (Array.isArray(plugin)) {
 				barba.use(plugin[0], plugin[1]);
 			} else {
@@ -80,37 +75,37 @@ export class OveeBarba extends Module<OveeBarbaOptions> {
 		}
 	}
 
-	private initHooks(): void {
-		this.registerHook('before');
-		this.registerHook('beforeLeave', 'before-leave');
-		this.registerHook('leave');
-		this.registerHook('afterLeave', 'after-leave');
-		this.registerHook('beforeEnter', 'before-enter');
+	function initHooks() {
+		registerHook('before');
+		registerHook('beforeLeave', 'before-leave');
+		registerHook('leave');
+		registerHook('afterLeave', 'after-leave');
+		registerHook('beforeEnter', 'before-enter');
 
 		barba.hooks.enter(data => {
 			const { next } = data ?? {};
 			const { bodyClass } = next!.container.dataset;
 
-			this.$app.getConfig().document.body.classList.value = bodyClass ?? '';
+			app.rootElement.classList.value = bodyClass ?? '';
 
-			this.callHook('enter');
+			callHook('enter');
 		});
 
-		this.registerHook('afterEnter', 'after-enter');
-		this.registerHook('after');
+		registerHook('afterEnter', 'after-enter');
+		registerHook('after');
 	}
 
-	private registerHook(name: Hook, appName?: string): void {
-		barba.hooks[name](() => this.callHook(name, appName));
+	function registerHook(name: HooksPage, appName?: string) {
+		barba.hooks[name](() => callHook(name, appName));
 	}
 
-	private callHook(name: Hook, appName?: string): void {
-		// eslint-disable-next-line no-unused-expressions
-		this.hooks[name]?.();
-		this.$app.$emit(`barba:${appName ?? name}`);
+	function callHook(name: HooksPage, appName?: string) {
+		hooks[name]?.();
+		app.$emit(`barba:${appName ?? name}`);
 	}
 
-	static getName(): string {
-		return 'OveeBarba';
-	}
-}
+	return {
+		go,
+		prefetch,
+	};
+});
