@@ -67,6 +67,17 @@ Tho to be fair, situation when module is being destroyed before app itself and u
 Both of these lifecycle functions run only once for each module instance
 :::
 
+::: tip
+If you're not sure if code is executed inside a module, f.ex. when writing really versatile composable, you can use hooks with `try...` prefix. If code is executed outside of a module context, then nothing will happen and no errors will be logged.
+
+```ts
+export function useComposable() {
+    tryOnInit(() => { /* ... */ }) // [!code focus]
+    tryOnDestroy(() => { /* ... */ }) // [!code focus]
+}
+```
+:::
+
 ## Module instance
 
 When declaring a module, you can optionally return an object. If you do that, it will be saved as a module's instance and exposed for rest of the app. This mechanism allows you to return a methods or values, for module control and data sharing.

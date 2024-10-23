@@ -88,6 +88,17 @@ export const MyComponent = defineComponent(() => {
 })
 ```
 
+::: tip
+If you're not sure if code is executed inside a component, f.ex. when writing really versatile composable, you can use hooks with `try...` prefix. If code is executed outside of a component context, then nothing will happen and no errors will be logged.
+
+```ts
+export function useComposable() {
+    tryOnMounted(() => { /* ... */ }) // [!code focus]
+    tryOnUnmounted(() => { /* ... */ }) // [!code focus]
+}
+```
+:::
+
 ## Component context
 
 It's time to address a second setup parameter: __component context__. It's an object, containing a few important things:

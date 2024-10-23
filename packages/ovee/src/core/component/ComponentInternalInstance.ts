@@ -74,12 +74,11 @@ export class ComponentInternalInstance<
 		const cleanUp = provideComponentContext(this);
 
 		this.scope = effectScope(true);
-		this.instance = this.scope.run(() => {
-			return (
+		this.instance = this.scope.run(
+			() =>
 				runThrowable('component setup', () => component(element, this.componentContext)) ??
 				({} as any)
-			);
-		});
+		);
 
 		cleanUp();
 
