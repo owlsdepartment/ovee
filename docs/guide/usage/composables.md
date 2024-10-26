@@ -114,3 +114,23 @@ export const MyComponent = defineComponent(() => {
     otherInstance.doSomething() // [!code focus]
 })
 ```
+
+## Universal hooks
+
+If we want to write a composable that could be called inside either a module or a component, and we want to react to the lifecycle of out context, then we would need to use both `onMounted/onUnmounted` and `onInit/onDestroy`.
+
+Fortunately, `init/destroy` hooks are universal and work inside both modules and components. So we can just write:
+
+```ts
+export function useMyComposable() {
+    onInit(() => {
+        // run during `init` of a module
+        // or during `mounted` of a component
+    })
+
+    onDestroy(() => {
+        // run during `destroy` of a module
+        // or during `unmounted` of a component
+    })
+}
+```

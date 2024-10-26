@@ -1,3 +1,5 @@
+import { EffectScope, effectScope } from '@vue/reactivity';
+
 import { EventBus, OmitNil, runThrowable } from '@/utils';
 
 import { App } from '../app';
@@ -14,12 +16,16 @@ export class ModuleInternalInstance<
 	initBus = new EventBus('onInit');
 	destroyBus = new EventBus('onDestroy');
 
+	readonly scope: EffectScope;
 	readonly instance: OmitNil<Return>;
 
 	constructor(public app: App, public module: Module<Options, Return>, public options: Options) {
 		const cleanUp = provideModuleContext(this);
 
-		this.instance = runThrowable('module setup', () => module({ app, options })) ?? ({} as any);
+		this.scope = effectScope(true);
+		this.instance = this.scope.run(
+			() => runThrowable('module setup', () => module({ app, options })) ?? ({} as any)
+		);
 		cleanUp();
 	}
 
@@ -27,13 +33,14 @@ export class ModuleInternalInstance<
 		if (this.initialized) return;
 
 		this.initialized = true;
-		this.initBus.emit();
+		this.scope.run(() => this.initBus.emit());
 	}
 
 	destroy() {
 		if (!this.initialized) return;
 
 		this.initialized = false;
+		this.scope.stop();
 		this.destroyBus.emit();
 	}
 }

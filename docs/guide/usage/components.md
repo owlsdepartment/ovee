@@ -4,16 +4,16 @@ Now we can get to the *crème de la crème* of Ovee: __components__! The reusabl
 
 ## Defining a component
 
-Similarly to [Modules](./modules.md), we start with a `defineComponent` method, which accepts a __setup function__, inside which you can access the current component's context.
+Similarly to [Modules](./modules.md), we start with a `defineComponent` method, which accepts a __setup function__, inside which you can access the current component's context and options.
 
 ```ts
 import { defineComponent } from 'ovee.js'
 
-export const MyComponent = defineComponent((element, {
-    app, on, off, emit, name, options
-}) => {
-    console.log('hi from component!')
-})
+export const MyComponent = defineComponent(
+    (element, { app, on, off, emit, name }, options) => {
+        console.log('hi from component!')
+    }
+)
 ```
 
 And just register it in the app
@@ -25,9 +25,10 @@ createApp()
     .component(MyComponent)
 ```
 
-The setup function is called with two arguments:
+The setup function is called with three arguments:
  - HTML Element on which the component is connected to
  - component's context, which will be explained later on
+ - component's options that were passed during component registration
 
 ::: tip
 Unlike modules, the component's setup function is called when the component's instance is created, so when a proper HTML tag or data attribute is used, not when it's registered in the app.
@@ -88,6 +89,17 @@ export const MyComponent = defineComponent(() => {
 })
 ```
 
+::: tip
+If you're not sure if code is executed inside a component, f.ex. when writing really versatile composable, you can use hooks with `try...` prefix. If code is executed outside of a component context, then nothing will happen and no errors will be logged.
+
+```ts
+export function useComposable() {
+    tryOnMounted(() => { /* ... */ }) // [!code focus]
+    tryOnUnmounted(() => { /* ... */ }) // [!code focus]
+}
+```
+:::
+
 ## Component context
 
 It's time to address a second setup parameter: __component context__. It's an object, containing a few important things:
@@ -97,11 +109,10 @@ It's time to address a second setup parameter: __component context__. It's an ob
  - `off` - function for removing event handlers
  - `emit` - function for emitting events
  - `name` - component's name
- - `options` - configuration object used, when registering component
 
 Functions associated with event handling will be discussed in [the next chapter](./event-handling.md). `app` instance is rarely needed in components, so we won't talk about it here, but you can find a reference to it in the API section.
 
-We also have `options`, which similarly to `modules`, are a simple way to globally pass configuration object for all instances of a specific component. To set component options, all you need to do is add them when registering to the app:
+We also have 3rd argument: `options`, which similarly to `modules`, are a simple way to globally pass configuration object for all instances of a specific component. To set component options, all you need to do is add them when registering to the app:
 
 ::: code-group
 ```ts [app.ts]
@@ -114,7 +125,7 @@ createApp()
 ```
 
 ```ts [MyComponent.ts]
-export const MyComponent = defineComponent((element, { options }) => {
+export const MyComponent = defineComponent((element, _, options) => {
     const event = options.event
 
     // ...
@@ -125,9 +136,9 @@ export const MyComponent = defineComponent((element, { options }) => {
 Providing default options is just a plain JS
 
 ```ts
-export const MyComponent = defineComponent((element, { // [!code focus]
+export const MyComponent = defineComponent((element, _, // [!code focus]
     options = { event: 'change' } // [!code focus]
-}) => { // [!code focus]
+) => { // [!code focus]
     const event = options.event
 
     // ...
@@ -193,4 +204,42 @@ export const MyComponent = defineComponent(async () => {
 
     const data = await fetch(`https://api.fallback.com/awesome/data`)
 })
+```
+
+## Typing component with TypeScript
+
+You can fully type your component, by passing all generics, but it's not recommended. Most of the time, you want to specify only specific parts of the component, like only `options` or only root `element`. The best way to do that is inside function itself, like so:
+
+```ts
+interface MyComponentOptions {
+    event?: string
+}
+
+interface MyComponentReturn {
+    refresh(): void
+}
+
+export const MyComponent = defineComponent(
+    (el: HTMLAnchorElement, {}, options: MyComponentOptions = { event: 'change' }): MyComponentReturn => {
+        return {
+            refresh: () => {
+                // ...
+            }
+        }
+    }
+)
+```
+
+This way you can type only one specific parameter, and the rest will be infered by TS with usage. For example, to just type element, and let the return type be inferred:
+
+```ts
+export const MyComponent = defineComponent(
+    (el: HTMLAnchorElement, { on, off }) => {
+        return {
+            refresh: (now?: boolean) => {
+                // ...
+            }
+        }
+    }
+)
 ```

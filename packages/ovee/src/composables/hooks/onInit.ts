@@ -1,17 +1,24 @@
-import { injectModuleContext } from '@/core';
+import { injectComponentContext, injectModuleContext } from '@/core';
 import { Logger } from '@/errors';
 import { getNoContextWarning } from '@/utils';
 
 const logger = new Logger('onInit');
 
-export function onInit(cb: () => void) {
-	const instance = injectModuleContext(true);
+export function onInit(cb: () => void, silent = false) {
+	const moduleInstance = injectModuleContext(true);
+	const componentInstance = injectComponentContext(true);
 
-	if (!instance) {
-		logger.warn(getNoContextWarning('onInit'));
+	if (!moduleInstance && !componentInstance) {
+		if (!silent) logger.warn(getNoContextWarning('onInit'));
 
 		return;
 	}
 
-	instance.initBus.on(cb);
+	const bus = moduleInstance?.initBus || componentInstance?.mountBus;
+
+	bus?.on(cb);
+}
+
+export function tryOnInit(cb: () => void) {
+	onInit(cb, true);
 }

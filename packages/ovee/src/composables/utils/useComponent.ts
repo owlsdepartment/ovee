@@ -1,10 +1,18 @@
-import { Component, GetComponentInstance, injectComponentContext } from '@/core';
+import {
+	Component,
+	GetComponentInstance,
+	GetComponentOptions,
+	injectComponentContext,
+} from '@/core';
 import { Logger } from '@/errors';
 import { getNoContextWarning } from '@/utils';
 
 const logger = new Logger('useComponent');
 
-export function useComponent<C extends Component>(component: C): GetComponentInstance<C> {
+export function useComponent<C extends Component>(
+	component: C,
+	options?: GetComponentOptions<C>
+): GetComponentInstance<C> {
 	const instance = injectComponentContext(true);
 
 	if (!instance) {
@@ -19,5 +27,7 @@ export function useComponent<C extends Component>(component: C): GetComponentIns
 		return null as any;
 	}
 
-	return component(instance.element, instance) as any;
+	options ??= instance.options;
+
+	return component(instance.element, instance, options) as any;
 }
