@@ -43,11 +43,10 @@ export class ComponentInternalInstance<
 		return this.component.__ovee_props;
 	}
 
-	private get componentContext(): ComponentContext<Options, Props> {
+	private get componentContext(): ComponentContext<Props> {
 		return {
 			name: this.name,
 			app: this.app,
-			options: this.options as Options,
 			props: this.props,
 
 			emit: (...args) => this.emit(...args),
@@ -74,12 +73,12 @@ export class ComponentInternalInstance<
 		const cleanUp = provideComponentContext(this);
 
 		this.scope = effectScope(true);
-		this.instance = this.scope.run(() => {
-			return (
-				runThrowable('component setup', () => component(element, this.componentContext)) ??
-				({} as any)
-			);
-		});
+		this.instance = this.scope.run(
+			() =>
+				runThrowable('component setup', () =>
+					component(element, this.componentContext, this.options)
+				) ?? ({} as any)
+		);
 
 		cleanUp();
 

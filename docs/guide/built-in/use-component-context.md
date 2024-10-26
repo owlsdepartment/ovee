@@ -1,6 +1,6 @@
 # Use Component Context
 
-A helper composable to get current components context.
+A helper composable to get current components context. It's not fully typed, as it's cannot always assume a context it's used in.
 
 ```ts
 import { useComponentContext } from 'ovee.js'

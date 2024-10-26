@@ -76,6 +76,118 @@ export const MyComponent = defineComponent(() => {
 })
 ```
 
+## Props
+
+JSX components can accept attributes, that will be rendered in HTML, but what if you want to pass some data from parent component to child, like f.ex. pure JS object or function. That's where component props comes in.
+
+You can specify component props as the first agument of `defineComponent`. It's an object, which key is the name of the prop and a value is prop's `type` or options object, with prop's `type`, `default` value or `required` flag. Every prop is optional if not marked as required.
+
+```tsx
+import { Prop } from 'ovee.js'
+
+export const MyComponent = defineComponent({
+    // optional string prop
+    name: Prop.string,
+    // reqruied string prop
+    amount: {
+        type: Prop.number,
+        required: true,
+    },
+    // optional string or number prop, which is nullable
+    id: [Prop.string, Prop.number, null],
+    // optional data object with default value
+    data: {
+        type: Prop.object,
+        default: () => ({ id: 0, value: null })
+    }
+}, (el, { props }) => {
+    // ...
+})
+
+// usage
+export const ParentComponent = defineComponent(() => {
+    const data = {
+        id: 10,
+        value: 'Shaekspear\'s Hamlet'
+    }
+
+    useTemplate(() => (
+        <div>
+            <MyComponent.jsx name='parent' amount={10} id={null} data={data} />
+        </div>
+    ))
+})
+```
+
+Specifying prop's type no only is a good way to document it, it also allow for both runtime type check in browser and TypeScript type check during build/in editor. All prop types are available under imported object `Prop`. Available types are:
+
+- `boolean`
+- `string`
+- `symbol`
+- `number`
+- `array`
+- `object`
+- `function`
+- `any` - similar to TS primitive `any`, it accepts any possbile value
+- `null` - to specify `null`, just use pure `null` value
+
+To specify more than one type for a prop, pass them as an array.
+
+```ts
+export const MyComponent = defineComponent({
+    id: [Prop.string, Prop.number, null], // [!code focus]
+}, (el, { props }) => {
+    // ...
+})
+```
+
+To mark prop as required, pass an object with `required: true`.
+
+```ts
+export const MyComponent = defineComponent({
+    id: { // [!code focus]
+        type: Prop.string, // [!code focus]
+        required: true // [!code focus]
+    }, // [!code focus]
+}, (el, { props }) => {
+    // ...
+})
+```
+
+You can speficy a default value for a prop. It can be a plain value or a factory function. Factory function is required, when providing with default array or object.
+
+```ts
+export const MyComponent = defineComponent({
+    type: { // [!code focus]
+        type: Prop.string, // [!code focus]
+        default: 'normal' // [!code focus]
+    }, // [!code focus]
+    values: { // [!code focus]
+        type: Prop.array, // [!code focus]
+        default: () => [] // [!code focus]
+    } // [!code focus]
+}, (el, { props }) => {
+    // ...
+})
+```
+
+::: warning
+Do not use `key` or `children` as a prop names, as they are used internally by `ovee`
+:::
+
+### More narrow types
+
+Every prop type accepts a generic argument which can make types more narrow, but it is only a TS type check, not a runtime check. Passed generic needs to match used type, so if you want to type an array of values, you should use `Prop.array`, but if you want to type an object, you should use `Prop.object`.
+
+Some examples of narrowing types:
+
+```ts
+Prop.string<'primary' | ''> // string union
+Prop.array<number[]> // array of numbers
+Prop.object<User> // accepts user object
+Prop.any<string | string[]> // if you don't care about runtime check, you can use any and pass all possible types
+```
+
 ## Slots
 
 Let's imagine a situation where we have a button component. Through attributes, we can pass the button's inner text. That's cool. But what when we want to pass some more specific HTML? Maybe a bold or italic in certain parts of the text? Maybe something like an icon? Then we have a problem. We could make multiple components, that reuse this one, but it's not really efficient and heavily violates the DRY rule.
