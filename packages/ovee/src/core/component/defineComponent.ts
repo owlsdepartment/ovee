@@ -24,13 +24,17 @@ export interface ComponentDefineFunction<
 	Props extends PropsDefinition = PropsDefinition,
 	Return extends ComponentReturn = ComponentReturn
 > {
-	(element: Root, context: ComponentContext<Options, PropsDefinitionToRawTypes<Props>>): Return;
+	(
+		element: Root,
+		context: ComponentContext<PropsDefinitionToRawTypes<Props>>,
+		options: Options
+	): Return;
 }
 
 export type GetComponentInstance<C extends AnyComponent, Return = ReturnType<C>> = OmitNil<Return>;
-export type GetComponentOptions<C extends AnyComponent> = Parameters<C>[1]['options'];
-export type GetComponentProps<C extends AnyComponent> = Parameters<C>[1]['props'];
 export type GetComponentRoot<C extends AnyComponent> = Parameters<C>[0];
+export type GetComponentProps<C extends AnyComponent> = Parameters<C>[1]['props'];
+export type GetComponentOptions<C extends AnyComponent> = Parameters<C>[2];
 export type GetComponentInternalInstance<C extends AnyComponent> = ComponentInternalInstance<
 	GetComponentRoot<C>,
 	GetComponentOptions<C>,
@@ -116,7 +120,7 @@ export function defineComponent<
 
 		const node = <AnonymousElement>document.createElement(type);
 
-		// NOTE: try to get default options, if exist
+		// TODO: try to get default options, if exist
 		const instance = new ComponentInternalInstance<
 			Root,
 			Options,

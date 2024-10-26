@@ -12,3 +12,16 @@ export function useChange() {
     someComponent.cool()
 }
 ```
+
+If component accepts options, you can pass them in the composable.
+
+```ts
+import { useComponent } from 'ovee.js'
+import { SomeComponent } from '@/components'
+
+export function useChange() {
+    const someComponent = useComponent(SomeComponent, {
+        namespace: 'change'
+    })
+}
+```

@@ -1,35 +1,19 @@
 import { injectComponentContext } from '@/core/component/componentContext';
-import { ComponentOptions, ComponentProps } from '@/core/component/defineComponent';
+import { ComponentOptions } from '@/core/component/defineComponent';
 import { ComponentContext } from '@/core/component/types';
 import { Logger } from '@/errors';
 
 const logger = new Logger('useComponentContext');
 
-export interface ComponentPublicInstance<
-	Root extends HTMLElement = HTMLElement,
-	Options extends ComponentOptions = ComponentOptions,
-	Props extends ComponentProps = ComponentProps
-> extends ComponentContext<Options, Props> {
-	element: Root;
+export interface ComponentPublicInstance extends ComponentContext {
+	element: HTMLElement;
+	options: ComponentOptions;
 }
 
-export function useComponentContext<
-	Root extends HTMLElement = HTMLElement,
-	Options extends ComponentOptions = ComponentOptions,
-	Props extends ComponentProps = ComponentProps
->(allowMissingContext?: boolean): ComponentPublicInstance<Root, Options, Props>;
+export function useComponentContext(allowMissingContext?: boolean): ComponentPublicInstance;
+export function useComponentContext(allowMissingContext: true): ComponentPublicInstance | null;
 
-export function useComponentContext<
-	Root extends HTMLElement = HTMLElement,
-	Options extends ComponentOptions = ComponentOptions,
-	Props extends ComponentProps = ComponentProps
->(allowMissingContext: true): ComponentPublicInstance<Root, Options, Props> | null;
-
-export function useComponentContext<
-	Root extends HTMLElement = HTMLElement,
-	Options extends ComponentOptions = ComponentOptions,
-	Props extends ComponentProps = ComponentProps
->(allowMissingContext = false): ComponentPublicInstance<Root, Options, Props> | null {
+export function useComponentContext(allowMissingContext = false): ComponentPublicInstance | null {
 	const instance = injectComponentContext();
 
 	if (!instance && !allowMissingContext) {
@@ -44,11 +28,11 @@ export function useComponentContext<
 
 	// TODO: use normal instance type
 	return {
-		element: instance.element as Root,
+		element: instance.element,
 		name: instance.name,
 		app: instance.app,
-		options: instance.options as Options,
-		props: instance.props as Props,
+		options: instance.options,
+		props: instance.props,
 
 		emit: (...args) => instance.emit(...args),
 		on: (...args) => instance.on(...args),

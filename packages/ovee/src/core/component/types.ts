@@ -14,13 +14,12 @@ export interface WithOveeInstances {
 	_OveeComponentInstances?: ComponentInternalInstance[];
 }
 
-export interface ComponentContext<
-	Options extends ComponentOptions = ComponentOptions,
-	Props extends ComponentProps = ComponentProps
-> {
+/**
+ * Component context for default usage in defining a component
+ */
+export interface ComponentContext<Props extends ComponentProps = ComponentProps> {
 	name: string;
 	app: App;
-	options: Options;
 	props: Props;
 
 	on(events: string, callback: AnyFunction, options?: ListenerOptions): void;
@@ -28,11 +27,15 @@ export interface ComponentContext<
 	emit<D = any>(eventDesc: EventDesc, detail?: D): void;
 }
 
+/**
+ * Represents minimal internal component instance that can be used and exposed to user
+ */
 export interface ComponentInstance<
 	Root extends HTMLElement = HTMLElement,
 	Options extends ComponentOptions = ComponentOptions,
 	Props extends ComponentProps = ComponentProps
-> extends ComponentContext<Options, Props> {
+> extends ComponentContext<Props> {
+	options: Options;
 	element: Root;
 	instance?: AnyObject;
 	renderPromise?: Promise<void>;
