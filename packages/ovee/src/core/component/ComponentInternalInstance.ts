@@ -29,7 +29,7 @@ export class ComponentInternalInstance<
 	readonly eventDelegate: EventDelegate<this>;
 	readonly scope: EffectScope;
 
-	private cachedPropsDefaults: AnyObject = {};
+	cachedPropsDefaults: AnyObject = {};
 
 	get unmounted() {
 		return !this.mounted;

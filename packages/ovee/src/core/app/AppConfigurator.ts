@@ -1,7 +1,7 @@
 import { Logger } from '@/errors';
 import { isComponentDefinition, isModuleDefinition, isNil } from '@/utils';
 
-import { AnyComponent, Component, ComponentOptions } from '../component';
+import { AnyComponent, Component, ComponentOptions, GetComponentOptions } from '../component';
 import { AnyModule, Module, ModuleOptions } from '../module';
 import { App } from './App';
 import type { AppConfig } from './createApp';
@@ -96,9 +96,9 @@ export class AppConfigurator {
 		return true;
 	}
 
-	component<Options extends ComponentOptions>(
+	component<C extends Component, Options = GetComponentOptions<C>>(
 		name: string,
-		component: Component<HTMLElement, Options>,
+		component: C,
 		options?: Options
 	): this {
 		if (!this.validateComponent(name, component)) return this;

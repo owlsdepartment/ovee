@@ -1,5 +1,5 @@
 import { ElementFiber, ElementFiberProps, FiberFactory } from '@/jsx';
-import { AnyObject, EmptyObject, OmitNil } from '@/utils';
+import { AnyObject, OmitNil } from '@/utils';
 
 import { ANONYMOUS_TAG, AnonymousElement } from './Anonymous';
 import { ComponentInternalInstance } from './ComponentInternalInstance';
@@ -68,8 +68,8 @@ export function defineComponent<
 	Options extends ComponentOptions = ComponentOptions,
 	Return extends ComponentReturn = ComponentReturn
 >(
-	component: ComponentDefineFunction<Root, Options, EmptyObject, Return>
-): Component<Root, Options, EmptyObject, Return>;
+	component: ComponentDefineFunction<Root, Options, ComponentProps, Return>
+): Component<Root, Options, ComponentProps, Return>;
 
 export function defineComponent<
 	Root extends HTMLElement = HTMLElement,

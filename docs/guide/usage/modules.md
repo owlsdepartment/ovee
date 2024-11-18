@@ -22,7 +22,7 @@ Then we need to register it in app
 import { MyModule } from './MyModule'
 
 createApp()
-    .use(MyModule)
+    .use('MyModule', MyModule)
 ```
 
 `defineModule` accepts a function, we call a __setup function__. It also receives an object with `app` instance and module `options`, that the module was registered with. But more on those two later.
@@ -167,7 +167,7 @@ When you register a module, you can optionally pass an options object
 
 ```ts [app.ts]
 createApp()
-    .use(MyModule, { url: 'https://api.fines.com' })
+    .use('MyModule', MyModule, { url: 'https://api.fines.com' })
     // alternatively with useMany
     .useMany({
         MyModule: [MyModule, { url: 'https://api.fines.com' }]

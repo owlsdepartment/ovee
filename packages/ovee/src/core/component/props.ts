@@ -1,5 +1,6 @@
 import { toRaw } from '@vue/reactivity';
 
+import { __DEV__ } from '@/constants';
 import { AnyFunction, AnyObject, ClassConstructor, Data, isFunction, PrimitiveName } from '@/utils';
 
 // NOTE: prop type checking should be DEV MODE ONLY
@@ -113,7 +114,7 @@ export function PropObject<T extends AnyObject = AnyObject>(): T {
 }
 PropObject.expected = 'object';
 PropObject.validate = (v: unknown): boolean => {
-	return v != null && typeof v === 'object';
+	return v != null && typeof v === 'object' && !Array.isArray(v);
 };
 
 export function PropFunction<T extends AnyFunction = AnyFunction>(): T {
@@ -136,7 +137,8 @@ export function PropAny<T = any>(): T {
 	return undefined as T;
 }
 PropAny.expected = 'any';
-PropAny.validate = (): boolean => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+PropAny.validate = (v?: any): boolean => {
 	return true;
 };
 
@@ -215,8 +217,9 @@ export function resolvePropsValues(
 		delete rawProps[key];
 	}
 
-	// TODO: if __DEV__
-	validateProps(rawProps, props, options);
+	if (__DEV__) {
+		validateProps(rawProps, props, options);
+	}
 
 	return rawProps;
 }

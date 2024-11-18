@@ -22,7 +22,7 @@ And just register it in the app
 import { MyComponent } from './MyComponent'
 
 createApp()
-    .component(MyComponent)
+    .component('MyComponent', MyComponent)
 ```
 
 The setup function is called with three arguments:
@@ -117,7 +117,7 @@ We also have 3rd argument: `options`, which similarly to `modules`, are a simple
 ::: code-group
 ```ts [app.ts]
 createApp()
-    .component(MyComponent, { event: 'resize' })
+    .component('MyComponent', MyComponent, { event: 'resize' })
     // alternatively with useMany
     .useMany({
         MyComponent: [MyComponent, { event: 'resize' }]
