@@ -1,5 +1,5 @@
-export function isValidNode(node: Node): node is Element {
+export function isValidNode(node: Node): node is HTMLElement {
 	const { nodeName, nodeType } = node;
 
-	return nodeName !== 'SCRIPT' && nodeName !== 'svg' && nodeType === 1;
+	return nodeType === 1 && node instanceof HTMLElement && nodeName.toLowerCase() !== 'script';
 }

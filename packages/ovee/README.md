@@ -2,4 +2,4 @@
 
 Core package of `ovee.js` framework.
 
-Official docs: <https://owlsdepartment.github.io/ovee/>
+Official docs: <https://owlsdepartment.github.io/ovee/v3>

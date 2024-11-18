@@ -1,8 +1,11 @@
-import { Task } from 'src/utils/Task';
+import { describe, expect, it, vi } from 'vitest';
+
+import { Task } from '@/utils';
+import { flushPromises } from '#/helpers/global';
 
 describe('Task promiselike', () => {
 	it('can be later resolved', async () => {
-		const thenCb = jest.fn();
+		const thenCb = vi.fn();
 		const resolveParam = {};
 		const t = new Task<any>();
 
@@ -18,7 +21,7 @@ describe('Task promiselike', () => {
 	});
 
 	it('can be later rejected', async () => {
-		const catchCb = jest.fn();
+		const catchCb = vi.fn();
 		const rejectParam = {};
 		const t = new Task<any>();
 
@@ -34,14 +37,17 @@ describe('Task promiselike', () => {
 	});
 
 	it('can be awaited', async () => {
+		vi.useFakeTimers();
 		const resolveParam = {};
 		const t = new Task<any>();
 
 		setTimeout(() => t.resolve(resolveParam));
 
+		vi.runAllTimers();
 		const awaited = await t;
 
 		expect(awaited).toBe(resolveParam);
+		vi.useRealTimers();
 	});
 
 	it(`adds special 'Symbol.toStringTag' field`, () => {

@@ -1,15 +1,13 @@
-import { JSDOM } from 'jsdom';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { attachMutationObserver } from '../../../src/utils/attachMutationObserver';
-
-const dom = new JSDOM('<!DOCTYPE html>');
+import { attachMutationObserver, defaultObserverConfig } from '@/utils/attachMutationObserver';
 
 describe('attachMutationObserver function', () => {
-	const body = dom.window.document.documentElement;
+	const body = window.document.documentElement;
 	const mutationObserverMethods = {
-		constuctor: jest.fn(),
-		disconnect: jest.fn(),
-		observe: jest.fn(),
+		constuctor: vi.fn(),
+		disconnect: vi.fn(),
+		observe: vi.fn(),
 	};
 	const MutationObserver = class {
 		constructor(...args: any[]) {
@@ -30,25 +28,36 @@ describe('attachMutationObserver function', () => {
 	});
 
 	beforeEach(() => {
-		Object.values(mutationObserverMethods).forEach(fn => fn.mockReset());
+		Object.values(mutationObserverMethods).forEach(fn => fn.mockClear());
 	});
 
 	it('should return instance of MutationObserver', () => {
-		const observer = attachMutationObserver(body, jest.fn(), jest.fn());
+		const { observer } = attachMutationObserver(body, vi.fn(), vi.fn());
 
 		expect(observer).toBeInstanceOf(MutationObserver);
 	});
 
 	it('calls MutationObserver observe method with proper params', () => {
-		attachMutationObserver(body, jest.fn(), jest.fn());
+		attachMutationObserver(body, vi.fn(), vi.fn());
 
-		expect(mutationObserverMethods.observe.mock.calls.length).toBe(1);
-		expect(mutationObserverMethods.observe.mock.calls[0][0]).toEqual(body);
+		expect(mutationObserverMethods.observe).toBeCalledTimes(1);
+		expect(mutationObserverMethods.observe).toHaveBeenNthCalledWith(1, body, defaultObserverConfig);
+	});
+
+	it('should return run function to call observe method again', () => {
+		const { run } = attachMutationObserver(body, vi.fn(), vi.fn());
+		const { observe } = mutationObserverMethods;
+
+		observe.mockClear();
+		run();
+
+		expect(observe).toBeCalledTimes(1);
+		expect(observe).toHaveBeenNthCalledWith(1, body, defaultObserverConfig);
 	});
 
 	it('passes callable to MutationObserver constructor', () => {
 		window.MutationObserver = MutationObserver as typeof window.MutationObserver;
-		attachMutationObserver(body, jest.fn(), jest.fn());
+		attachMutationObserver(body, vi.fn(), vi.fn());
 
 		const listener = mutationObserverMethods.constuctor.mock.calls[0][0];
 
@@ -56,23 +65,23 @@ describe('attachMutationObserver function', () => {
 	});
 
 	it('passes filtered list of nodes to proper callback methods', () => {
-		const addedCallback = jest.fn();
-		const removedCallback = jest.fn();
+		const addedCallback = vi.fn();
+		const removedCallback = vi.fn();
 		const mutations = [
 			{
 				type: 'characterData',
-				target: dom.window.document.createElement('div'),
+				target: window.document.createElement('div'),
 			},
 			{
 				type: 'childList',
-				target: dom.window.document.createElement('div'),
-				addedNodes: [dom.window.document.createElement('div')],
-				removedNodes: [dom.window.document.createElement('div')],
+				target: window.document.createElement('div'),
+				addedNodes: [window.document.createElement('div')],
+				removedNodes: [window.document.createElement('div')],
 			},
 			{
 				type: 'childList',
-				target: dom.window.document.createElement('div'),
-				addedNodes: [dom.window.document.createElement('div')],
+				target: window.document.createElement('div'),
+				addedNodes: [window.document.createElement('div')],
 				removedNodes: [],
 			},
 		];
@@ -83,10 +92,10 @@ describe('attachMutationObserver function', () => {
 		const listener = mutationObserverMethods.constuctor.mock.calls[0][0];
 		listener(mutations);
 
-		expect(addedCallback.mock.calls.length).toBe(2);
-		expect(removedCallback.mock.calls.length).toBe(1);
-		expect(addedCallback.mock.calls[0][0]).toEqual(mutations[1].addedNodes);
-		expect(addedCallback.mock.calls[1][0]).toEqual(mutations[2].addedNodes);
-		expect(removedCallback.mock.calls[0][0]).toEqual(mutations[1].removedNodes);
+		expect(addedCallback).toBeCalledTimes(2);
+		expect(removedCallback).toBeCalledTimes(1);
+		expect(addedCallback).toHaveBeenNthCalledWith(1, mutations[1].addedNodes);
+		expect(addedCallback).toHaveBeenNthCalledWith(2, mutations[2].addedNodes);
+		expect(removedCallback).toHaveBeenNthCalledWith(1, mutations[1].removedNodes);
 	});
 });

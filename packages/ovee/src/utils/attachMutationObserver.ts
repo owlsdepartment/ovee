@@ -4,7 +4,7 @@ export interface MutationCallback {
 	(list: Node[]): void;
 }
 
-const defaultObserverConfig = {
+export const defaultObserverConfig = {
 	childList: true,
 	subtree: true,
 };
@@ -22,15 +22,21 @@ export function attachMutationObserver(
 	root: Node,
 	onAddedCallback: MutationCallback,
 	onRemovedCallback: MutationCallback
-): MutationObserver {
+): { observer: MutationObserver; run: () => void } {
 	const DOMObserver = new MutationObserver(mutations => {
 		mutations.forEach(mutation => {
 			filterCallback(mutation, 'addedNodes', onAddedCallback);
 			filterCallback(mutation, 'removedNodes', onRemovedCallback);
 		});
 	});
+	const run = () => {
+		DOMObserver.observe(root, defaultObserverConfig);
+	};
 
-	DOMObserver.observe(root, defaultObserverConfig);
+	run();
 
-	return DOMObserver;
+	return {
+		observer: DOMObserver,
+		run,
+	};
 }

@@ -37,11 +37,11 @@ export class Task<T = void> extends Promise<T> {
 		};
 	}
 
-	static get [Symbol.species]() {
+	static override get [Symbol.species]() {
 		return Promise;
 	}
 
-	get [Symbol.toStringTag]() {
+	override get [Symbol.toStringTag]() {
 		return 'Task';
 	}
 }

@@ -1,0 +1,55 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "noImplicitAny": true,
+    "lib": [
+      "ES2017",
+      "ES7",
+      "ES6",
+      "DOM"
+    ],
+    "target": "ESNext",
+    "strict": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "baseUrl": "..",
+    "plugins": [
+      {
+        "transform": "@zerollup/ts-transform-paths"
+      }
+    ],
+    "rootDir": "../",
+    "outDir": "./dist/src",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "#/*": [
+        "./tests/*"
+      ],
+      "~/*": [
+        "./*"
+      ]
+    },
+    "types": [
+      "node"
+    ],
+    "emitDeclarationOnly": false,
+    "incremental": true,
+    "tsBuildInfoFile": "/Users/majlo/Projects/Colab/ovee/node_modules/vitest/dist/tsconfig.tmp.tsbuildinfo"
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "./dist/src",
+    "./dist/src"
+  ],
+  "include": [
+    "./**/*.ts",
+    "./**/*.d.ts"
+  ]
+}
