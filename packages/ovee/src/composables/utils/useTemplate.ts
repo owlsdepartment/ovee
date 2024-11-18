@@ -96,7 +96,7 @@ function useRenderSavedTemplate(instance: ComponentInstance, stored: StoredRende
 	}
 
 	onBeforeMount(() => {
-		update();
+		update(true);
 
 		if (renderTask) instance.renderPromise = renderTask;
 	});
